@@ -1,143 +1,172 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
+/*   Updated: 2025/02/18 19:07:31 by drongier         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/cub3d.h"
-#include <stdlib.h>
-#include <math.h>
-#include "mlx.h"
 
-ButtonKeys Keys = {0, 0, 0, 0};
-
-float degToRad(float a) { return a * M_PI / 180.0; }
-float FixAng(float a) { if (a > 359) a -= 360; if (a < 0) a += 360; return a; }
-float distance(float ax, float ay, float bx, float by, float ang) { return cos(degToRad(ang)) * (bx - ax) - sin(degToRad(ang)) * (by - ay); }
-
-float px = 150, py = 400; // Player position
-float pdx, pdy, pa = 90;  // Player direction and angle
-
-int mapW[] = 
+void put_pixel(int x, int y, int color, t_game *game)
 {
-    1, 1, 1, 1, 1, 1, 1, 1,
-    1, 0, 0, 1, 0, 0, 0, 1,
-    1, 0, 0, 4, 0, 2, 0, 1,
-    1, 1, 0, 1, 0, 0, 0, 1,
-    2, 0, 0, 0, 0, 0, 0, 1,
-    2, 0, 0, 0, 0, 1, 0, 1,
-    2, 0, 0, 0, 0, 0, 0, 1,
-    1, 1, 3, 1, 3, 1, 3, 1,
-};
-
-void my_mlx_pixel_put(t_data *data, int x, int y, int color)
-{
-    char *dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
-    *(unsigned int *)dst = color;
+    if(x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
+        return;
+    
+    int index = y * game->size_line + x * game->bpp / 8;
+    game->data[index] = color & 0xFF;
+    game->data[index + 1] = (color >> 8) & 0xFF;
+    game->data[index + 2] = (color >> 16) & 0xFF;
 }
 
-void drawSquare(t_data *data, int x, int y, int size, int color)
+// our own clear_image
+void clear_image(t_game *game)
 {
-    for (int i = 0; i < size; i++)
-        for (int j = 0; j < size; j++)
-            my_mlx_pixel_put(data, x + i, y + j, color);
+    for(int y = 0; y < HEIGHT; y++)
+        for(int x = 0; x < WIDTH; x++)
+            put_pixel(x, y, 0, game);
 }
 
-void drawLine(t_data *data, int x0, int y0, int x1, int y1, int color)
+// utils functions
+void draw_square(int x, int y, int size, int color, t_game *game)
 {
-    int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
-    int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
-    int err = dx + dy, e2;
+    for(int i = 0; i < size; i++)
+        put_pixel(x + i, y, color, game);
+    for(int i = 0; i < size; i++)
+        put_pixel(x, y + i, color, game);
+    for(int i = 0; i < size; i++)
+        put_pixel(x + size, y + i, color, game);
+    for(int i = 0; i < size; i++)
+        put_pixel(x + i, y + size, color, game);
+}
 
-    while (1)
+void draw_map(t_game *game)
+{
+    char **map = game->map;
+    int color = 0x0000FF;
+    for(int y = 0; map[y]; y++)
+        for(int x = 0; map[y][x]; x++)
+            if(map[y][x] == '1')
+                draw_square(x * BLOCK, y * BLOCK, BLOCK, color, game);
+}
+
+// distance calculation functions
+float distance(float x, float y){
+    return sqrt(x * x + y * y);
+}
+
+float fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
+{
+    float delta_x = x2 - x1;
+    float delta_y = y2 - y1;
+    float angle = atan2(delta_y, delta_x) - game->player.angle;
+    float fix_dist = distance(delta_x, delta_y) * cos(angle);
+    return fix_dist;
+}
+
+// touch function 
+bool touch(float px, float py, t_game *game)
+{
+    int x = px / BLOCK;
+    int y = py / BLOCK;
+    if(game->map[y][x] == '1')
+        return true;
+    return false;
+}
+
+// initialisation functions
+char **get_map(void)
+{
+    char **map = malloc(sizeof(char *) * 11);
+    map[0] = "111111111111111";
+    map[1] = "100000000000001";
+    map[2] = "100000000000001";
+    map[3] = "100000100000001";
+    map[4] = "100000000000001";
+    map[5] = "100000010000001";
+    map[6] = "100001000000001";
+    map[7] = "100000000000001";
+    map[8] = "100000000000001";
+    map[9] = "111111111111111";
+    map[10] = NULL;
+    return (map);
+}
+
+void init_game(t_game *game)
+{
+    init_player(&game->player);
+    game->map = get_map();
+    game->mlx = mlx_init();
+    game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "Game");
+    game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+    game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
+    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+}
+
+// raycasting functions
+void draw_line(t_player *player, t_game *game, float start_x, int i)
+{
+    float cos_angle = cos(start_x);
+    float sin_angle = sin(start_x);
+    float ray_x = player->x;
+    float ray_y = player->y;
+
+    while(!touch(ray_x, ray_y, game))
     {
-        my_mlx_pixel_put(data, x0, y0, color);
-        if (x0 == x1 && y0 == y1) break;
-        e2 = 2 * err;
-        if (e2 >= dy) { err += dy; x0 += sx; }
-        if (e2 <= dx) { err += dx; y0 += sy; }
+        if(DEBUG)
+            put_pixel(ray_x, ray_y, 0xFF0000, game);
+        ray_x += cos_angle;
+        ray_y += sin_angle;
     }
-}
-
-void drawMap2D(t_data *data)
-{
-    for (int y = 0; y < mapY; y++)
+    if(!DEBUG)
     {
-        for (int x = 0; x < mapX; x++)
+        float dist = fixed_dist(player->x, player->y, ray_x, ray_y, game);
+        float height = (BLOCK / dist) * (WIDTH / 2);
+        int start_y = (HEIGHT - height) / 2;
+        int end = start_y + height;
+        while(start_y < end)
         {
-            int xo = x * mapS;
-            int yo = y * mapS;
-            if (mapW[y * mapX + x] > 0)
-                drawSquare(data, xo, yo, mapS, 0xFFFFFF); // White for walls
-            else
-                drawSquare(data, xo, yo, mapS, 0x000000); // Black for empty space
+            put_pixel(i, start_y, 255, game);
+            start_y++;
         }
     }
 }
 
-void drawPlayer2D(t_data *data)
+int draw_loop(t_game *game)
 {
-    drawSquare(data, px, py, 8, 0xFFFF00); // Yellow player
-    drawLine(data, px, py, px + pdx * 20, py + pdy * 20, 0xFFFF00); // Player direction
-}
-
-int Buttons(int keycode)
-{
-    if (keycode == LEFT) // A key
+    t_player *player = &game->player;
+    move_player(player);
+    clear_image(game);
+    if(DEBUG)
     {
-        pa += 5;
-        pa = FixAng(pa);
-        pdx = cos(degToRad(pa));
-        pdy = -sin(degToRad(pa));
+        draw_square(player->x, player->y, 10, 0x00FF00, game);
+        draw_map(game);
     }
-    if (keycode == RIGHT) // D key
+    float fraction = PI / 3 / WIDTH;
+    float start_x = player->angle - PI / 6;
+    int i = 0;
+    while(i < WIDTH)
     {
-        pa -= 5;
-        pa = FixAng(pa);
-        pdx = cos(degToRad(pa));
-        pdy = -sin(degToRad(pa));
+        draw_line(player, game, start_x, i);
+        start_x += fraction;
+        i++;
     }
-    if (keycode == UP) // W key
-    {
-        px += pdx * 5;
-        py += pdy * 5;
-    }
-    if (keycode == DOWN) // S key
-    {
-        px -= pdx * 5;
-        py -= pdy * 5;
-    }
-	else if (keycode == 65307) // Touche Échap
-		exit(0);
-    return (0);
-}
-
-int render_frame(t_data *data)
-{
-    // Clear screen
-    for (int y = 0; y < WINDOW_HEIGHT; y++)
-        for (int x = 0; x < WINDOW_WIDTH; x++)
-            my_mlx_pixel_put(data, x, y, 0x303030); // Gray background
-
-    drawMap2D(data);
-    drawPlayer2D(data);
-    mlx_put_image_to_window(data->mlx, data->win, data->img, 0, 0);
-    return (0);
+    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+    return 0;
 }
 
 int main(void)
 {
-    t_data data;
+    t_game game;
 
-    data.mlx = mlx_init();
-    data.win = mlx_new_window(data.mlx, WINDOW_WIDTH, WINDOW_HEIGHT, "Cub3D - MinilibX");
-    data.img = mlx_new_image(data.mlx, WINDOW_WIDTH, WINDOW_HEIGHT);
-    data.addr = mlx_get_data_addr(data.img, &data.bits_per_pixel, &data.line_length, &data.endian);
-
-    // Initialize player direction
-    pdx = cos(degToRad(pa));
-    pdy = -sin(degToRad(pa));
-
-    // Hook events
-    mlx_hook(data.win, 2, 1L << 0, Buttons, &data);
-    mlx_loop_hook(data.mlx, render_frame, &data);
-
-    // Main loop
-    mlx_loop(data.mlx);
-
-    return (0);
+	init_game(&game);
+    mlx_hook(game.win, 2, 1L<<0, key_press, &game.player);
+    mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
+    mlx_loop_hook(game.mlx, draw_loop, &game);
+    mlx_loop(game.mlx);
+    return 0;
 }
