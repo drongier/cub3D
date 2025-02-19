@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/19 16:06:11 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/19 16:18:28 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,46 +22,6 @@ void	put_pixel(int x, int y, int color, t_game *game)
 	game->data[index] = color & 0xFF; 				//BLUE COMPOSANTE 
 	game->data[index + 1] = (color >> 8) & 0xFF; 	// GREEN COMPOSANTE
 	game->data[index + 2] = (color >> 16) & 0xFF; 	// RED COMPOSTANTE
-}
-
-// utils functions
-void draw_square(int x, int y, int size, int color, t_game *game)
-{
-	int i;
-	
-	i = 0;
-	while (i++ < size)
-		put_pixel(x + i, y, color, game);
-	i = 0;
-	while (i++ < size)
-		put_pixel(x, y + i, color, game);
-	i = 0;
-	while (i++ < size)
-		put_pixel(x + size, y + i, color, game);
-	i = 0;
-	while (i++ < size)
-		put_pixel(x + i, y + size, color, game);
-}
-
-void draw_map(t_game *game)
-{
-	int x;
-	int y;
-	char **map = game->map;
-	int color = 0xFF00FF; //color of the map, ici pink
-	
-	y = 0;
-	while (map[y])
-	{
-		x = 0;
-		while (map[y][x])
-		{
-			if (map[y][x] == '1')
-				draw_square(x * BLOCK, y * BLOCK, BLOCK, color, game);
-			x++;
-		}
-		y++;
-	}
 }
 
 // raycasting functions
