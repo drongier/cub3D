@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/18 19:09:53 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/19 11:46:57 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ void init_player(t_player *player)
 int close_window(t_game *game)
 {
     mlx_destroy_window(game->mlx, game->win);
-    exit(0);
     return (0);
 }
 
@@ -50,7 +49,7 @@ int key_press(int keycode, t_player *player)
 		player->right_rotate = true;
 	if(keycode == EXIT)
 		close_window(player->game);
-    return 0;
+    return (0);
 }
 
 int key_release(int keycode, t_player *player)

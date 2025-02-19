@@ -6,52 +6,81 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/18 19:07:31 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/19 14:45:24 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-void put_pixel(int x, int y, int color, t_game *game)
+void	put_pixel(int x, int y, int color, t_game *game)
 {
-    if(x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
-        return;
-    
-    int index = y * game->size_line + x * game->bpp / 8;
-    game->data[index] = color & 0xFF;
-    game->data[index + 1] = (color >> 8) & 0xFF;
-    game->data[index + 2] = (color >> 16) & 0xFF;
+	int	index;
+	
+	if(x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
+		return;
+	index = y * game->size_line + x * game->bpp / 8;
+	game->data[index] = color & 0xFF; 				//BLUE COMPOSANTE 
+	game->data[index + 1] = (color >> 8) & 0xFF; 	// GREEN COMPOSANTE
+	game->data[index + 2] = (color >> 16) & 0xFF; 	// RED COMPOSTANTE
 }
 
 // our own clear_image
 void clear_image(t_game *game)
 {
-    for(int y = 0; y < HEIGHT; y++)
-        for(int x = 0; x < WIDTH; x++)
-            put_pixel(x, y, 0, game);
+	int x;
+	int y;
+
+	y = 0;
+	while (y < HEIGHT)
+	{
+		x = 0;
+		while (x < WIDTH)
+		{
+			put_pixel(x, y, 0, game);
+			x++;
+		}
+		y++;
+	}
 }
 
 // utils functions
 void draw_square(int x, int y, int size, int color, t_game *game)
 {
-    for(int i = 0; i < size; i++)
-        put_pixel(x + i, y, color, game);
-    for(int i = 0; i < size; i++)
-        put_pixel(x, y + i, color, game);
-    for(int i = 0; i < size; i++)
-        put_pixel(x + size, y + i, color, game);
-    for(int i = 0; i < size; i++)
-        put_pixel(x + i, y + size, color, game);
+	int i;
+	
+	i = 0;
+	while (i++ < size)
+		put_pixel(x + i, y, color, game);
+	i = 0;
+	while (i++ < size)
+		put_pixel(x, y + i, color, game);
+	i = 0;
+	while (i++ < size)
+		put_pixel(x + size, y + i, color, game);
+	i = 0;
+	while (i++ < size)
+		put_pixel(x + i, y + size, color, game);
 }
 
 void draw_map(t_game *game)
 {
-    char **map = game->map;
-    int color = 0x0000FF;
-    for(int y = 0; map[y]; y++)
-        for(int x = 0; map[y][x]; x++)
-            if(map[y][x] == '1')
-                draw_square(x * BLOCK, y * BLOCK, BLOCK, color, game);
+	int x;
+	int y;
+	char **map = game->map;
+	int color = 0xFF00FF; //color of the map, ici pink
+	
+	y = 0;
+	while (map[y])
+	{
+		x = 0;
+		while (map[y][x])
+		{
+			if (map[y][x] == '1')
+				draw_square(x * BLOCK, y * BLOCK, BLOCK, color, game);
+			x++;
+		}
+		y++;
+	}
 }
 
 // distance calculation functions
@@ -85,13 +114,13 @@ char **get_map(void)
 {
     char **map = malloc(sizeof(char *) * 11);
     map[0] = "111111111111111";
-    map[1] = "100000000000001";
-    map[2] = "100000000000001";
+    map[1] = "100000100000001";
+    map[2] = "100000100000001";
     map[3] = "100000100000001";
-    map[4] = "100000000000001";
+    map[4] = "100000000001001";
     map[5] = "100000010000001";
     map[6] = "100001000000001";
-    map[7] = "100000000000001";
+    map[7] = "100000000010001";
     map[8] = "100000000000001";
     map[9] = "111111111111111";
     map[10] = NULL;
@@ -120,7 +149,7 @@ void draw_line(t_player *player, t_game *game, float start_x, int i)
     while(!touch(ray_x, ray_y, game))
     {
         if(DEBUG)
-            put_pixel(ray_x, ray_y, 0xFF0000, game);
+            put_pixel(ray_x, ray_y, 0xFF0000, game); //color vision fps ici red
         ray_x += cos_angle;
         ray_y += sin_angle;
     }
@@ -132,7 +161,7 @@ void draw_line(t_player *player, t_game *game, float start_x, int i)
         int end = start_y + height;
         while(start_y < end)
         {
-            put_pixel(i, start_y, 255, game);
+            put_pixel(i, start_y, 0xFF0000, game); //wall color ici blue
             start_y++;
         }
     }
@@ -146,7 +175,7 @@ int draw_loop(t_game *game)
     clear_image(game);
     if(DEBUG)
     {
-        draw_square(player->x, player->y, 10, 0x00FF00, game);
+        draw_square(player->x, player->y, 10, 0x00FF00, game); //small square for player, ici green
         draw_map(game);
     }
     /* PI/3 = 60° = Player vision like FPS game then /WIDTH to equal sample for raycasting */
