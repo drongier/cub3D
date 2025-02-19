@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/19 16:18:28 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/19 17:19:32 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,11 +45,18 @@ void draw_line(t_player *player, t_game *game, float start_x, int i)
         float height = (BLOCK / dist) * (WIDTH / 2);
         int start_y = (HEIGHT - height) / 2;
         int end = start_y + height;
-        while(start_y < end)
+		
+		int j = 0;
+		while (j < start_y)
+			put_pixel(i, j++, 0x74583A, game); //wall
+		while(start_y < end)
         {
-            put_pixel(i, start_y, 0xFF0000, game); //wall color ici blue
+            put_pixel(i, start_y, 0x11C7C7, game); //celling
             start_y++;
         }
+		j = start_y;
+		while (j < HEIGHT)
+			put_pixel(i, j++, 0x999999, game); //ground
     }
 }
 
