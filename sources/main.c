@@ -55,10 +55,12 @@ void draw_map(t_game *game)
 }
 
 // distance calculation functions
-float distance(float x, float y){
+float distance(float x, float y)
+{
     return sqrt(x * x + y * y);
 }
 
+//Removing distortion + fisheyes effect 
 float fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
 {
     float delta_x = x2 - x1;
@@ -110,8 +112,8 @@ void init_game(t_game *game)
 // raycasting functions
 void draw_line(t_player *player, t_game *game, float start_x, int i)
 {
-    float cos_angle = cos(start_x);
-    float sin_angle = sin(start_x);
+    float cos_angle = cos(start_x); //axe X
+    float sin_angle = sin(start_x); //axe Y 
     float ray_x = player->x;
     float ray_y = player->y;
 
@@ -136,6 +138,7 @@ void draw_line(t_player *player, t_game *game, float start_x, int i)
     }
 }
 
+/* GRAPHIC ENGINE */
 int draw_loop(t_game *game)
 {
     t_player *player = &game->player;
@@ -146,9 +149,21 @@ int draw_loop(t_game *game)
         draw_square(player->x, player->y, 10, 0x00FF00, game);
         draw_map(game);
     }
+    /* PI/3 = 60° = Player vision like FPS game then /WIDTH to equal sample for raycasting */
     float fraction = PI / 3 / WIDTH;
+
+    /*   FOV left <-- [angle du joueur] --> FOV right
+         start_x     <-- 30° --> centre <-- 30° --> end */
     float start_x = player->angle - PI / 6;
     int i = 0;
+
+    /*    Joueur
+            |  [Rays]
+            |    /
+            |   /  ← Angle augmente graduellement (fraction + 1)
+            |  /   ← Chaque rays = une colonne à l'écran
+            | /    ← from start_x to end
+            |/                                                */
     while(i < WIDTH)
     {
         draw_line(player, game, start_x, i);
