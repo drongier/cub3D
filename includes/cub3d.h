@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/18 19:10:45 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/19 16:19:13 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,30 @@ typedef struct s_game
     char **map;
 } t_game;
 
-void init_player(t_player *player);
-int key_release(int keycode, t_player *player);
-int key_press(int keycode, t_player *player);
-void move_player(t_player *player);
-int close_window(t_game *game);
+
+// INITIALISATION
+
+void	init_player(t_player *player);
+
+// PLAYER MOVEMENT
+
+int		key_release(int keycode, t_player *player);
+int		key_press(int keycode, t_player *player);
+void	move_player(t_player *player);
+
+// UTILS 
+int		close_window(t_game *game);
+void	clear_image(t_game *game);
+
+// DRAWING FUNCTIONS
+int		draw_loop(t_game *game);
+bool	touch(float px, float py, t_game *game);
+float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
+void	put_pixel(int x, int y, int color, t_game *game);
+
+// DEBUG OR BONUS MINIMAP
+
+void draw_map(t_game *game);
+void draw_square(int x, int y, int size, int color, t_game *game);
 
 #endif
