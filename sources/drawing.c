@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/19 17:19:32 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 14:21:38 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,20 @@ void draw_line(t_player *player, t_game *game, float start_x, int i)
 			put_pixel(i, j++, 0x999999, game); //ground
     }
 }
+void draw_square_full(int x, int y, int size, int color, t_game *game)
+{
+    int i = 0;
+    while (i < size)
+    {
+        int j = 0;
+        while (j < size)
+        {
+            put_pixel(x + i, y + j, color, game);
+            j++;
+        }
+        i++;
+    }
+}
 
 /* GRAPHIC ENGINE */
 int draw_loop(t_game *game)
@@ -69,7 +83,7 @@ int draw_loop(t_game *game)
     if(DEBUG)
     {
         draw_square(player->x, player->y, 10, 0x00FF00, game); //small square for player, ici green
-        draw_map(game);
+        //draw_map(game);
     }
     /* PI/3 = 60° = Player vision like FPS game then /WIDTH to equal sample for raycasting */
     float fraction = PI / 3 / WIDTH;
@@ -92,6 +106,7 @@ int draw_loop(t_game *game)
         start_x += fraction;
         i++;
     }
+	draw_target(game);
     mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
     return 0;
 }

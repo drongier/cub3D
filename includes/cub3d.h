@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/19 16:19:13 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 14:22:28 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,9 @@ void	put_pixel(int x, int y, int color, t_game *game);
 
 // DEBUG OR BONUS MINIMAP
 
-void draw_map(t_game *game);
+void draw_map(t_game *game, int offset_x, int offset_y);
+void draw_square_full(int x, int y, int size, int color, t_game *game);
 void draw_square(int x, int y, int size, int color, t_game *game);
+void draw_target(t_game *game);
 
 #endif
