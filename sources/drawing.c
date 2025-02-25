@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/25 17:24:23 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 17:57:27 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,10 @@ int draw_loop(t_game *game)
         i++;
     }
 	if (BONUS == 1)
-		draw_target(game);
+	{
+		draw_mini_map(game);
+		draw_scope(game);
+	}
     mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
     return 0;
 }

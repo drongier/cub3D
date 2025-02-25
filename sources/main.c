@@ -6,27 +6,11 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/25 15:55:55 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 18:40:12 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
-
-// distance calculation functions
-float distance(float x, float y)
-{
-    return sqrt(x * x + y * y);
-}
-
-//Removing distortion + fisheyes effect 
-float fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
-{
-    float delta_x = x2 - x1;
-    float delta_y = y2 - y1;
-    float angle = atan2(delta_y, delta_x) - game->player.angle;
-    float fix_dist = distance(delta_x, delta_y) * cos(angle);
-    return fix_dist;
-}
 
 // initialisation functions
 char **get_map(void)
@@ -66,6 +50,7 @@ int main(void)
 	init_game(&game);
     mlx_hook(game.win, 2, 1L<<0, key_press, &game.player);
     mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
+	//mlx_hook(game.win, 6, 1L<<6, mouse_move, &game);
     mlx_loop_hook(game.mlx, draw_loop, &game);
     mlx_loop(game.mlx);
 	mlx_loop_end(game.mlx);

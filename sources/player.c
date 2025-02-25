@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/25 15:48:20 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 18:39:51 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,28 @@ int key_release(int keycode, t_player *player)
         player->right_rotate = false;
 	else if(keycode == EXIT)
 		player->key_exit = false;
+    return (0);
+}
+
+int mouse_move(int x, t_player *player)
+{
+    static int last_x = -1;
+
+    if (last_x == -1)
+        last_x = x;
+
+    int delta_x = x - last_x;
+    float angle_speed = 0.005; // Ajustez cette valeur pour régler la sensibilité de la souris
+
+    player->angle += delta_x * angle_speed;
+
+    if (player->angle > 2 * PI)
+        player->angle -= 2 * PI;
+    if (player->angle < 0)
+        player->angle += 2 * PI;
+
+    last_x = x;
+
     return (0);
 }
 
