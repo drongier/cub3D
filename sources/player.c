@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/19 11:46:57 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 15:48:20 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,12 @@ void init_player(t_player *player)
 
     player->left_rotate = false;
     player->right_rotate = false;
+	player->game = NULL;
 }
 int close_window(t_game *game)
 {
     mlx_destroy_window(game->mlx, game->win);
+	exit(0);
     return (0);
 }
 
@@ -48,7 +50,10 @@ int key_press(int keycode, t_player *player)
     if(keycode == RIGHT)
 		player->right_rotate = true;
 	if(keycode == EXIT)
+	{
+		player->key_exit = true;
 		close_window(player->game);
+	}
     return (0);
 }
 
@@ -107,4 +112,15 @@ void move_player(t_player *player)
         player->x -= sin_angle * speed;
         player->y += cos_angle * speed;
     }
+    // Effet miroir horizontal
+    if (player->x >= player->game->map_width * BLOCK)
+        player->x = 0;
+    else if (player->x < 0)
+        player->x = (player->game->map_width - 1) * BLOCK;
+
+    // Effet miroir vertical
+    if (player->y >= player->game->map_height * BLOCK)
+        player->y = 0;
+    else if (player->y < 0)
+        player->y = (player->game->map_height - 1) * BLOCK;
 }

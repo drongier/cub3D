@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:05:39 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/19 16:06:49 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 15:55:59 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,19 @@ bool touch(float px, float py, t_game *game)
     if(game->map[y][x] == '1')
         return true;
     return false;
+}
+
+void get_size_map(t_game *game)
+{
+	game->map_width = 0;
+    game->map_height = 0;
+    while (game->map[game->map_height])
+    {
+        int row_length = 0;
+        while (game->map[game->map_height][row_length])
+            row_length++;
+        if (row_length > game->map_width)
+            game->map_width = row_length;
+        game->map_height++;
+    }
 }

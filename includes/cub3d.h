@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/25 14:22:28 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 15:56:16 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # define HEIGHT 720
 # define BLOCK 64
 # define DEBUG 0
+# define BONUS 1
 
 # define W 119
 # define A 97
@@ -65,6 +66,8 @@ typedef struct s_game
     t_player player;
 
     char **map;
+	int map_width;
+	int map_height;
 } t_game;
 
 
@@ -81,6 +84,7 @@ void	move_player(t_player *player);
 // UTILS 
 int		close_window(t_game *game);
 void	clear_image(t_game *game);
+void	get_size_map(t_game *game);
 
 // DRAWING FUNCTIONS
 int		draw_loop(t_game *game);

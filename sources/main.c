@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/19 16:06:45 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/25 15:55:55 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ char **get_map(void)
 void init_game(t_game *game)
 {
     init_player(&game->player);
+	game->player.game = game;
     game->map = get_map();
+	get_size_map(game);
     game->mlx = mlx_init();
     game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "Game");
     game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
@@ -66,5 +68,8 @@ int main(void)
     mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
     mlx_loop_hook(game.mlx, draw_loop, &game);
     mlx_loop(game.mlx);
+	mlx_loop_end(game.mlx);
+	free(game.map);
+	// exit_game(&game);
     return 0;
 }
