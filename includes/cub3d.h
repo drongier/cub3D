@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/25 18:40:55 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/26 19:11:29 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # define WIDTH 1280
 # define HEIGHT 720
 # define BLOCK 64
-# define BONUS 0
+# define BONUS 1
 
 # define W 119
 # define A 97
@@ -70,6 +70,9 @@ typedef struct s_game
 } t_game;
 
 
+//EXIT
+void	exit_game(t_game *game);
+
 // INITIALISATION
 
 void	init_player(t_player *player);
@@ -80,6 +83,13 @@ int		key_release(int keycode, t_player *player);
 int		key_press(int keycode, t_player *player);
 void	move_player(t_player *player);
 int		mouse_move(int x, t_player *player);
+void	m_up(t_player *player, float cos_angle, float sin_angle, int speed);
+void	m_down(t_player *player, float cos_angle, float sin_angle, int speed);
+void	m_left(t_player *player, float cos_angle, float sin_angle, int speed);
+void	m_right(t_player *player, float cos_angle, float sin_angle, int speed);
+void	update_angle(t_player *player, float angle_speed);
+void	check_boundaries(t_player *player);
+
 
 // UTILS 
 int		close_window(t_game *game);

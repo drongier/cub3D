@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/25 18:40:12 by drongier         ###   ########.fr       */
+/*   Updated: 2025/02/26 19:13:32 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char **get_map(void)
 {
     char **map = malloc(sizeof(char *) * 11);
     map[0] = "111111111111111";
-    map[1] = "100000100000001";
+    map[1] = "111100100000001";
     map[2] = "100000100000001";
     map[3] = "100000100000001";
     map[4] = "100000000001001";
@@ -30,31 +30,58 @@ char **get_map(void)
     return (map);
 }
 
-void init_game(t_game *game)
+void	init_game(t_game *game)
 {
-    init_player(&game->player);
+	init_player(&game->player);
 	game->player.game = game;
-    game->map = get_map();
+	game->map = get_map();
 	get_size_map(game);
-    game->mlx = mlx_init();
-    game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "Game");
-    game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-    game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	game->mlx = mlx_init();
+	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
+	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
+	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
+	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 }
 
-int main(void)
+void	free_map(char **map)
 {
-    t_game game;
+	int	i;
+
+	i = 0;
+	while (map[i])
+	{
+		free(map[i]);
+		i++;
+	}
+	free(map);
+}
+
+void	exit_game(t_game *game)
+{
+	if (game->img)
+		mlx_destroy_image(game->mlx, game->img);
+	if (game->win)
+		mlx_destroy_window(game->mlx, game->win);
+	if (game->mlx)
+	{
+		mlx_loop_end(game->mlx);
+		mlx_destroy_display(game->mlx);
+	}
+	free(game->mlx);
+	free_map(game->map);
+}
+
+int	main(void)
+{
+	t_game	game;
 
 	init_game(&game);
-    mlx_hook(game.win, 2, 1L<<0, key_press, &game.player);
-    mlx_hook(game.win, 3, 1L<<1, key_release, &game.player);
+	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
+	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
 	//mlx_hook(game.win, 6, 1L<<6, mouse_move, &game);
-    mlx_loop_hook(game.mlx, draw_loop, &game);
-    mlx_loop(game.mlx);
-	mlx_loop_end(game.mlx);
-	free(game.map);
-	// exit_game(&game);
-    return 0;
+	mlx_loop_hook(game.mlx, draw_loop, &game);
+	mlx_loop(game.mlx);
+	//mlx_loop_end(game.mlx);
+	exit_game(&game);
+	return (0);
 }
