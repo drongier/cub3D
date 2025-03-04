@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 15:39:42 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/04 15:35:21 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,42 +16,30 @@ void	put_pixel(int x, int y, int color, t_game *game)
 {
 	int	index;
 
-	if(x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
-		return;
+	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
+		return ;
 	index = y * game->size_line + x * game->bpp / 8;
-	game->data[index] = color & 0xFF; 				// BLUE COMPOSANTE 
-	game->data[index + 1] = (color >> 8) & 0xFF; 	// GREEN COMPOSANTE
-	game->data[index + 2] = (color >> 16) & 0xFF; 	// RED COMPOSTANTE
+	game->data[index] = color & 0xFF;
+	game->data[index + 1] = (color >> 8) & 0xFF;
+	game->data[index + 2] = (color >> 16) & 0xFF;
 }
 
 // raycasting functions
 void	draw_line(t_player *player, t_game *game, float start_x, int i)
 {
-    float cos_angle = cos(start_x); //axe X
-    float sin_angle = sin(start_x); //axe Y 
-    float ray_x = player->x;
-    float ray_y = player->y;
+	float	ray_x;
+	float	ray_y;
+	float	height;
+	int		start_y;
+	int		end;
 
-    while(!touch(ray_x, ray_y, game))
-    {
-        ray_x += cos_angle;
-        ray_y += sin_angle;
-    }
-    float dist = fixed_dist(player->x, player->y, ray_x, ray_y, game);
-    float height = (BLOCK / dist) * (WIDTH / 2);
-    int start_y = (HEIGHT - height) / 2;
-    int end = start_y + height;
-	
-	int j = 0;
-	while (j < start_y)
-		put_pixel(i, j++, 0x74583A, game); //celling
-	while(start_y < end)
-        put_pixel(i, start_y++, 0x11C7C7, game); //wall
-	if (start_y < 0)
-		start_y = 0;
-	int l = start_y;
-	while (l < HEIGHT)
-		put_pixel(i, l++, 0x999999, game); //ground
+	calc_ray(player, start_x, &ray_x, &ray_y);
+	height = calculate_height(player, ray_x, ray_y);
+	start_y = (HEIGHT - height) / 2;
+	end = start_y + height;
+	draw_ceiling(i, start_y, game);
+	draw_wall(i, &start_y, end, game);
+	draw_ground(i, start_y, game);
 }
 
 void	draw_square_full(int x, int y, int size, int color, t_game *game)

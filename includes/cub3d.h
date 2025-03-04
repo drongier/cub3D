@@ -6,12 +6,12 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 19:11:29 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/04 15:37:55 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
-#define CUB3D_H
+# define CUB3D_H
 
 # define WIDTH 1280
 # define HEIGHT 720
@@ -28,26 +28,26 @@
 
 # define PI 3.14159265359
 
-#include "../minilibx-linux/mlx.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
+# include "../minilibx-linux/mlx.h"
+# include <stdio.h>
+# include <stdlib.h>
+# include <stdbool.h>
+# include <math.h>
 
 typedef struct s_player
 {
-    float x;
-    float y;
-    float angle;
+    float	x;
+    float	y;
+    float	angle;
 
-    bool key_up;
-    bool key_down;
-    bool key_left;
-    bool key_right;
-	bool key_exit;
+    bool	key_up;
+    bool	key_down;
+    bool	key_left;
+    bool	key_right;
+	bool	key_exit;
 
-    bool left_rotate;
-    bool right_rotate;
+    bool	left_rotate;
+    bool	right_rotate;
 	struct s_game *game;
 	
 }   t_player;
@@ -82,7 +82,6 @@ void	init_player(t_player *player);
 int		key_release(int keycode, t_player *player);
 int		key_press(int keycode, t_player *player);
 void	move_player(t_player *player);
-int		mouse_move(int x, t_player *player);
 void	m_up(t_player *player, float cos_angle, float sin_angle, int speed);
 void	m_down(t_player *player, float cos_angle, float sin_angle, int speed);
 void	m_left(t_player *player, float cos_angle, float sin_angle, int speed);
@@ -100,12 +99,16 @@ void	get_size_map(t_game *game);
 
 float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
 float	distance(float x, float y);
+void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
+float	calculate_height(t_player *player, float ray_x, float ray_y);
 
 // DRAWING FUNCTIONS
 int		draw_loop(t_game *game);
 bool	touch(float px, float py, t_game *game);
-float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
 void	put_pixel(int x, int y, int color, t_game *game);
+void	draw_ground(int i, int start_y, t_game *game);
+void	draw_wall(int i, int *start_y, int end, t_game *game);
+void	draw_ceiling(int i, int start_y, t_game *game);
 
 // DEBUG OR BONUS MINIMAP
 

@@ -6,14 +6,14 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 19:13:32 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/04 15:36:16 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
 // initialisation functions
-char **get_map(void)
+char	**get_map(void)
 {
     char **map = malloc(sizeof(char *) * 11);
     map[0] = "111111111111111";
@@ -78,10 +78,8 @@ int	main(void)
 	init_game(&game);
 	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
 	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
-	//mlx_hook(game.win, 6, 1L<<6, mouse_move, &game);
 	mlx_loop_hook(game.mlx, draw_loop, &game);
 	mlx_loop(game.mlx);
-	//mlx_loop_end(game.mlx);
 	exit_game(&game);
 	return (0);
 }
