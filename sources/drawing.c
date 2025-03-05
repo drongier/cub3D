@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/04 15:35:21 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/05 18:38:39 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,24 +40,6 @@ void	draw_line(t_player *player, t_game *game, float start_x, int i)
 	draw_ceiling(i, start_y, game);
 	draw_wall(i, &start_y, end, game);
 	draw_ground(i, start_y, game);
-}
-
-void	draw_square_full(int x, int y, int size, int color, t_game *game)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (i < size)
-	{
-		j = 0;
-		while (j < size)
-		{
-			put_pixel(x + i, y + j, color, game);
-			j++;
-		}
-		i++;
-	}
 }
 
 /* GRAPHIC ENGINE */

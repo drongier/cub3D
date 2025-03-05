@@ -6,11 +6,29 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:17:47 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 15:43:56 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/05 18:38:55 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+void	draw_square_full(int x, int y, int size, int color, t_game *game)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < size)
+	{
+		j = 0;
+		while (j < size)
+		{
+			put_pixel(x + i, y + j, color, game);
+			j++;
+		}
+		i++;
+	}
+}
 
 //[BONUS] MINI MAP
 void	draw_map(t_game *game, int offset_x, int offset_y)
