@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:30:33 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/05 18:34:26 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/05 18:45:21 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ int	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
    // Détermination de la face touchée
    if ((int)prev_x / BLOCK != (int)*ray_x / BLOCK) // Changement en X -> Mur vertical (Est/Ouest)
    {
-	   if (cos(start_x) > 0)
+	   if (cos(start_x))
 		   hit_dir = WEST;
 	   else
 			hit_dir = EAST;
 	}
 	else if ((int)prev_y / BLOCK != (int)*ray_y / BLOCK) // Changement en Y -> Mur horizontal (Nord/Sud)
 	{
-	   if (sin(start_x) > 0)
+	   if (sin(start_x))
 		   hit_dir = NORD;
 	   else
 		   hit_dir = SUD;
