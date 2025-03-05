@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/04 15:37:55 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/05 18:32:09 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,11 @@
 
 # define PI 3.14159265359
 
+# define NORD 0
+# define SUD  1
+# define WEST 2
+# define EAST 3
+
 # include "../minilibx-linux/mlx.h"
 # include <stdio.h>
 # include <stdlib.h>
@@ -45,9 +50,9 @@ typedef struct s_player
     bool	key_left;
     bool	key_right;
 	bool	key_exit;
-
     bool	left_rotate;
     bool	right_rotate;
+	int		hit_dir;
 	struct s_game *game;
 	
 }   t_player;
@@ -99,7 +104,7 @@ void	get_size_map(t_game *game);
 
 float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
 float	distance(float x, float y);
-void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
+int		calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
 float	calculate_height(t_player *player, float ray_x, float ray_y);
 
 // DRAWING FUNCTIONS

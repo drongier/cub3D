@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:12:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/04 15:38:32 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/05 18:27:01 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,19 @@ void	draw_ceiling(int i, int start_y, t_game *game)
 
 void	draw_wall(int i, int *start_y, int end, t_game *game)
 {
+	int	color;
+
+	if (game->player.hit_dir == 0)
+		color = 0xFF0000;
+	else if (game->player.hit_dir == 1)
+		color = 0x00FF00;
+	else if (game->player.hit_dir == 2)
+		color = 0x0000FF;
+	else
+		color = 0xFFFF00;
+
 	while (*start_y < end)
-		put_pixel(i, (*start_y)++, 0x11C7C7, game);
+		put_pixel(i, (*start_y)++, color, game);
 	if (*start_y < 0)
 		*start_y = 0;
 }
