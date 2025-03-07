@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/05 18:32:09 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/07 14:50:17 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,7 @@ typedef struct s_game
 
 
 //EXIT
+
 void	exit_game(t_game *game);
 
 // INITIALISATION
@@ -95,10 +96,14 @@ void	update_angle(t_player *player, float angle_speed);
 void	check_boundaries(t_player *player);
 
 
-// UTILS 
+// UTILS
+
 int		close_window(t_game *game);
 void	clear_image(t_game *game);
 void	get_size_map(t_game *game);
+int		is_nord_sud(float start_x);
+int		is_west_east(float start_x);
+int 	get_hit_direction(float start_x, int is_vertical);
 
 // UTILS MATH 
 
@@ -108,6 +113,7 @@ int		calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
 float	calculate_height(t_player *player, float ray_x, float ray_y);
 
 // DRAWING FUNCTIONS
+
 int		draw_loop(t_game *game);
 bool	touch(float px, float py, t_game *game);
 void	put_pixel(int x, int y, int color, t_game *game);

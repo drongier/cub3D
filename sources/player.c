@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 19:12:45 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/07 16:06:33 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ void	init_player(t_player *player)
 {
 	player->x = WIDTH / 2;
 	player->y = HEIGHT / 2;
-	player->angle = PI / 2;
+	player->angle = 3 * PI / 2;
+	player->hit_dir = -1;
 	player->key_up = false;
 	player->key_down = false;
 	player->key_right = false;

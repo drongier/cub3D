@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:12:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/05 18:56:24 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/07 13:29:11 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,11 @@ void	draw_wall(int i, int *start_y, int end, t_game *game)
 {
 	int	color;
 
-	if (game->player.hit_dir == 0)
+	if (game->player.hit_dir == NORD)
 		color = 0xFF0000;
-	else if (game->player.hit_dir == 1)
+	else if (game->player.hit_dir == SUD)
 		color = 0x00FF00;
-	else if (game->player.hit_dir == 2)
+	else if (game->player.hit_dir == WEST)
 		color = 0x0000FF;
 	else
 		color = 0xFFFF00;

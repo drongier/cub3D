@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:30:33 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/05 18:45:21 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/07 15:02:44 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,8 @@ float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game)
 int	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 {
 	float	prev_x;
-    float	prev_y;
-    int		hit_dir = -1;
+	float	prev_y;
+	int		hit_dir;
 
 	*ray_x = player->x;
 	*ray_y = player->y;
@@ -48,21 +48,10 @@ int	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 		*ray_x += cos(start_x);
 		*ray_y += sin(start_x);
 	}
-   // Détermination de la face touchée
-   if ((int)prev_x / BLOCK != (int)*ray_x / BLOCK) // Changement en X -> Mur vertical (Est/Ouest)
-   {
-	   if (cos(start_x))
-		   hit_dir = WEST;
-	   else
-			hit_dir = EAST;
-	}
-	else if ((int)prev_y / BLOCK != (int)*ray_y / BLOCK) // Changement en Y -> Mur horizontal (Nord/Sud)
-	{
-	   if (sin(start_x))
-		   hit_dir = NORD;
-	   else
-		   hit_dir = SUD;
-   }
+	if ((int)prev_x / BLOCK != (int)*ray_x / BLOCK)
+		hit_dir = is_west_east(start_x);
+	else if ((int)prev_y / BLOCK != (int)*ray_y / BLOCK)
+		hit_dir = is_nord_sud(start_x);
 	return (hit_dir);
 }
 

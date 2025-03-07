@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:17:47 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/05 17:02:18 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/07 15:13:18 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,23 @@ void	draw_map(t_game *game, int offset_x, int offset_y)
 	}
 }
 
+void draw_ray_on_minimap(t_game *game, float start_x, int bottom_right_x, int bottom_right_y)
+{
+    float ray_x = game->player.x;
+    float ray_y = game->player.y;
+    float cos_angle = cos(start_x);
+    float sin_angle = sin(start_x);
+
+    while (!touch(ray_x, ray_y, game))
+    {
+        int mini_map_x = bottom_right_x + (ray_x / BLOCK) * (BLOCK / 4);
+        int mini_map_y = bottom_right_y + (ray_y / BLOCK) * (BLOCK / 4);
+        put_pixel(mini_map_x, mini_map_y, 0xAAAAAA, game); // Dessiner le rayon en rouge sur la minimap
+        ray_x += cos_angle;
+        ray_y += sin_angle;
+    }
+}
+
 //[BONUS] Size & position minimap/player on the mini map
 void	draw_mini_map(t_game *game)
 {
@@ -62,6 +79,9 @@ void	draw_mini_map(t_game *game)
 	int	bottom_right_y;
 	int	player_x;
 	int	player_y;
+	float start_x;
+    float fraction;
+    int i;
 
 	if (game->map_width > game->map_height)
 		square_size = game->map_width * BLOCK / 4;
@@ -73,6 +93,15 @@ void	draw_mini_map(t_game *game)
 	player_y = bottom_right_y + (game->player.y / BLOCK) * (BLOCK / 4);
 	draw_map(game, bottom_right_x, bottom_right_y);
 	draw_square_full(player_x, player_y, 5, 0x00FF00, game);
+	fraction = PI / 3 / WIDTH;
+    start_x = game->player.angle - PI / 6;
+    i = 0;
+    while (i < WIDTH)
+    {
+        draw_ray_on_minimap(game, start_x, bottom_right_x, bottom_right_y);
+        start_x += fraction;
+        i++;
+    }
 }
 
 //[BONUS] Really optionnal -> Scope on map
