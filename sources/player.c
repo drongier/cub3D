@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 16:59:25 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:56:15 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	init_player(t_player *player)
 	t_map	*map;
 
 	map = player->s_map;
-	player->x = WIDTH / 2;
-	player->y = HEIGHT / 2;
+	player->x = 80;
+	player->y = 500;
 	player->angle = 3 * PI / 2;
 	player->hit_dir = -1;
 	player->key_up = false;

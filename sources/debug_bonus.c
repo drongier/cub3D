@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:17:47 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/07 15:13:18 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 17:59:51 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	draw_map(t_game *game, int offset_x, int offset_y)
 		while (map[y][x])
 		{
 			if (map[y][x] == '1')
-				draw_square_full(offset_x + x * BLOCK / 4, offset_y + y * BLOCK / 4, BLOCK / 4, color, game);
+				draw_square_full(offset_x + x * BLOCK / SIZE_M_MAP, offset_y + y * BLOCK / SIZE_M_MAP, BLOCK / SIZE_M_MAP, color, game);
 			x++;
 		}
 		y++;
@@ -63,8 +63,8 @@ void draw_ray_on_minimap(t_game *game, float start_x, int bottom_right_x, int bo
 
     while (!touch(ray_x, ray_y, game))
     {
-        int mini_map_x = bottom_right_x + (ray_x / BLOCK) * (BLOCK / 4);
-        int mini_map_y = bottom_right_y + (ray_y / BLOCK) * (BLOCK / 4);
+        int mini_map_x = bottom_right_x + (ray_x / BLOCK) * (BLOCK / SIZE_M_MAP);
+        int mini_map_y = bottom_right_y + (ray_y / BLOCK) * (BLOCK / SIZE_M_MAP);
         put_pixel(mini_map_x, mini_map_y, 0xAAAAAA, game); // Dessiner le rayon en rouge sur la minimap
         ray_x += cos_angle;
         ray_y += sin_angle;
@@ -84,13 +84,13 @@ void	draw_mini_map(t_game *game)
     int i;
 
 	if (game->map_width > game->map_height)
-		square_size = game->map_width * BLOCK / 4;
+		square_size = game->map_width * BLOCK / SIZE_M_MAP;
 	else
-		square_size = game->map_height * BLOCK / 4;
+		square_size = game->map_height * BLOCK / SIZE_M_MAP;
 	bottom_right_x = WIDTH - square_size;
 	bottom_right_y = HEIGHT - square_size;
-	player_x = bottom_right_x + (game->player.x / BLOCK) * (BLOCK / 4);
-	player_y = bottom_right_y + (game->player.y / BLOCK) * (BLOCK / 4);
+	player_x = bottom_right_x + (game->player.x / BLOCK) * (BLOCK / SIZE_M_MAP);
+	player_y = bottom_right_y + (game->player.y / BLOCK) * (BLOCK / SIZE_M_MAP);
 	draw_map(game, bottom_right_x, bottom_right_y);
 	draw_square_full(player_x, player_y, 5, 0x00FF00, game);
 	fraction = PI / 3 / WIDTH;
