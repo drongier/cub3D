@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 13:50:23 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 15:03:50 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # define WIDTH 1280
 # define HEIGHT 720
 # define BLOCK 64
-# define BONUS 1
+# define BONUS 0
 
 # define W 119
 # define A 97
@@ -127,5 +127,7 @@ void	draw_map(t_game *game, int offset_x, int offset_y);
 void	draw_square_full(int x, int y, int size, int color, t_game *game);
 void	draw_mini_map(t_game *game);
 void	draw_scope(t_game *game);
+void	wall_colision(t_player *player);
+void	check_collision(t_player *player, float dx, float dy);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:17:47 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/07 15:13:18 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 15:02:42 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	draw_map(t_game *game, int offset_x, int offset_y)
 		y++;
 	}
 }
-
+// [BONUS]
 void draw_ray_on_minimap(t_game *game, float start_x, int bottom_right_x, int bottom_right_y)
 {
     float ray_x = game->player.x;
@@ -122,4 +122,37 @@ void	draw_scope(t_game *game)
 	y = center_y - line_length / 2;
 	while (y <= center_y + line_length / 2)
 		put_pixel(center_x, y++, 0x000000, game);
+}
+// [BONUS] Wall colision
+void	wall_colision(t_player *player)
+{
+	int	next_x;
+	int	next_y;
+	int	back_x;
+    int	back_y;
+
+	back_x = player->x - cos(player->angle) * 5;
+    back_y = player->y - sin(player->angle) * 5;
+	next_x = player->x + cos(player->angle) * 5;
+	next_y = player->y + sin(player->angle) * 5;
+	if (touch(next_x, player->y, player->game))
+		player->x -= cos(player->angle) * 5;
+	if (touch(player->x, next_y, player->game))
+		player->y -= sin(player->angle) * 5;
+	if (touch(back_x, player->y, player->game))
+		player->x += cos(player->angle) * 5;
+	if (touch(player->x, back_y, player->game))
+        player->y += sin(player->angle) * 5;
+}
+
+void	check_collision(t_player *player, float dx, float dy)
+{
+    int next_x = player->x + dx * 5;
+    int next_y = player->y + dy * 5;
+
+    // Vérifie la collision avant d'appliquer le mouvement
+    if (!touch(next_x, player->y, player->game))
+        player->x += dx;
+    if (!touch(player->x, next_y, player->game))
+        player->y += dy;
 }
