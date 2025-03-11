@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 13:50:23 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 16:55:45 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # define WIDTH 1280
 # define HEIGHT 720
 # define BLOCK 64
-# define BONUS 1
+# define BONUS 0
 
 # define W 119
 # define A 97
@@ -36,8 +36,42 @@
 # include "../minilibx-linux/mlx.h"
 # include <stdio.h>
 # include <stdlib.h>
+# include <unistd.h>
+# include <stddef.h>
+# include <fcntl.h>
+# include <limits.h>
 # include <stdbool.h>
 # include <math.h>
+# include "../libft/libft.h"
+
+typedef struct s_map_data
+{
+        int     row;
+        int     col;
+        char    *coor;
+	int	player_x;
+	int	player_y;
+	char	player_o;
+	int	player_flag;
+        char    **map;
+} t_map;
+
+typedef struct s_scene_data
+{
+        int     col;  
+        int     row;  
+        char    **lines;  
+        char	*no_texture;
+        char	*so_texture;
+        char	*we_texture;
+        char	*ea_texture;
+	char	*f_color;
+	char	*c_color;
+        int     del_line;
+        int     map_first_line;
+        int     map_last_line;
+	t_map	*map;
+} t_scene;
 
 typedef struct s_player
 {
@@ -54,7 +88,8 @@ typedef struct s_player
     bool	right_rotate;
 	int		hit_dir;
 	struct s_game *game;
-	
+    t_map   *s_map;
+
 }   t_player;
 
 typedef struct s_game
@@ -68,12 +103,24 @@ typedef struct s_game
     int size_line;
     int endian;
     t_player player;
-
+    
     char **map;
 	int map_width;
 	int map_height;
 } t_game;
 
+// PARSER
+
+void    ft_scene_init(t_scene *scene);
+void	get_scene_data(char *argv, t_scene *scene);
+void    parse_map(t_scene *scene);
+void    ft_dda_init(t_scene *scene);
+int     ft_row_count(char *argv);
+void    ft_free_all(t_scene *scene);
+void    ft_2dstrfree(char **str);
+void	ft_error(t_scene *scene);
+void    enclosed_map_check(t_scene *scene, t_map *map);
+void	get_map(t_game *game, t_map *map);
 
 //EXIT
 
@@ -109,7 +156,7 @@ int 	get_hit_direction(float start_x, int is_vertical);
 
 float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
 float	distance(float x, float y);
-int		calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
+void		calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
 float	calculate_height(t_player *player, float ray_x, float ray_y);
 
 // DRAWING FUNCTIONS

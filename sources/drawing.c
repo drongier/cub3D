@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   drawing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 13:50:42 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 16:29:04 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	draw_line(t_player *player, t_game *game, float start_x, int i)
 	int		start_y;
 	int		end;
 
-	player->hit_dir = calc_ray(player, start_x, &ray_x, &ray_y);
+	calc_ray(player, start_x, &ray_x, &ray_y);
 	height = calculate_height(player, ray_x, ray_y);
 	start_y = (HEIGHT - height) / 2;
 	end = start_y + height;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_math.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:30:33 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 13:41:38 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 16:47:11 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,13 @@ float	distance(float x, float y)
 }
 
 /* Calculate one RAY and check direction of the walls upd */
-int	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
+void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 {
 	float	prev_x;
 	float	prev_y;
-	int		hit_dir;
 
+	prev_x = 0;
+	prev_y = 0;
 	*ray_x = player->x;
 	*ray_y = player->y;
 	while (!touch(*ray_x, *ray_y, player->game))
@@ -35,10 +36,9 @@ int	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 		*ray_y += sin(start_x);
 	}
 	if ((int)prev_x / BLOCK != (int)*ray_x / BLOCK)
-		hit_dir = is_west_east(start_x);
+		player->hit_dir = is_west_east(start_x);
 	else if ((int)prev_y / BLOCK != (int)*ray_y / BLOCK)
-		hit_dir = is_nord_sud(start_x);
-	return (hit_dir);
+		player->hit_dir = is_nord_sud(start_x);
 }
 
 /* Removing distortion + fisheyes effect

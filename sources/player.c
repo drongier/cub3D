@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 14:37:11 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 16:59:25 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,9 @@
 
 void	init_player(t_player *player)
 {
+	t_map	*map;
+
+	map = player->s_map;
 	player->x = WIDTH / 2;
 	player->y = HEIGHT / 2;
 	player->angle = 3 * PI / 2;
