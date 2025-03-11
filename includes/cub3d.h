@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 15:03:50 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 15:07:47 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,10 @@ typedef struct s_game
     void	*win;
     void	*img;
 
-    char *data;
-    int bpp;
-    int size_line;
-    int endian;
+    char	*data;
+    int		bpp;
+    int		size_line;
+    int		endian;
     t_player player;
 
     char **map;
