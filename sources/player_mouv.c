@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 18:55:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 19:13:18 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 14:24:09 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,19 +36,33 @@ void	m_right(t_player *player, float cos_angle, float sin_angle, int speed)
 	player->y += cos_angle * speed;
 }
 
+
 void check_boundaries(t_player *player)
 {
-    // Effet miroir horizontal
-	if (player->x >= player->game->map_width * BLOCK)
-		player->x = 0;
-	else if (player->x < 0)
-		player->x = (player->game->map_width - 1) * BLOCK;
-    // Effet miroir vertical
-	if (player->y >= player->game->map_height * BLOCK)
-		player->y = 0;
-	else if (player->y < 0)
-		player->y = (player->game->map_height - 1) * BLOCK;
+	int	next_x;
+	int	next_y;
+
+	next_x = player->x + cos(player->angle) * 5;
+	next_y = player->y + sin(player->angle) * 5;
+	if (touch(next_x, player->y, player->game)) 
+		player->x -= cos(player->angle) * 5;
+	if (touch(player->x, next_y, player->game)) 
+		player->y -= sin(player->angle) * 5;
 }
+
+// void check_boundaries(t_player *player)
+// {
+//     // Effet miroir horizontal
+// 	if (player->x >= player->game->map_width * BLOCK)
+// 		player->x = 0;
+// 	else if (player->x < 0)
+// 		player->x = (player->game->map_width - 1) * BLOCK;
+//     // Effet miroir vertical
+// 	if (player->y >= player->game->map_height * BLOCK)
+// 		player->y = 0;
+// 	else if (player->y < 0)
+// 		player->y = (player->game->map_height - 1) * BLOCK;
+// }
 
 void	update_angle(t_player *player, float angle_speed)
 {

@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/05 17:55:37 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 13:50:42 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,10 @@ void	put_pixel(int x, int y, int color, t_game *game)
 	game->data[index + 2] = (color >> 16) & 0xFF;
 }
 
-// raycasting functions
+/* RAYCASTING FONCTION  
+	-> Calculate ray and define direction of player
+	-> Define height of wall to play with perspective
+	-> Draw wall / Celling / floor */
 void	draw_line(t_player *player, t_game *game, float start_x, int i)
 {
 	float	ray_x;
@@ -55,7 +58,7 @@ int	draw_loop(t_game *game)
 	start_x = player->angle - PI / 6;
 	i = 0;
 	move_player(player);
-	clear_image(game);
+	//clear_image(game);
 	while (i < WIDTH)
 	{
 		draw_line(player, game, start_x, i);

@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/07 16:06:33 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 14:37:11 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,5 +60,8 @@ void	move_player(t_player *player)
 		m_left(player, cos_angle, sin_angle, speed);
 	if (player->key_right)
 		m_right(player, cos_angle, sin_angle, speed);
-	check_boundaries(player);
+	if (BONUS == 1)
+		check_boundaries(player);
+	else
+		check_boundaries(player);
 }

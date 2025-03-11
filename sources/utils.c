@@ -6,31 +6,34 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:05:39 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 19:13:02 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 13:33:23 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
 // our own clear_image
-void	clear_image(t_game *game)
-{
-	int	x;
-	int	y;
+// void	clear_image(t_game *game)
+// {
+// 	int	x;
+// 	int	y;
 
-	y = 0;
-	while (y < HEIGHT)
-	{
-		x = 0;
-		while (x < WIDTH)
-		{
-			put_pixel(x, y, 0, game);
-			x++;
-		}
-		y++;
-	}
-}
+// 	y = 0;
+// 	while (y < HEIGHT)
+// 	{
+// 		x = 0;
+// 		while (x < WIDTH)
+// 		{
+// 			put_pixel(x, y, 0, game);
+// 			x++;
+// 		}
+// 		y++;
+// 	}
+// }
 
+/* 1) Convert pixel to block to check 2D map
+	2) Return true if ray hit wall 
+*/
 bool	touch(float px, float py, t_game *game)
 {
 	int	x;

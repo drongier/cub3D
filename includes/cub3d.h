@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/07 14:50:17 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/11 13:50:23 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ typedef struct s_player
 
 typedef struct s_game
 {
-    void *mlx;
-    void *win;
-    void *img;
+    void	*mlx;
+    void	*win;
+    void	*img;
 
     char *data;
     int bpp;
