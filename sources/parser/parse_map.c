@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:07:44 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/12 18:51:13 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/12 19:36:47 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,19 +138,34 @@ void	get_map(t_map *map)
 	map->map[i] = NULL;
 }
 
-void	encode_colors(t_game *game, t_scene *scene)
+void	encode_colors(t_game *game, t_scene *scene, t_map *map)
 {
 	char	**tmp;
 	int		i;
+	int		num;
 
 	i = 0;
 	tmp = ft_split(scene->c_color, ',');
-	// while (tmp[i])
-	// {
-	// 	printf("%s\n", tmp[i]);
+	while (tmp[i])
+	{
+		num = ft_atoi(tmp[i]);
+		printf("num %d\n", num);
 
-	// }
-
+		if (!(num >= 0 && num <= 255))
+		{
+			ft_2dstrfree(tmp);	
+			ft_error(scene);
+		}
+		map->ceiling = (num << 16);
+		printf("ceiling: %d\n", map->ceiling);
+		printf("%s\n", tmp[i]);
+		i++;
+	}
+	// printf("i: %d\n", i);
+	ft_2dstrfree(tmp);	
+	if (i < 3)
+		ft_error(scene);
+	
 	(void)game;
 	// game->ceiling = 
 	// index = y * game->size_line + x * game->bpp / 8;
@@ -180,7 +195,6 @@ void	parse_map(t_scene *scene)
 	scene->map->player_x = scene->map->player_y;
 	scene->map->player_y = tmp;
 	
-
 	int i, j;
     i = 0;
 	while (i < map->row)

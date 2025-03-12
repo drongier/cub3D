@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/12 18:38:13 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/12 19:33:57 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ int	main(int argc, char **argv)
 	initialize(&scene, &map);
 	get_scene_data(argv[1], &scene);
 	get_map(&map);
-	encode_colors(&game, &scene);
+	encode_colors(&game, &scene, &map);
 
 	
 	// game->map = map->map;

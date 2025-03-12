@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/12 18:47:34 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/12 19:34:10 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ typedef struct s_map_data
 	char	player_o;
 	int     player_flag;   
     char    **map;
+    int     ceiling;
+    int     floor;
 } t_map;
 
 typedef struct s_scene_data
@@ -126,7 +128,7 @@ void    ft_2dstrfree(char **str);
 void	ft_error(t_scene *scene);
 void    enclosed_map_check(t_scene *scene, t_map *map);
 void	get_map(t_map *map);
-void	encode_colors(t_game *game, t_scene *scene);
+void	encode_colors(t_game *game, t_scene *scene, t_map *map);
 
 //EXIT
 
