@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 15:04:57 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/11 16:27:51 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/12 18:34:24 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,4 @@ void    enclosed_map_check(t_scene *scene, t_map *map)
     visited = (bool *)ft_calloc(map->row * map->col, sizeof(bool));
     ft_flood_fill(scene, visited, map->player_x, map->player_y);
     free(visited);
-
-	int i, j;
-    i = 0;
-	while (i < map->row)
-	{
-		j = 0;
-		while(j < map->col)
-		{
-			printf("%d", map->coor[i * map->col + j]);
-			j++;
-		}
-		printf("\n");
-		i++;
-	}	
-    printf("\n");
 }

@@ -6,35 +6,18 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 16:55:34 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/12 18:38:13 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
 // initialisation functions
-// char	**get_map(void)
-// {
-//     char **map = malloc(sizeof(char *) * 11);
-//     map[0] = "111111111111111";
-//     map[1] = "100000100000001";
-//     map[2] = "100000100000001";
-//     map[3] = "100000100000101";
-//     map[4] = "100000000001001";
-//     map[5] = "100000010000001";
-//     map[6] = "1000000000P0001";
-//     map[7] = "101010101000001";
-//     map[8] = "100000000000001";
-//     map[9] = "111111111111111";
-//     map[10] = NULL;
-//     return (map);
-// }
-
-void	init_game(t_game *game)
+void	init_game(t_game *game, t_map *map)
 {
-	init_player(&game->player);
+	init_player(&game->player, map);
 	game->player.game = game;
-	get_size_map(game);
+	// get_size_map(game);
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
@@ -42,18 +25,18 @@ void	init_game(t_game *game)
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 }
 
-void	free_map(char **map)
-{
-	int	i;
+// void	free_map(char **map)
+// {
+// 	int	i;
 
-	i = 0;
-	while (map[i])
-	{
-		free(map[i]);
-		i++;
-	}
-	free(map);
-}
+// 	i = 0;
+// 	while (map[i])
+// 	{
+// 		free(map[i]);
+// 		i++;
+// 	}
+// 	free(map);
+// }
 
 void	exit_game(t_game *game)
 {
@@ -67,7 +50,7 @@ void	exit_game(t_game *game)
 		mlx_destroy_display(game->mlx);
 	}
 	free(game->mlx);
-	free_map(game->map);
+	// free_map(game->map);
 }
 
 void	ft_cleanup(t_scene *scene)
@@ -88,9 +71,9 @@ void	ft_cleanup(t_scene *scene)
 	free(scene->c_color);
 	free(scene->map->coor);
 	i = 0;
-	while(map->map && map->map[i])
-		free(map->map[i++]);
-	free(map->map);
+	// while(map->map && map->map[i])
+	// 	free(map->map[i++]);
+	// free(map->map);
 }	
 
 void	ft_error(t_scene *scene)
@@ -102,7 +85,6 @@ void	ft_error(t_scene *scene)
 
 void	initialize(t_scene *scene, t_map *map)
 {
-	scene->col = 0;
 	scene->row = 0;
 	scene->lines = NULL;  
 	scene->no_texture = NULL;
@@ -137,9 +119,14 @@ int	main(int argc, char **argv)
 	}
 	initialize(&scene, &map);
 	get_scene_data(argv[1], &scene);
-	get_map(&game, &map);
+	get_map(&map);
+	encode_colors(&game, &scene);
+
+	
 	// game->map = map->map;
-	init_game(&game);
+	game.map = &map;
+	game.player.map = &map;
+	init_game(&game, &map);
 	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
 	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
 	mlx_hook(game.win, 17, 0L, close_window, &game);

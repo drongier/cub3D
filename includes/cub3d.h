@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 17:47:36 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/12 18:47:34 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # define HEIGHT 720
 # define BLOCK 64
 # define BONUS 1
-# define SIZE_M_MAP 8
+# define MINI_MAP_SIZE 8
 
 # define W 119
 # define A 97
@@ -47,30 +47,29 @@
 
 typedef struct s_map_data
 {
-        int     row;
-        int     col;
-        char    *coor;
-	int	player_x;
-	int	player_y;
+    int     row;
+    int     col;
+    char    *coor;
+	int	    player_x;
+	int	    player_y;
 	char	player_o;
-	int	player_flag;
-        char    **map;
+	int     player_flag;   
+    char    **map;
 } t_map;
 
 typedef struct s_scene_data
 {
-        int     col;  
-        int     row;  
-        char    **lines;  
-        char	*no_texture;
-        char	*so_texture;
-        char	*we_texture;
-        char	*ea_texture;
+    int     row;  
+    char    **lines;  
+    char	*no_texture;
+    char	*so_texture;
+    char	*we_texture;
+    char	*ea_texture;
 	char	*f_color;
 	char	*c_color;
-        int     del_line;
-        int     map_first_line;
-        int     map_last_line;
+    int     del_line;
+    int     map_first_line;
+    int     map_last_line;
 	t_map	*map;
 } t_scene;
 
@@ -79,7 +78,8 @@ typedef struct s_player
     float	x;
     float	y;
     float	angle;
-
+    char    o;
+    
     bool	key_up;
     bool	key_down;
     bool	key_left;
@@ -89,8 +89,7 @@ typedef struct s_player
     bool	right_rotate;
 	int		hit_dir;
 	struct s_game *game;
-    t_map   *s_map;
-
+    t_map   *map;
 }   t_player;
 
 typedef struct s_game
@@ -99,16 +98,21 @@ typedef struct s_game
     void	*win;
     void	*img;
 
-    char *data;
-    int bpp;
-    int size_line;
-    int endian;
+    char    *data;
+    int     bpp;
+    int     size_line;
+    int     endian;
+
+    // char    **map;
+	// int     map_width;
+	// int     map_height;
+    // int     ceiling;
+    // int     floor; 
+
     t_player player;
-    
-    char **map;
-	int map_width;
-	int map_height;
+    t_map   *map;
 } t_game;
+
 
 // PARSER
 
@@ -121,7 +125,8 @@ void    ft_free_all(t_scene *scene);
 void    ft_2dstrfree(char **str);
 void	ft_error(t_scene *scene);
 void    enclosed_map_check(t_scene *scene, t_map *map);
-void	get_map(t_game *game, t_map *map);
+void	get_map(t_map *map);
+void	encode_colors(t_game *game, t_scene *scene);
 
 //EXIT
 
@@ -129,7 +134,7 @@ void	exit_game(t_game *game);
 
 // INITIALISATION
 
-void	init_player(t_player *player);
+void	init_player(t_player *player, t_map *map);
 
 // PLAYER MOVEMENT
 
@@ -142,7 +147,6 @@ void	m_left(t_player *player, float cos_angle, float sin_angle, int speed);
 void	m_right(t_player *player, float cos_angle, float sin_angle, int speed);
 void	update_angle(t_player *player, float angle_speed);
 void	check_boundaries(t_player *player);
-
 
 // UTILS
 

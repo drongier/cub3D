@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:07:44 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/11 16:39:10 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/12 18:39:31 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	extract_orientation_coor(t_scene *scene, int line, int i, int j)
 	map->player_x = i;
 	map->player_y = j;
 	map->player_o = scene->lines[line][j];
-	printf("Player: %d %d %c\n", map->player_x, map->player_y ,map->player_o);
 }
 
 void	extract_map(t_scene *scene, t_map *map)
@@ -80,7 +79,7 @@ void	extract_map(t_scene *scene, t_map *map)
 					k++;
 				}
 			}
-			if (ft_is_whitespace(scene->lines[line][j]))
+			else if (ft_is_whitespace(scene->lines[line][j]))
 				map->coor[i * map->col + j + k] = 0;
 			else if (scene->lines[line][j] == '0')
 				map->coor[i * map->col + j + k] = 0;
@@ -116,32 +115,54 @@ void	extract_map(t_scene *scene, t_map *map)
 	// }
 }
 
-void	get_map(t_game *game, t_map *map)
+void	get_map(t_map *map)
 {
 	int	i;
 	int	j;
 	
-	game->map = (char **)ft_calloc(map->row + 1, sizeof(char *));
+	map->map = (char **)ft_calloc(map->row + 1, sizeof(char *));
 	i = 0;
 	while (i < map->row)
 	{
-		game->map[i] = (char *)ft_calloc(map->col + 1, sizeof(char));
+		map->map[i] = (char *)ft_calloc(map->col + 1, sizeof(char));
 		j = 0;
 		while (j < map->col)
 		{
-			game->map[i][j] = map->coor[i * map->col + j] + 48;
+			map->map[i][j] = map->coor[i * map->col + j] + 48;
 			j++;
 		}
-		game->map[i][j] = 0;
-		printf("%s\n", game->map[i]);
+		map->map[i][j] = 0;
+		// printf("%s\n", map->map[i]);
 		i++;
 	}
-	game->map[i] = NULL;
+	map->map[i] = NULL;
+}
+
+void	encode_colors(t_game *game, t_scene *scene)
+{
+	char	**tmp;
+	int		i;
+
+	i = 0;
+	tmp = ft_split(scene->c_color, ',');
+	while (tmp[i])
+	{
+		printf("%s\n", tmp[i]);
+
+	}
+
+	(void)game;
+	// game->ceiling = 
+	// index = y * game->size_line + x * game->bpp / 8;
+	// game->data[index] = color & 0xFF;
+	// game->data[index + 1] = (color >> 8) & 0xFF;
+	// game->data[index + 2] = (color >> 16) & 0xFF;
 }
 
 void	parse_map(t_scene *scene)
 {
 	t_map	*map;
+	int		tmp;
 
 	map = scene->map;
 	// printf("%d\n", scene->map_first_line);
@@ -149,14 +170,31 @@ void	parse_map(t_scene *scene)
 
 	map_row_col(scene);
 
-	printf("map_row: %d\n", map->row);
-	printf("map_col: %d\n", map->col);
-
 	map->coor = (char *)ft_calloc(map->row * map->col, sizeof(char));
 
 	extract_map(scene, map);
 	if (!map->player_o)
 		ft_error(scene);
 	enclosed_map_check(scene, map);
-	// get_map(map);
+	tmp = scene->map->player_x;
+	scene->map->player_x = scene->map->player_y;
+	scene->map->player_y = tmp;
+	
+
+	int i, j;
+    i = 0;
+	while (i < map->row)
+	{
+		j = 0;
+		while(j < map->col)
+		{
+			printf("%d", map->coor[i * map->col + j]);
+			j++;
+		}
+		printf("\n");
+		i++;
+	}	
+	printf("map_row: %d\n", map->row);
+	printf("map_col: %d\n", map->col);
+	printf("Player: x_%d y_%d o_%c\n", map->player_x, map->player_y ,map->player_o);
 }

@@ -3,22 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 17:56:15 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/12 18:48:28 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-void	init_player(t_player *player)
+void	init_player(t_player *player, t_map *map)
 {
-	t_map	*map;
-
-	map = player->s_map;
-	player->x = 80;
-	player->y = 500;
+	player->o = map->player_o;
+	// player->x = WIDTH / 2;
+	// player->y = HEIGHT / 2;
+	player->x = (WIDTH / (float)map->col) * (float)map->player_x;
+	player->y = (HEIGHT / (float)map->row) * (float)map->player_y;
+	// player->x = 1008;
+	// player->y = 565;
+	printf("x: %f\n", player->x);
+	printf("y: %f\n", player->y);
 	player->angle = 3 * PI / 2;
 	player->hit_dir = -1;
 	player->key_up = false;

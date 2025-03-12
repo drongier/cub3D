@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   drawing2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:12:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/11 13:50:32 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/12 14:02:55 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	draw_wall(int i, int *start_y, int end, t_game *game)
 		color = 0x0000FF;
 	else
 		color = 0xFFFF00;
-
 	while (*start_y < end)
 		put_pixel(i, (*start_y)++, color, game);
 	if (*start_y < 0)
