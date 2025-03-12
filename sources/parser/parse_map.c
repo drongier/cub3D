@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:07:44 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/12 18:39:31 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/12 18:51:13 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,11 +145,11 @@ void	encode_colors(t_game *game, t_scene *scene)
 
 	i = 0;
 	tmp = ft_split(scene->c_color, ',');
-	while (tmp[i])
-	{
-		printf("%s\n", tmp[i]);
+	// while (tmp[i])
+	// {
+	// 	printf("%s\n", tmp[i]);
 
-	}
+	// }
 
 	(void)game;
 	// game->ceiling = 
