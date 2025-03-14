@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/12 19:15:27 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/14 18:04:10 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,28 +47,34 @@ void	player_pos(t_player *player, int angle_speed)
 		player->angle = 2 * PI;
 }
 
-void	move_player(t_player *player)
+void check_collision(t_player *player, float dx, float dy, int speed)
 {
-	int		speed;
-	float	angle_speed;
-	float	cos_angle;
-	float	sin_angle;
+    float next_x;
+    float next_y;
+	
+	next_x = player->x + dx * COLLISION_MARG;
+    next_y = player->y + dy * COLLISION_MARG;
+    if (!touch(next_x, player->y, player->game))
+        player->x += dx * speed;
+    if (!touch(player->x, next_y, player->game))
+        player->y += dy * speed;
+}
 
-	speed = 3;
-	angle_speed = 0.03;
-	cos_angle = cos(player->angle);
-	sin_angle = sin(player->angle);
-	update_angle(player, angle_speed);
-	if (player->key_up)
-		m_up(player, cos_angle, sin_angle, speed);
-	if (player->key_down)
-		m_down(player, cos_angle, sin_angle, speed);
-	if (player->key_left)
-		m_left(player, cos_angle, sin_angle, speed);
-	if (player->key_right)
-		m_right(player, cos_angle, sin_angle, speed);
-	if (BONUS == 1)
-		check_boundaries(player);
-	else
-		check_boundaries(player);
+void move_player(t_player *player)
+{
+    int     speed = 3;
+    float   angle_speed = 0.03;
+    float   cos_angle = cos(player->angle);
+    float   sin_angle = sin(player->angle);
+
+    update_angle(player, angle_speed);
+
+    if (player->key_up)
+        check_collision(player, cos_angle, sin_angle, speed);
+    if (player->key_down)
+        check_collision(player, -cos_angle, -sin_angle, speed);
+    if (player->key_left)
+        check_collision(player, sin_angle, -cos_angle, speed);
+    if (player->key_right)
+        check_collision(player, -sin_angle, cos_angle, speed);
 }
