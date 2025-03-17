@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 12:32:30 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/17 17:11:29 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void    init_textures(t_game *game)
 // initialisation functions
 void	init_game(t_game *game, t_map *map)
 {
-	init_player(&game->player, map);
+	init_player(&game->player, map, game);
 	game->player.game = game;
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");

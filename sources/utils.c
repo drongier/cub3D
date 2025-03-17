@@ -3,33 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:05:39 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/12 18:01:25 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/17 16:42:58 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-// our own clear_image
-// void	clear_image(t_game *game)
-// {
-// 	int	x;
-// 	int	y;
-
-// 	y = 0;
-// 	while (y < HEIGHT)
-// 	{
-// 		x = 0;
-// 		while (x < WIDTH)
-// 		{
-// 			put_pixel(x, y, 0, game);
-// 			x++;
-// 		}
-// 		y++;
-// 	}
-// }
 
 /* 1) Convert pixel to block to check 2D map
 	2) Return true if ray hit wall 

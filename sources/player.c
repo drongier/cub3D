@@ -6,13 +6,13 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 13:11:10 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/17 18:01:29 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-void	init_player(t_player *player, t_map *map)
+void	init_player(t_player *player, t_map *map, t_game *game)
 {
 	player->o = map->player_o;
 	player->x = (float)map->player_x * BLOCK + BLOCK/2;
@@ -21,6 +21,8 @@ void	init_player(t_player *player, t_map *map)
 	printf("y: %f\n", player->y);
 	player->angle = 3 * PI / 2;
 	player->hit_dir = -1;
+	player->hit_x = 0;
+    player->hit_y = 0;
 	player->key_up = false;
 	player->key_down = false;
 	player->key_right = false;
@@ -28,7 +30,7 @@ void	init_player(t_player *player, t_map *map)
 	player->key_exit = false;
 	player->left_rotate = false;
 	player->right_rotate = false;
-	player->game = NULL;
+	player->game = game;
 }
 
 void	player_pos(t_player *player, int angle_speed)

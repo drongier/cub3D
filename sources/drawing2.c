@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:12:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 13:10:57 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/17 17:41:07 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,18 +44,21 @@ void draw_wall(int i, int *start_y, int end, t_game *game)
     int         wall_height = end - *start_y;
     t_texture   *texture;
 
-    // Sélection de la texture en fonction de la direction du mur touché
     if (game->player.hit_dir == NORD)
         texture = &game->textures[0];
     else if (game->player.hit_dir == SUD)
         texture = &game->textures[1];
     else if (game->player.hit_dir == WEST)
-        texture = &game->textures[2];
+		texture = &game->textures[2];
     else
-        texture = &game->textures[3];
+	{
+    	texture = &game->textures[3];
+	}
 
-    tex_x = (int)(game->player.x) % BLOCK * texture->width / BLOCK;
-
+	if (game->player.hit_dir == NORD || game->player.hit_dir == SUD)
+		tex_x = (int)game->player.hit_x % BLOCK * texture->width / BLOCK;
+	else
+		tex_x = (int)game->player.hit_y % BLOCK * texture->width / BLOCK;
     while (*start_y < end)
     {
         tex_y = (*start_y - (HEIGHT / 2) + (wall_height / 2)) * texture->height / wall_height;

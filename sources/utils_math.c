@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:30:33 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 13:09:22 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/17 17:55:18 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 		*ray_x += cos(start_x);
 		*ray_y += sin(start_x);
 	}
+	player->hit_x = prev_x;
+	player->hit_y = prev_y;
 	if ((int)prev_x / BLOCK != (int)*ray_x / BLOCK)
 		player->hit_dir = is_west_east(start_x);
 	else if ((int)prev_y / BLOCK != (int)*ray_y / BLOCK)

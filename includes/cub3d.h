@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 13:09:28 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/17 18:01:36 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # define BLOCK 64
 # define BONUS 1
 # define MINI_MAP_SIZE 8
-# define COLLISION_MARG 5
+# define COLLISION_MARG 10
 
 # define W 119
 # define A 97
@@ -91,6 +91,8 @@ typedef struct s_player
     bool	left_rotate;
     bool	right_rotate;
 	int		hit_dir;
+    float 	hit_x;
+    float 	hit_y;
 	struct s_game *game;
     t_map   *map;
 }   t_player;
@@ -155,7 +157,7 @@ void	exit_game(t_game *game);
 
 // INITIALISATION
 
-void	init_player(t_player *player, t_map *map);
+void	init_player(t_player *player, t_map *map, t_game *game);
 
 // PLAYER MOVEMENT
 
