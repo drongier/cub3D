@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/14 18:04:27 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:09:28 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,17 @@ typedef struct s_player
     t_map   *map;
 }   t_player;
 
+typedef struct s_texture
+{
+    void    *img;
+    char    *data;
+    int     width;
+    int     height;
+    int     bpp;
+    int     size_line;
+    int     endian;
+}   t_texture;
+
 typedef struct s_game
 {
     void	*mlx;
@@ -112,9 +123,10 @@ typedef struct s_game
     char    *tex_so;
     char    *tex_ea;
     char    *tex_we;
+	t_texture   textures[4];
     // char    **map;
-	// int     map_width;
-	// int     map_height;
+	int     map_width;
+	int     map_height;
     // int     ceiling;
     // int     floor; 
 

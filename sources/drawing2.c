@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   drawing2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:12:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/12 14:02:55 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/17 13:10:57 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,48 @@ void	draw_ceiling(int i, int start_y, t_game *game)
 		put_pixel(i, j++, 0x74583A, game);
 }
 
-void	draw_wall(int i, int *start_y, int end, t_game *game)
+int get_texture_color(t_texture *texture, int tex_x, int tex_y)
 {
-	int	color;
+    int index;
 
-	if (game->player.hit_dir == NORD)
-		color = 0xFF0000;
-	else if (game->player.hit_dir == SUD)
-		color = 0x00FF00;
-	else if (game->player.hit_dir == WEST)
-		color = 0x0000FF;
-	else
-		color = 0xFFFF00;
-	while (*start_y < end)
-		put_pixel(i, (*start_y)++, color, game);
-	if (*start_y < 0)
-		*start_y = 0;
+    if (tex_x < 0)
+        tex_x = 0;
+    if (tex_x >= texture->width)
+        tex_x = texture->width - 1;
+    if (tex_y < 0)
+        tex_y = 0;
+    if (tex_y >= texture->height)
+        tex_y = texture->height - 1;
+
+    index = (tex_y * texture->size_line) + (tex_x * (texture->bpp / 8));
+    return (*(int *)(texture->data + index));
 }
+
+void draw_wall(int i, int *start_y, int end, t_game *game)
+{
+    int         tex_x, tex_y;
+    int         wall_height = end - *start_y;
+    t_texture   *texture;
+
+    // Sélection de la texture en fonction de la direction du mur touché
+    if (game->player.hit_dir == NORD)
+        texture = &game->textures[0];
+    else if (game->player.hit_dir == SUD)
+        texture = &game->textures[1];
+    else if (game->player.hit_dir == WEST)
+        texture = &game->textures[2];
+    else
+        texture = &game->textures[3];
+
+    tex_x = (int)(game->player.x) % BLOCK * texture->width / BLOCK;
+
+    while (*start_y < end)
+    {
+        tex_y = (*start_y - (HEIGHT / 2) + (wall_height / 2)) * texture->height / wall_height;
+        put_pixel(i, (*start_y)++, get_texture_color(texture, tex_x, tex_y), game);
+    }
+}
+
 
 void	draw_ground(int i, int start_y, t_game *game)
 {

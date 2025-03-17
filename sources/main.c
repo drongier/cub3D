@@ -3,14 +3,37 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/12 19:33:57 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/17 12:32:30 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+void    init_textures(t_game *game)
+{
+    char *paths[4] = {
+        "textures/blue_stone.xpm",
+        "textures/color_stone.xpm",
+        "textures/mossy.xpm",
+        "textures/wood.xpm"
+    };
+    for (int i = 0; i < 4; i++)
+    {
+        game->textures[i].img = mlx_xpm_file_to_image(game->mlx, paths[i],
+                &game->textures[i].width, &game->textures[i].height);
+        if (!game->textures[i].img)
+        {
+            printf("Erreur: Impossible de charger la texture %s\n", paths[i]);
+            exit(1);
+        }
+        game->textures[i].data = mlx_get_data_addr(game->textures[i].img,
+                &game->textures[i].bpp, &game->textures[i].size_line,
+                &game->textures[i].endian);
+    }
+}
 
 // initialisation functions
 void	init_game(t_game *game, t_map *map)
@@ -19,19 +42,11 @@ void	init_game(t_game *game, t_map *map)
 	game->player.game = game;
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
-
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-	printf("bbp: %d\n", game->bpp);
-	printf("line: %d\n", game->size_line);
-	printf("endian: %d\n", game->endian);
-	
+	init_textures(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-	game->tex_no = mlx_xpm_file_to_image(game->mlx, "textures/red_brick.xpm", &game->tex_no_width, &game->tex_no_height);
-	printf("tex_w: %d\n", game->tex_no_width);
-	printf("tex_h: %d\n", game->tex_no_height);
-    mlx_put_image_to_window(game->mlx, game->win, game->tex_no, 100, 100);
-	// mlx_xpm_to_image(game->mlx, &game->tex_no, &game->tex_no_width, &game->tex_no_height);
+    // mlx_put_image_to_window(game->mlx, game->win, game->tex_no, 100, 100);
 }
 
 void	exit_game(t_game *game)
