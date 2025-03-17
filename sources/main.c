@@ -17,26 +17,22 @@ void	init_game(t_game *game, t_map *map)
 {
 	init_player(&game->player, map);
 	game->player.game = game;
-	// get_size_map(game);
 	game->mlx = mlx_init();
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
+
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
+	printf("bbp: %d\n", game->bpp);
+	printf("line: %d\n", game->size_line);
+	printf("endian: %d\n", game->endian);
+	
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	game->tex_no = mlx_xpm_file_to_image(game->mlx, "textures/red_brick.xpm", &game->tex_no_width, &game->tex_no_height);
+	printf("tex_w: %d\n", game->tex_no_width);
+	printf("tex_h: %d\n", game->tex_no_height);
+    mlx_put_image_to_window(game->mlx, game->win, game->tex_no, 100, 100);
+	// mlx_xpm_to_image(game->mlx, &game->tex_no, &game->tex_no_width, &game->tex_no_height);
 }
-
-// void	free_map(char **map)
-// {
-// 	int	i;
-
-// 	i = 0;
-// 	while (map[i])
-// 	{
-// 		free(map[i]);
-// 		i++;
-// 	}
-// 	free(map);
-// }
 
 void	exit_game(t_game *game)
 {
@@ -55,10 +51,8 @@ void	exit_game(t_game *game)
 
 void	ft_cleanup(t_scene *scene)
 {
-	t_map	*map;
 	int		i;
 
-	map = scene->map;
 	i = 0;
 	while (scene->lines && scene->lines[i])
 		free(scene->lines[i++]);

@@ -106,6 +106,12 @@ typedef struct s_game
     int     size_line;
     int     endian;
 
+    char    *tex_no;
+    int     tex_no_width;
+    int     tex_no_height;
+    char    *tex_so;
+    char    *tex_ea;
+    char    *tex_we;
     // char    **map;
 	// int     map_width;
 	// int     map_height;

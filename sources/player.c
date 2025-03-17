@@ -15,12 +15,8 @@
 void	init_player(t_player *player, t_map *map)
 {
 	player->o = map->player_o;
-	// player->x = WIDTH / 2;
-	// player->y = HEIGHT / 2;
 	player->x = (float)map->player_x * BLOCK + BLOCK/2;
 	player->y = (float)map->player_y * BLOCK + BLOCK/2;
-	// player->x = 1008;
-	// player->y = 565;
 	printf("x: %f\n", player->x);
 	printf("y: %f\n", player->y);
 	player->angle = 3 * PI / 2;
