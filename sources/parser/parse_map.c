@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:07:44 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/12 19:36:47 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/18 19:09:33 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,7 +143,8 @@ void	encode_colors(t_game *game, t_scene *scene, t_map *map)
 	char	**tmp;
 	int		i;
 	int		num;
-
+	__uint8_t		*index;
+	
 	i = 0;
 	tmp = ft_split(scene->c_color, ',');
 	while (tmp[i])
@@ -156,8 +157,12 @@ void	encode_colors(t_game *game, t_scene *scene, t_map *map)
 			ft_2dstrfree(tmp);	
 			ft_error(scene);
 		}
-		map->ceiling = (num << 16);
-		printf("ceiling: %d\n", map->ceiling);
+		map->ceiling = num;
+		printf("ceiling: %x\n", map->ceiling);
+		map->ceiling << 8;
+		printf("ceiling: %x\n", map->ceiling);
+		
+		
 		printf("%s\n", tmp[i]);
 		i++;
 	}
@@ -167,6 +172,8 @@ void	encode_colors(t_game *game, t_scene *scene, t_map *map)
 		ft_error(scene);
 	
 	(void)game;
+
+	(void)map;
 	// game->ceiling = 
 	// index = y * game->size_line + x * game->bpp / 8;
 	// game->data[index] = color & 0xFF;
@@ -182,11 +189,8 @@ void	parse_map(t_scene *scene)
 	map = scene->map;
 	// printf("%d\n", scene->map_first_line);
 	// printf("%d\n", scene->map_last_line);
-
 	map_row_col(scene);
-
 	map->coor = (char *)ft_calloc(map->row * map->col, sizeof(char));
-
 	extract_map(scene, map);
 	if (!map->player_o)
 		ft_error(scene);
@@ -194,7 +198,6 @@ void	parse_map(t_scene *scene)
 	tmp = scene->map->player_x;
 	scene->map->player_x = scene->map->player_y;
 	scene->map->player_y = tmp;
-	
 	int i, j;
     i = 0;
 	while (i < map->row)

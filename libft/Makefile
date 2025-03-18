@@ -6,7 +6,7 @@
 #    By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/16 19:34:04 by mekundur          #+#    #+#              #
-#    Updated: 2025/03/04 16:56:37 by mekundur         ###   ########.fr        #
+#    Updated: 2025/03/18 15:52:39 by mekundur         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ SOURCES = ft_isalpha.c ft_isdigit.c ft_isalnum.c ft_isascii.c ft_isprint.c \
 	  ft_printf.c ft_printf_hexflags.c ft_printf_nbrflags.c \
 	  ft_printf_putchar.c ft_printf_puthex.c ft_printf_putnbr.c \
 	  ft_printf_putptr.c ft_printf_putstr.c ft_printf_strutils.c \
-	  ft_printfutils.c ft_iswhitespace.c ft_isemptyline.c
+	  ft_printfutils.c ft_iswhitespace.c ft_isemptyline.c ft_remove_trailing_newline.c
 
 OBJECTS = $(SOURCES:.c=.o)
 

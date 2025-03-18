@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 17:11:29 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/18 17:45:45 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,21 +14,17 @@
 
 void    init_textures(t_game *game)
 {
-    char *paths[4] = {
-        "textures/blue_stone.xpm",
-        "textures/color_stone.xpm",
-        "textures/mossy.xpm",
-        "textures/wood.xpm"
-    };
+    char *paths[4];
+        paths[0] = game->scene->no_texture;
+		paths[1] = game->scene->so_texture;
+		paths[2] = game->scene->we_texture;
+		paths[3] = game->scene->ea_texture;		
     for (int i = 0; i < 4; i++)
     {
         game->textures[i].img = mlx_xpm_file_to_image(game->mlx, paths[i],
                 &game->textures[i].width, &game->textures[i].height);
         if (!game->textures[i].img)
-        {
-            printf("Erreur: Impossible de charger la texture %s\n", paths[i]);
-            exit(1);
-        }
+        	ft_error(game->scene);
         game->textures[i].data = mlx_get_data_addr(game->textures[i].img,
                 &game->textures[i].bpp, &game->textures[i].size_line,
                 &game->textures[i].endian);
@@ -41,10 +37,10 @@ void	init_game(t_game *game, t_map *map)
 	init_player(&game->player, map, game);
 	game->player.game = game;
 	game->mlx = mlx_init();
+	init_textures(game);
 	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
 	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
 	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line, &game->endian);
-	init_textures(game);
 	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
     // mlx_put_image_to_window(game->mlx, game->win, game->tex_no, 100, 100);
 }
@@ -71,18 +67,26 @@ void	ft_cleanup(t_scene *scene)
 	i = 0;
 	while (scene->lines && scene->lines[i])
 		free(scene->lines[i++]);
-	free(scene->lines);
-	free(scene->no_texture);
-	free(scene->so_texture);
-	free(scene->we_texture);
-	free(scene->ea_texture);
-	free(scene->f_color);
-	free(scene->c_color);
-	free(scene->map->coor);
+	if (scene->lines)
+		free(scene->lines);
+	if (scene->no_texture)
+		free(scene->no_texture);
+	if (scene->so_texture)
+		free(scene->so_texture);
+	if (scene->we_texture)
+		free(scene->we_texture);
+	if (scene->ea_texture)
+		free(scene->ea_texture);
+	if (scene->f_color)
+		free(scene->f_color);
+	if (scene->c_color)
+		free(scene->c_color);
+	if (scene->map->coor)
+		free(scene->map->coor);
 	i = 0;
-	// while(map->map && map->map[i])
-	// 	free(map->map[i++]);
-	// free(map->map);
+	while(scene->map->map && scene->map->map[i])
+		free(scene->map->map[i++]);
+	free(scene->map->map);
 }	
 
 void	ft_error(t_scene *scene)
@@ -131,9 +135,8 @@ int	main(int argc, char **argv)
 	get_map(&map);
 	encode_colors(&game, &scene, &map);
 
-	
-	// game->map = map->map;
 	game.map = &map;
+	game.scene = &scene;
 	game.player.map = &map;
 	init_game(&game, &map);
 	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
@@ -145,10 +148,10 @@ int	main(int argc, char **argv)
 	
 	// while (scene.lines && *scene.lines)
 	// 	printf("%s", *(scene.lines++));
-	// printf("%s", scene.no_texture);
-	// printf("%s", scene.so_texture);
-	// printf("%s", scene.we_texture);
-	// printf("%s", scene.ea_texture);
+	printf("%s", scene.no_texture);
+	printf("%s", scene.so_texture);
+	printf("%s", scene.we_texture);
+	printf("%s", scene.ea_texture);
 	// printf("%s", scene.f_color);
 	// printf("%s", scene.c_color);
 	// printf("%d\n", scene.row);

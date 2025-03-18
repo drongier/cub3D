@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:30:38 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/12 18:13:50 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/18 17:21:50 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,37 @@ void	put_textures(t_scene *scene, char **tmp)
 	j = 0;
 	while (tmp && tmp[j])
 	{
-		if (ft_strnstr(tmp[j], "NO", 2) && ft_strnstr(tmp[j + 1], "./", 2))
+		if (ft_strnstr(tmp[j], "NO", 2))
+		{
 			scene->no_texture = ft_strdup(tmp[j + 1]);
-		else if (ft_strnstr(tmp[j], "SO", 2) && ft_strnstr(tmp[j + 1], "./", 2))
+			ft_remove_trailing_new_line(scene->no_texture);
+		}
+		else if (ft_strnstr(tmp[j], "SO", 2))
+		{
 			scene->so_texture = ft_strdup(tmp[j + 1]);
-		else if (ft_strnstr(tmp[j], "WE", 2) && ft_strnstr(tmp[j + 1], "./", 2))
+			ft_remove_trailing_new_line(scene->so_texture);
+		}
+		else if (ft_strnstr(tmp[j], "WE", 2))
+		{
 			scene->we_texture = ft_strdup(tmp[j + 1]);
-		else if (ft_strnstr(tmp[j], "EA", 2) && ft_strnstr(tmp[j + 1], "./", 2))
+			ft_remove_trailing_new_line(scene->we_texture);
+		}
+		else if (ft_strnstr(tmp[j], "EA", 2))
+		{
 			scene->ea_texture = ft_strdup(tmp[j + 1]);
+			ft_remove_trailing_new_line(scene->ea_texture);
+		}
 		j++;
 	}
+	// ft_strtrim()
+	// printf("%s", scene->no_texture);
+	// printf("%s", scene->so_texture);
+	// printf("%s", scene->we_texture);
+	// printf("%s", scene->ea_texture);		
+	// ft_remove_trailing_new_line(scene->no_texture);
+	// ft_remove_trailing_new_line(scene->so_texture);
+	// ft_remove_trailing_new_line(scene->ea_texture);
+	// ft_remove_trailing_new_line(scene->we_texture);
 }
 
 void	get_textures(t_scene *scene)
@@ -59,6 +80,8 @@ int	ft_row_count(char *argv)
 	row = 0;
 	tmp = NULL;
 	fd = open(argv, O_RDONLY);
+	if (fd == -1)
+		ft_error(0);
 	while (1)
 	{
 		tmp = get_next_line(fd);

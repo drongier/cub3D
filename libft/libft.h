@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 19:10:51 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/04 16:55:51 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/18 15:52:18 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ char			*get_next_line(int fd);
 int				ft_printf(const char *format, ...);
 int				ft_is_whitespace(char s);
 int				ft_is_emptyline(char *s);
+void			ft_remove_trailing_new_line(char *str);
 
 typedef struct s_list
 {

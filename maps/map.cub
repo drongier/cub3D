@@ -1,11 +1,11 @@
 
- WE ./path_to_the_west_texture
+ WE textures/grey_stone.xpm
 
 C 225,30,0
 
- NO	./path_to_the_north_texture
- EA      ./path_to_the_east_texture
-     SO ./path_to_the_south_texture
+ NO     textures/blue_stone.xpm
+ EA     textures/wood.xpm
+     SO textures/color_stone.xpm
 F 220,100,0
 	
 

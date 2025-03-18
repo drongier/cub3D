@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 18:01:36 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/18 19:06:48 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # include <limits.h>
 # include <stdbool.h>
 # include <math.h>
+# include <bits/types.h>
 # include "../libft/libft.h"
 
 typedef struct s_map_data
@@ -134,6 +135,7 @@ typedef struct s_game
 
     t_player player;
     t_map   *map;
+    t_scene *scene;
 } t_game;
 
 
