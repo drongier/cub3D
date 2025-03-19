@@ -127,12 +127,10 @@ typedef struct s_game
     char    *tex_ea;
     char    *tex_we;
 	t_texture   textures[4];
-    // char    **map;
+
 	int     map_width;
 	int     map_height;
-    // int     ceiling;
-    // int     floor; 
-
+ 
     t_player player;
     t_map   *map;
     t_scene *scene;
@@ -151,7 +149,8 @@ void    ft_2dstrfree(char **str);
 void	ft_error(t_scene *scene);
 void    enclosed_map_check(t_scene *scene, t_map *map);
 void	get_map(t_map *map);
-void	encode_colors(t_game *game, t_scene *scene, t_map *map);
+void	encode_ceiling_color(t_scene *scene, t_map *map);
+void	encode_floor_color(t_scene *scene, t_map *map);
 
 //EXIT
 
@@ -186,7 +185,7 @@ int 	get_hit_direction(float start_x, int is_vertical);
 
 float	fixed_dist(float x1, float y1, float x2, float y2, t_game *game);
 float	distance(float x, float y);
-void		calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
+void    calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y);
 float	calculate_height(t_player *player, float ray_x, float ray_y);
 
 // DRAWING FUNCTIONS

@@ -1,17 +1,17 @@
 
- WE ./path_to_the_west_texture
+ WE textures/red_brick.xpm
 
 C 153,153,153
 
- NO	./path_to_the_north_texture
- EA      ./path_to_the_east_texture
-     SO ./path_to_the_south_texture
+ NO	textures/purple_stone.xpm
+ EA      textures/wood.xpm
+     SO textures/eagle.xpm
 F 220,100,0
 
 111111111111111
 100000100000001
 100000100000001
-1000001N0000101
+1000001S0000101
 100000000001001
 100000010000001
 100000000000001

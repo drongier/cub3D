@@ -55,8 +55,8 @@ void	exit_game(t_game *game)
 	{
 		mlx_loop_end(game->mlx);
 		mlx_destroy_display(game->mlx);
+		free(game->mlx);
 	}
-	free(game->mlx);
 	// free_map(game->map);
 }
 
@@ -116,7 +116,10 @@ void	initialize(t_scene *scene, t_map *map)
 	map->player_y = 0;
 	map->player_o = 0;
 	map->player_flag = 0;
+	map->ceiling = 0;
+	map->floor = 0;
 	map->coor = NULL;
+	map->map = NULL;
 }
 
 int	main(int argc, char **argv)
@@ -133,8 +136,6 @@ int	main(int argc, char **argv)
 	initialize(&scene, &map);
 	get_scene_data(argv[1], &scene);
 	get_map(&map);
-	encode_colors(&game, &scene, &map);
-
 	game.map = &map;
 	game.scene = &scene;
 	game.player.map = &map;

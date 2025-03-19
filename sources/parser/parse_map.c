@@ -138,47 +138,54 @@ void	get_map(t_map *map)
 	map->map[i] = NULL;
 }
 
-void	encode_colors(t_game *game, t_scene *scene, t_map *map)
+void	encode_ceiling_color(t_scene *scene, t_map *map)
 {
 	char	**tmp;
 	int		i;
 	int		num;
-	__uint8_t		*index;
-	
+
 	i = 0;
 	tmp = ft_split(scene->c_color, ',');
 	while (tmp[i])
 	{
 		num = ft_atoi(tmp[i]);
-		printf("num %d\n", num);
-
 		if (!(num >= 0 && num <= 255))
 		{
 			ft_2dstrfree(tmp);	
 			ft_error(scene);
 		}
-		map->ceiling = num;
-		printf("ceiling: %x\n", map->ceiling);
-		map->ceiling << 8;
-		printf("ceiling: %x\n", map->ceiling);
-		
-		
-		printf("%s\n", tmp[i]);
+		map->ceiling = map->ceiling << 8;
+		map->ceiling += num;
 		i++;
 	}
-	// printf("i: %d\n", i);
 	ft_2dstrfree(tmp);	
-	if (i < 3)
+	if (i != 3)
 		ft_error(scene);
-	
-	(void)game;
+}
 
-	(void)map;
-	// game->ceiling = 
-	// index = y * game->size_line + x * game->bpp / 8;
-	// game->data[index] = color & 0xFF;
-	// game->data[index + 1] = (color >> 8) & 0xFF;
-	// game->data[index + 2] = (color >> 16) & 0xFF;
+void	encode_floor_color(t_scene *scene, t_map *map)
+{
+	char	**tmp;
+	int		i;
+	int		num;
+
+	i = 0;
+	tmp = ft_split(scene->f_color, ',');
+	while (tmp[i])
+	{
+		num = ft_atoi(tmp[i]);
+		if (!(num >= 0 && num <= 255))
+		{
+			ft_2dstrfree(tmp);	
+			ft_error(scene);
+		}
+		map->floor = map->floor << 8;
+		map->floor += num;
+		i++;
+	}
+	ft_2dstrfree(tmp);	
+	if (i != 3)
+		ft_error(scene);
 }
 
 void	parse_map(t_scene *scene)
@@ -195,9 +202,13 @@ void	parse_map(t_scene *scene)
 	if (!map->player_o)
 		ft_error(scene);
 	enclosed_map_check(scene, map);
+	encode_ceiling_color(scene, map);
+	encode_floor_color(scene, map);
+
 	tmp = scene->map->player_x;
 	scene->map->player_x = scene->map->player_y;
 	scene->map->player_y = tmp;
+
 	int i, j;
     i = 0;
 	while (i < map->row)

@@ -18,7 +18,7 @@ void	draw_ceiling(int i, int start_y, t_game *game)
 
 	j = 0;
 	while (j < start_y)
-		put_pixel(i, j++, 0x74583A, game);
+		put_pixel(i, j++, game->map->ceiling, game);
 }
 
 int get_texture_color(t_texture *texture, int tex_x, int tex_y)
@@ -73,5 +73,5 @@ void	draw_ground(int i, int start_y, t_game *game)
 
 	l = start_y;
 	while (l < HEIGHT)
-		put_pixel(i, l++, 0x999999, game);
+		put_pixel(i, l++, game->map->floor, game);
 }
