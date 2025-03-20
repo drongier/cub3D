@@ -1,6 +1,6 @@
 NAME = cub3D
 HEADER = includes/cub3d.h 
-SRC =  main.c debug_bonus.c drawing2.c drawing.c player.c player_key.c \
+SRC =  main.c bonus_map.c bonus_map2.c drawing2.c drawing.c player.c player_key.c \
 		player_mouv.c utils2.c utils.c utils_math.c
 SRC := $(addprefix sources/, $(SRC))
 PRS_SRC = ft_flood_fill.c get_scene_data.c get_colors_textures.c parse_map.c extract_map.c utils_2dstr.c

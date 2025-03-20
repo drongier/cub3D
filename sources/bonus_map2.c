@@ -6,11 +6,11 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 18:50:15 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 18:52:16 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/20 19:11:42 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "cub3d.h"
+#include "../includes/cub3d.h"
 
 void	put_pixel_minimap(t_game *game, float x, float y, t_minimap *mini)
 {
