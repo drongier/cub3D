@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 12:25:26 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/20 18:20:07 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,8 +144,11 @@ typedef struct s_game
 // PARSER
 
 void    ft_scene_init(t_scene *scene);
+void	get_colors(t_scene *scene);
+void	get_textures(t_scene *scene);
 void	get_scene_data(char *argv, t_scene *scene);
 void    parse_map(t_scene *scene);
+void	extract_map(t_scene *scene, t_map *map);
 void    ft_dda_init(t_scene *scene);
 int     ft_row_count(char *argv);
 void    ft_free_all(t_scene *scene);
