@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/17 18:01:29 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/20 14:32:00 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	init_player(t_player *player, t_map *map, t_game *game)
 	player->y = (float)map->player_y * BLOCK + BLOCK/2;
 	printf("x: %f\n", player->x);
 	printf("y: %f\n", player->y);
-	player->angle = 3 * PI / 2;
+	player->angle = 0;
 	player->hit_dir = -1;
 	player->hit_x = 0;
     player->hit_y = 0;

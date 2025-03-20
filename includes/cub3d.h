@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/18 19:06:48 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/20 12:25:26 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # define BONUS 1
 # define MINI_MAP_SIZE 8
 # define COLLISION_MARG 10
+# define EPSILON 0.001 
 
 # define W 119
 # define A 97
@@ -134,6 +135,9 @@ typedef struct s_game
     t_player player;
     t_map   *map;
     t_scene *scene;
+
+	int	*delete;
+	
 } t_game;
 
 

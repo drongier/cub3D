@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   drawing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/18 18:53:46 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/20 15:16:13 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ void	put_pixel(int x, int y, int color, t_game *game)
 	-> Draw wall / Celling / floor */
 void	draw_line(t_player *player, t_game *game, float start_x, int i)
 {
-	float	ray_x;
-	float	ray_y;
-	float	height;
-	int		start_y;
-	int		end;
+	float	ray_x = 0;
+	float	ray_y = 0;
+	float	height = 0;
+	int		start_y = 0;
+	int		end = 0;
 
 	calc_ray(player, start_x, &ray_x, &ray_y);
 	height = calculate_height(player, ray_x, ray_y);
@@ -50,7 +50,7 @@ int	draw_loop(t_game *game)
 {
 	t_player	*player;
 	float		fraction;
-	float		start_x;
+	float		start_x = 0;
 	int			i;
 
 	player = &game->player;
@@ -59,6 +59,7 @@ int	draw_loop(t_game *game)
 	i = 0;
 	move_player(player);
 	//clear_image(game);
+	game->delete = &i;
 	while (i < WIDTH)
 	{
 		draw_line(player, game, start_x, i);

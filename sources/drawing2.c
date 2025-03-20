@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   drawing2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:12:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/18 14:33:35 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/19 18:30:21 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,10 +40,11 @@ int get_texture_color(t_texture *texture, int tex_x, int tex_y)
 
 void draw_wall(int i, int *start_y, int end, t_game *game)
 {
-    int         tex_x, tex_y;
-    int         wall_height = end - *start_y;
+    int         tex_x = 0, tex_y = 0;
+    int         wall_height = 0;
     t_texture   *texture;
 
+	wall_height = end - *start_y;
     if (game->player.hit_dir == NORD)
         texture = &game->textures[0];
     else if (game->player.hit_dir == SUD)
@@ -54,7 +55,6 @@ void draw_wall(int i, int *start_y, int end, t_game *game)
 	{
     	texture = &game->textures[3];
 	}
-
 	if (game->player.hit_dir == NORD || game->player.hit_dir == SUD)
 		tex_x = (int)game->player.hit_x % BLOCK * texture->width / BLOCK;
 	else
