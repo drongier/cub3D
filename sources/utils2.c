@@ -27,21 +27,3 @@ int	is_nord_sud(float start_x)
 	else
 		return (NORD);
 }
-
-int get_hit_direction(float start_x, int is_vertical)
-{
-    if (is_vertical)
-    {
-        if (cos(start_x) > 0)
-            return WEST;
-        else
-            return EAST;
-    }
-    else
-    {
-        if (sin(start_x) > 0)
-            return SUD;
-        else
-            return NORD;
-    }
-}

@@ -50,20 +50,6 @@ void check_boundaries(t_player *player)
 		player->y -= sin(player->angle) * 5;
 }
 
-// void check_boundaries(t_player *player)
-// {
-//     // Effet miroir horizontal
-// 	if (player->x >= player->game->map_width * BLOCK)
-// 		player->x = 0;
-// 	else if (player->x < 0)
-// 		player->x = (player->game->map_width - 1) * BLOCK;
-//     // Effet miroir vertical
-// 	if (player->y >= player->game->map_height * BLOCK)
-// 		player->y = 0;
-// 	else if (player->y < 0)
-// 		player->y = (player->game->map_height - 1) * BLOCK;
-// }
-
 void	update_angle(t_player *player, float angle_speed)
 {
 	if (player->left_rotate)

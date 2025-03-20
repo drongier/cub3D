@@ -12,6 +12,18 @@
 
 #include "../includes/cub3d.h"
 
+void	init_player_angle(t_player *player, t_map *map)
+{
+	if (map->player_o == 'N')
+		player->angle = 3 * PI / 2;
+	else if (map->player_o == 'S')
+		player->angle = PI / 2;
+	else if (map->player_o == 'E')
+		player->angle = 0;
+	else if (map->player_o == 'W')
+		player->angle = PI;
+}
+
 void	init_player(t_player *player, t_map *map, t_game *game)
 {
 	player->o = map->player_o;
@@ -19,7 +31,6 @@ void	init_player(t_player *player, t_map *map, t_game *game)
 	player->y = (float)map->player_y * BLOCK + BLOCK/2;
 	printf("x: %f\n", player->x);
 	printf("y: %f\n", player->y);
-	player->angle = 3 * PI / 2;
 	player->hit_dir = -1;
 	player->hit_x = 0;
     player->hit_y = 0;
@@ -31,6 +42,7 @@ void	init_player(t_player *player, t_map *map, t_game *game)
 	player->left_rotate = false;
 	player->right_rotate = false;
 	player->game = game;
+	init_player_angle(player, map);
 }
 
 void	player_pos(t_player *player, int angle_speed)

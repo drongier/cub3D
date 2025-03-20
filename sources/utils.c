@@ -30,23 +30,6 @@ bool	touch(float px, float py, t_game *game)
 	return (false);
 }
 
-// void	get_size_map(t_game *game)
-// {
-// 	int	row_length;
-
-// 	game->map_width = 0;
-// 	game->map_height = 0;
-// 	while (game->map[game->map_height])
-// 	{
-// 		row_length = 0;
-// 		while (game->map[game->map_height][row_length])
-// 			row_length++;
-// 		if (row_length > game->map_width)
-// 			game->map_width = row_length;
-// 		game->map_height++;
-// 	}
-// }
-
 int	close_window(t_game *game)
 {
 	mlx_destroy_window(game->mlx, game->win);

@@ -149,10 +149,10 @@ int	main(int argc, char **argv)
 	
 	// while (scene.lines && *scene.lines)
 	// 	printf("%s", *(scene.lines++));
-	printf("%s", scene.no_texture);
-	printf("%s", scene.so_texture);
-	printf("%s", scene.we_texture);
-	printf("%s", scene.ea_texture);
+	// printf("%s", scene.no_texture);
+	// printf("%s", scene.so_texture);
+	// printf("%s", scene.we_texture);
+	// printf("%s", scene.ea_texture);
 	// printf("%s", scene.f_color);
 	// printf("%s", scene.c_color);
 	// printf("%d\n", scene.row);
