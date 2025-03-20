@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 12:25:26 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/20 18:51:56 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # define HEIGHT 720
 # define BLOCK 64
 # define BONUS 1
-# define MINI_MAP_SIZE 8
+# define MM_SIZE 8
 # define COLLISION_MARG 10
 # define EPSILON 0.001 
 
@@ -140,6 +140,13 @@ typedef struct s_game
 	
 } t_game;
 
+typedef struct s_minimap
+{
+	int	bottom_right_x;
+	int	bottom_right_y;
+	int	square_size;
+}	t_minimap;
+
 
 // PARSER
 
@@ -175,6 +182,7 @@ void	m_left(t_player *player, float cos_angle, float sin_angle, int speed);
 void	m_right(t_player *player, float cos_angle, float sin_angle, int speed);
 void	update_angle(t_player *player, float angle_speed);
 void	check_boundaries(t_player *player);
+void	update_angle(t_player *player, float angle_speed);
 
 // UTILS
 
@@ -201,11 +209,12 @@ void	draw_ground(int i, int start_y, t_game *game);
 void	draw_wall(int i, int *start_y, int end, t_game *game);
 void	draw_ceiling(int i, int start_y, t_game *game);
 
-// DEBUG OR BONUS MINIMAP
+// BONUS MINIMAP
 
-void	draw_map(t_game *game, int offset_x, int offset_y);
 void	draw_square_full(int x, int y, int size, int color, t_game *game);
 void	draw_mini_map(t_game *game);
 void	draw_scope(t_game *game);
+void	put_pixel_minimap(t_game *game, float x, float y, t_minimap *mini);
+void	calcu_ray(float *x, float *y, float cos_a, float sin_a);
 
 #endif
