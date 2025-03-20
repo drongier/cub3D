@@ -1,38 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   bonus_map2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/19 16:05:39 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 18:38:28 by drongier         ###   ########.fr       */
+/*   Created: 2025/03/20 18:50:15 by drongier          #+#    #+#             */
+/*   Updated: 2025/03/20 18:52:16 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "cub3d.h"
 
-
-/* 1) Convert pixel to block to check 2D map
-	2) Return true if ray hit wall 
-*/
-bool	touch(float px, float py, t_game *game)
+void	put_pixel_minimap(t_game *game, float x, float y, t_minimap *mini)
 {
-	int		x;
-	int		y;
-	char	**map;
+	int	map_x;
+	int	map_y;
 
-	map = game->map->map;
-	x = px / BLOCK;
-	y = py / BLOCK;
-	if (map[y][x] == '1')
-		return (true);
-	return (false);
+	map_x = mini->bottom_right_x + (x / BLOCK) * (BLOCK / MM_SIZE);
+	map_y = mini->bottom_right_y + (y / BLOCK) * (BLOCK / MM_SIZE);
+	put_pixel(map_x, map_y, 0xAAAAAA, game);
 }
 
-int	close_window(t_game *game)
+void	calcu_ray(float *x, float *y, float cos_a, float sin_a)
 {
-	mlx_destroy_window(game->mlx, game->win);
-	exit(0);
-	return (0);
+	*x += cos_a;
+	*y += sin_a;
 }

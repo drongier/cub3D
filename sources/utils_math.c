@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:30:33 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 17:02:02 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/20 18:38:15 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,6 @@
 float	distance(float x, float y)
 {
 	return (sqrt(x * x + y * y));
-}
-
-float r_t_d(float number)
-{
-    return round(number * 100) / 100;
 }
 
 /* Calculate one RAY and check direction of the walls */
@@ -37,7 +32,7 @@ void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 	{
 		prev_x = *ray_x;
 		prev_y = *ray_y;
-		*ray_x += cos(start_x); 
+		*ray_x += cos(start_x);
 		*ray_y += sin(start_x);
 	}
 	player->hit_x = prev_x;
@@ -47,8 +42,9 @@ void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 		if (((int)(*ray_y) % BLOCK != 0 && (int)(*ray_y) % BLOCK != BLOCK - 1))
 			player->hit_dir = is_west_east(start_x);
 	}
-    else if ((((int)prev_y / BLOCK != (int)*ray_y / BLOCK)) && ((int)(*ray_x) % BLOCK != 0))
-			player->hit_dir = is_nord_sud(start_x);
+	else if ((((int)prev_y / BLOCK != (int)*ray_y / BLOCK)) \
+		&& ((int)(*ray_x) % BLOCK != 0))
+		player->hit_dir = is_nord_sud(start_x);
 
 }
 

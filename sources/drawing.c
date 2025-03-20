@@ -6,7 +6,7 @@
 /*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 15:16:13 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/20 17:31:30 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,11 @@ void	put_pixel(int x, int y, int color, t_game *game)
 	-> Draw wall / Celling / floor */
 void	draw_line(t_player *player, t_game *game, float start_x, int i)
 {
-	float	ray_x = 0;
-	float	ray_y = 0;
-	float	height = 0;
-	int		start_y = 0;
-	int		end = 0;
+	float	ray_x;
+	float	ray_y;
+	float	height;
+	int		start_y;
+	int		end;
 
 	calc_ray(player, start_x, &ray_x, &ray_y);
 	height = calculate_height(player, ray_x, ray_y);
@@ -50,7 +50,7 @@ int	draw_loop(t_game *game)
 {
 	t_player	*player;
 	float		fraction;
-	float		start_x = 0;
+	float		start_x;
 	int			i;
 
 	player = &game->player;
@@ -58,7 +58,6 @@ int	draw_loop(t_game *game)
 	start_x = player->angle - PI / 6;
 	i = 0;
 	move_player(player);
-	//clear_image(game);
 	game->delete = &i;
 	while (i < WIDTH)
 	{
