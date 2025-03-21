@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils_math.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:30:33 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/21 11:31:30 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/21 14:01:58 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 		if (((int)(*ray_y) % BLOCK != 0 && (int)(*ray_y) % BLOCK != BLOCK - 1))
 			player->hit_dir = is_west_east(start_x);
 	}
-	else if ((((int)prev_y / BLOCK != (int)*ray_y / BLOCK)) 
+	else if ((((int)prev_y / BLOCK != (int)*ray_y / BLOCK))
 		&& ((int)(*ray_x) % BLOCK != 0))
 		player->hit_dir = is_nord_sud(start_x);
 }
