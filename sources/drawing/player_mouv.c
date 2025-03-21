@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   player_mouv.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 18:55:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 18:34:11 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/21 10:16:58 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 void	m_up(t_player *player, float cos_angle, float sin_angle, int speed)
 {
@@ -35,7 +35,6 @@ void	m_right(t_player *player, float cos_angle, float sin_angle, int speed)
 	player->x -= sin_angle * speed;
 	player->y += cos_angle * speed;
 }
-
 
 void	check_boundaries(t_player *player)
 {

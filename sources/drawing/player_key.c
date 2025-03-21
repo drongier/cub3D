@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   player_key.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 18:00:39 by drongier          #+#    #+#             */
-/*   Updated: 2025/02/26 19:02:35 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/21 10:10:26 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 int	key_press(int keycode, t_player *player)
 {

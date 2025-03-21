@@ -3,47 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   player.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:49:58 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 19:09:13 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/21 11:44:57 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
-
-void	init_player_angle(t_player *player, t_map *map)
-{
-	if (map->player_o == 'N')
-		player->angle = 3 * PI / 2;
-	else if (map->player_o == 'S')
-		player->angle = PI / 2;
-	else if (map->player_o == 'E')
-		player->angle = 0;
-	else if (map->player_o == 'W')
-		player->angle = PI;
-}
-
-void	init_player(t_player *player, t_map *map, t_game *game)
-{
-	player->o = map->player_o;
-	player->x = (float)map->player_x * BLOCK + BLOCK / 2;
-	player->y = (float)map->player_y * BLOCK + BLOCK / 2;
-	printf("x: %f\n", player->x);
-	printf("y: %f\n", player->y);
-	player->hit_dir = -1;
-	player->hit_x = 0;
-	player->hit_y = 0;
-	player->key_up = false;
-	player->key_down = false;
-	player->key_right = false;
-	player->key_left = false;
-	player->key_exit = false;
-	player->left_rotate = false;
-	player->right_rotate = false;
-	player->game = game;
-	init_player_angle(player, map);
-}
+#include "../../includes/cub3d.h"
 
 void	player_pos(t_player *player, int angle_speed)
 {

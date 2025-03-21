@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   drawing2.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:12:52 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 18:32:20 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/21 11:27:48 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 void	draw_ceiling(int i, int start_y, t_game *game)
 {
@@ -49,7 +49,6 @@ void	select_texture(t_game *game, int *tex_x)
 		texture = &game->textures[2];
 	else
 		texture = &game->textures[3];
-
 	if (game->player.hit_dir == NORD || game->player.hit_dir == SUD)
 		*tex_x = (int)game->player.hit_x % BLOCK * texture->width / BLOCK;
 	else
@@ -65,7 +64,6 @@ void	draw_wall(int i, int *start_y, int end, t_game *game)
 
 	wall_height = end - *start_y;
 	select_texture(game, &tex_x);
-
 	if (game->player.hit_dir == NORD)
 		texture = &game->textures[0];
 	else if (game->player.hit_dir == SUD)
@@ -76,13 +74,12 @@ void	draw_wall(int i, int *start_y, int end, t_game *game)
 		texture = &game->textures[3];
 	while (*start_y < end)
 	{
-		tex_y = (*start_y - (HEIGHT / 2) + (wall_height / 2)) * \
-			texture->height / wall_height;
-		put_pixel(i, (*start_y)++, \
-			get_texture_color(texture, tex_x, tex_y), game);
+		tex_y = (*start_y - (HEIGHT / 2) + (wall_height / 2)) * texture->height
+			/ wall_height;
+		put_pixel(i, (*start_y)++, get_texture_color(texture, tex_x, tex_y),
+			game);
 	}
 }
-
 
 void	draw_ground(int i, int start_y, t_game *game)
 {

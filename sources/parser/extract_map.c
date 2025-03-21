@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 18:18:01 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/20 18:51:46 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/03/21 10:50:39 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,35 @@ void	extract_orientation_coor(t_scene *scene, int line, int i, int j)
 	map->player_o = scene->lines[line][j];
 }
 
+int	extract_map_inner_loop(t_scene *scene, int line, int i, int *k)
+{
+	int		j;
+	t_map	*map;
+
+	map = scene->map;
+	j = -1;
+	while (scene->lines[line][++j] != '\n')
+	{
+		if (scene->lines[line][j] == '\t')
+		{
+			*k = -1;
+			while (++(*k) < 7)
+				map->coor[i * map->col + *k] = 0;
+		}
+		else if (ft_is_whitespace(scene->lines[line][j]))
+			map->coor[i * map->col + j + *k] = 0;
+		else if (scene->lines[line][j] == '0')
+			map->coor[i * map->col + j + *k] = 0;
+		else if (scene->lines[line][j] == '1')
+			map->coor[i * map->col + j + *k] = 1;
+		else if (ft_is_orientation(scene->lines[line][j]))
+			extract_orientation_coor(scene, line, i, j);
+		else
+			ft_error(scene);
+	}
+	return (j);
+}
+
 void	extract_map(t_scene *scene, t_map *map)
 {
 	int	i;
@@ -46,31 +75,8 @@ void	extract_map(t_scene *scene, t_map *map)
 	line = scene->map_first_line;
 	while (line < scene->map_first_line + map->row)
 	{
-		j = 0;
 		k = 0;
-		while (scene->lines[line][j] != '\n')
-		{
-			if (scene->lines[line][j] == '\t')
-			{
-				k = 0;
-				while (k < 7)
-				{
-					map->coor[i * map->col + k] = 0;
-					k++;
-				}
-			}
-			else if (ft_is_whitespace(scene->lines[line][j]))
-				map->coor[i * map->col + j + k] = 0;
-			else if (scene->lines[line][j] == '0')
-				map->coor[i * map->col + j + k] = 0;
-			else if (scene->lines[line][j] == '1')
-				map->coor[i * map->col + j + k] = 1;
-			else if (ft_is_orientation(scene->lines[line][j]))
-				extract_orientation_coor(scene, line, i, j);
-			else
-				ft_error(scene);
-			j++;
-		}
+		j = extract_map_inner_loop(scene, line, i, &k);
 		while (j < map->col)
 		{
 			map->coor[i * map->col + j + k] = 0;

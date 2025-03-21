@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   drawing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/20 17:31:30 by drongier         ###   ########.fr       */
+/*   Updated: 2025/03/21 11:17:07 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/cub3d.h"
+#include "../../includes/cub3d.h"
 
 void	put_pixel(int x, int y, int color, t_game *game)
 {
@@ -58,7 +58,6 @@ int	draw_loop(t_game *game)
 	start_x = player->angle - PI / 6;
 	i = 0;
 	move_player(player);
-	game->delete = &i;
 	while (i < WIDTH)
 	{
 		draw_line(player, game, start_x, i);
