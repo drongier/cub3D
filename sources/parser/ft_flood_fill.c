@@ -42,6 +42,8 @@ void	enclosed_map_check(t_scene *scene, t_map *map)
 	bool	*visited;
 
 	visited = (bool *)ft_calloc(map->row * map->col, sizeof(bool));
+	if (!visited)
+		ft_cleanup(scene);
 	ft_flood_fill(scene, visited, map->player_x, map->player_y);
 	free(visited);
 }

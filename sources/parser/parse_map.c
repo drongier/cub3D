@@ -31,16 +31,20 @@ void	map_row_col(t_scene *scene)
 	}
 }
 
-void	get_map(t_map *map)
+void	get_map(t_scene *scene, t_map *map)
 {
 	int	i;
 	int	j;
 
 	map->map = (char **)ft_calloc(map->row + 1, sizeof(char *));
+	if (!map->map)
+		ft_cleanup(scene);
 	i = 0;
 	while (i < map->row)
 	{
 		map->map[i] = (char *)ft_calloc(map->col + 1, sizeof(char));
+		if (!map->map[i])
+			ft_cleanup(scene);
 		j = 0;
 		while (j < map->col)
 		{
@@ -61,6 +65,8 @@ void	parse_map(t_scene *scene)
 	map = scene->map;
 	map_row_col(scene);
 	map->coor = (char *)ft_calloc(map->row * map->col, sizeof(char));
+	if (!map->coor)
+		ft_cleanup(scene);
 	extract_map(scene, map);
 	if (!map->player_o)
 		ft_error(scene);

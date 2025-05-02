@@ -42,12 +42,12 @@ void	get_lines(char *argv, t_scene *scene)
 
 	scene->lines = (char **)calloc(scene->row + 1, sizeof(char *));
 	if (!scene->lines)
-		return ;
+		ft_cleanup(scene);
 	scene->lines[scene->row] = NULL;
 	fd = open(argv, O_RDONLY);
-	i = 0;
-	while (i < scene->row)
-		scene->lines[i++] = get_next_line(fd);
+	i = -1;
+	while (++i < scene->row)
+		scene->lines[i] = get_next_line(fd);
 	close(fd);
 }
 

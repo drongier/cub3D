@@ -1,0 +1,8 @@
+
+NO       ./maps/walls/north.xpm
+SO            ./maps/walls/south.xpm
+WE         ./maps/walls/west.xpm
+EA                            ./maps/walls/east.xpm
+
+F          50  ,  50  ,  50   
+C           256  ,   30    , 5 

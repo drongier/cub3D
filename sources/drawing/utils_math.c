@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   utils_math.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 17:30:33 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/21 14:01:58 by drongier         ###   ########.fr       */
+/*   Updated: 2025/04/26 16:59:55 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
-
-// distance calculation functions
-float	distance(float x, float y)
-{
-	return (sqrt(x * x + y * y));
-}
 
 /* Calculate one RAY and check direction of the walls */
 void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
@@ -37,14 +31,40 @@ void	calc_ray(t_player *player, float start_x, float *ray_x, float *ray_y)
 	}
 	player->hit_x = prev_x;
 	player->hit_y = prev_y;
-	if (((int)prev_x / BLOCK != (int)*ray_x / BLOCK))
+	if ((int)(prev_x / BLOCK) != (int)(*ray_x / BLOCK) && (int)(prev_y / BLOCK) != (int)(*ray_y / BLOCK))
+		return ;
+	else if ((int)(prev_x / BLOCK) != (int)(*ray_x / BLOCK))
 	{
-		if (((int)(*ray_y) % BLOCK != 0 && (int)(*ray_y) % BLOCK != BLOCK - 1))
-			player->hit_dir = is_west_east(start_x);
+		player->hit_dir = is_west_east(start_x);
+		printf("X: %d, %d | ", (int)prev_x / BLOCK, (int)*ray_x / BLOCK);
+		printf("Y: %d, %d XXX\n", (int)prev_y / BLOCK, (int)*ray_y / BLOCK);
+
+		// printf("prev_x: %f, prev_y: %f\n", prev_x, prev_y);
+		// printf("ray__x: %f, ray__y: %f\n", *ray_x, *ray_y);
 	}
-	else if ((((int)prev_y / BLOCK != (int)*ray_y / BLOCK))
-		&& ((int)(*ray_x) % BLOCK != 0))
+	else if ((int)(prev_y / BLOCK) != (int)(*ray_y / BLOCK))
+	{	
 		player->hit_dir = is_nord_sud(start_x);
+		printf("X: %d, %d | ", (int)prev_x / BLOCK, (int)*ray_x / BLOCK);
+		printf("Y: %d, %d YYY\n", (int)prev_y / BLOCK, (int)*ray_y / BLOCK);
+
+		// printf("prev_x: %f, prev_y: %f\n", prev_x, prev_y);
+		// printf("ray__x: %f, ray__y: %f\n", *ray_x, *ray_y);
+	}
+	// if (((int)prev_x / BLOCK != (int)*ray_x / BLOCK))
+	// {
+	// 	if (((int)(*ray_y) % BLOCK != 0 && (int)(*ray_y) % BLOCK != BLOCK - 1))
+	// 		player->hit_dir = is_west_east(start_x);
+	// }
+	// else if ((((int)prev_y / BLOCK != (int)*ray_y / BLOCK))
+	// 	&& ((int)(*ray_x) % BLOCK != 0))
+	// 	player->hit_dir = is_nord_sud(start_x);
+}
+
+// distance calculation functions
+float	distance(float x, float y)
+{
+	return (sqrt(x * x + y * y));
 }
 
 /* Removing distortion + fisheyes effect
