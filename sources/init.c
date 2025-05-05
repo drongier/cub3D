@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 11:39:19 by mekundur          #+#    #+#             */
-/*   Updated: 2025/04/26 15:14:15 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/03 17:51:07 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,8 @@ void	init_player_angle(t_player *player, t_map *map)
 void	init_player(t_player *player, t_map *map, t_game *game)
 {
 	player->o = map->player_o;
-	player->x = (float)map->player_x * BLOCK + BLOCK / 2;
-	player->y = (float)map->player_y * BLOCK + BLOCK / 2;
+	player->x = (float)map->player_x * BLOCK + BLOCK ;
+	player->y = (float)map->player_y * BLOCK + BLOCK ;
 	player->hit_dir = -1;
 	player->hit_x = 0;
 	player->hit_y = 0;

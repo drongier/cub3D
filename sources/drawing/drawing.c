@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:01:36 by drongier          #+#    #+#             */
-/*   Updated: 2025/04/26 15:39:39 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/05 12:02:30 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ int	draw_loop(t_game *game)
 	{
 		draw_line(player, game, start_x, i);
 		start_x += fraction;
-		printf("i: %d | ",i );
 		i++;
 	}
 	if (BONUS == 1)

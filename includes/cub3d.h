@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/04/26 15:47:14 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/05 11:52:36 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,22 @@ typedef struct s_texture
 	int				size_line;
 	int				endian;
 }					t_texture;
+
+typedef struct s_ray
+{
+	int				map_x;
+	int				map_y;
+	int				step_x;
+	int				step_y;
+	float			side_dist_x;
+	float			side_dist_y;
+	float			delta_dist_x;
+	float			delta_dist_y;
+	float			angle;
+	float			dir_x;
+	float			dir_y;
+	int				side;
+}					t_ray;
 
 typedef struct s_minimap
 {

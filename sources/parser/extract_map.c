@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 18:18:01 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/21 10:50:39 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/05 15:01:22 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,9 @@ int	extract_map_inner_loop(t_scene *scene, int line, int i, int *k)
 
 	map = scene->map;
 	j = -1;
-	while (scene->lines[line][++j] != '\n')
+	while (scene->lines[line][++j] != '\n' && j < scene->map->col)
 	{
+		// printf("j: %d, col, %d\n", j, map->col);
 		if (scene->lines[line][j] == '\t')
 		{
 			*k = -1;
@@ -73,8 +74,12 @@ void	extract_map(t_scene *scene, t_map *map)
 
 	i = 0;
 	line = scene->map_first_line;
+	// printf("line: %d\n", line);
+	// printf("map_rows: %d\n", map->row);
+
 	while (line < scene->map_first_line + map->row)
 	{
+		// printf("map_line %d %s",line, scene->lines[line]);
 		k = 0;
 		j = extract_map_inner_loop(scene, line, i, &k);
 		while (j < map->col)
@@ -83,6 +88,7 @@ void	extract_map(t_scene *scene, t_map *map)
 			j++;
 		}
 		i++;
+		// printf("line: %d\n", line);
 		line++;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:17:47 by drongier          #+#    #+#             */
-/*   Updated: 2025/03/21 11:22:01 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/03 17:56:46 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,10 +63,20 @@ void	draw_player(t_game *game, t_minimap *mini)
 {
 	int	x;
 	int	y;
+	int	i;
+	int	j;
 
-	x = mini->bottom_right_x + (game->player.x / BLOCK) * (BLOCK / MM_SIZE);
-	y = mini->bottom_right_y + (game->player.y / BLOCK) * (BLOCK / MM_SIZE);
-	draw_square(x, y, 5, game);
+	x = mini->bottom_right_x + (game->player.x / BLOCK) * (BLOCK / MM_SIZE) \
+		- (BLOCK / MM_SIZE / 4);
+	y = mini->bottom_right_y + (game->player.y / BLOCK) * (BLOCK / MM_SIZE) \
+		- (BLOCK / MM_SIZE / 4);
+	i = -1;
+	while (++i < 4)
+	{
+		j = -1;
+		while (++j < 4)
+			put_pixel(x + i, y + j, 0x00FF00, game);
+	}
 }
 
 void	draw_mini_map(t_game *game)

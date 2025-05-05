@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:30:38 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/21 12:29:14 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/05 15:00:33 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,9 @@ int	ft_row_count(char *argv)
 void	get_lines(char *argv, t_scene *scene)
 {
 	int	i;
+	int j;
 	int	fd;
+	int	len;
 
 	scene->lines = (char **)calloc(scene->row + 1, sizeof(char *));
 	if (!scene->lines)
@@ -47,7 +49,17 @@ void	get_lines(char *argv, t_scene *scene)
 	fd = open(argv, O_RDONLY);
 	i = -1;
 	while (++i < scene->row)
+	{	
 		scene->lines[i] = get_next_line(fd);
+		len = ft_strlen(scene->lines[i]);
+		// printf("len :%d %s", len, scene->lines[i]);
+		j = 0;
+		while (scene->lines[i][j] != '\0')
+			j++;
+		if (scene->lines[i][j - 1] != '\n')
+			scene->lines[i][j - 1] = '\n';
+		// printf("len :%d %s", len, scene->lines[i]);
+	}
 	close(fd);
 }
 
