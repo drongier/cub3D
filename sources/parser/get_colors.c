@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:29:08 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/21 12:28:40 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/05 17:43:44 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,9 @@ void	get_colors(t_scene *scene)
 		j = 0;
 		while (tmp && tmp[j])
 		{
-			if (ft_strnstr(tmp[j], "F", 1))
+			if (ft_strnstr(tmp[j], "F", 1) && !scene->f_color)
 				scene->f_color = ft_strdup(tmp[j + 1]);
-			else if (ft_strnstr(tmp[j], "C", 1))
+			else if (ft_strnstr(tmp[j], "C", 1) && !scene->c_color)
 				scene->c_color = ft_strdup(tmp[j + 1]);
 			j++;
 		}

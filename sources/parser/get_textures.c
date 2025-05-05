@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 12:25:47 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/05 16:40:39 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/05 17:42:53 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	put_textures_contd(t_scene *scene, char **tmp)
 {
 	if (!tmp)
 		return ;
-	else if (ft_strnstr(*tmp, "WE", 2))
+	else if (ft_strnstr(*tmp, "WE", 2) && !scene->we_texture)
 	{
 		if (*(tmp + 1))
 		{
@@ -26,7 +26,7 @@ void	put_textures_contd(t_scene *scene, char **tmp)
 		else
 			ft_error(scene);
 	}
-	else if (ft_strnstr(*tmp, "EA", 2))
+	else if (ft_strnstr(*tmp, "EA", 2) && !scene->ea_texture)
 	{
 		if (*(tmp + 1))
 		{
@@ -42,7 +42,7 @@ void	put_textures(t_scene *scene, char **tmp)
 {
 	while (tmp && *tmp)
 	{
-		if (ft_strnstr(*tmp, "NO", 2))
+		if (ft_strnstr(*tmp, "NO", 2) && !scene->no_texture)
 		{
 			if (*(tmp + 1))
 			{
@@ -52,7 +52,7 @@ void	put_textures(t_scene *scene, char **tmp)
 			else
 				ft_error(scene);
 		}
-		else if (ft_strnstr(*tmp, "SO", 2))
+		else if (ft_strnstr(*tmp, "SO", 2) && !scene->so_texture)
 		{
 			if (*(tmp + 1))
 			{
