@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bonus_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/19 16:17:47 by drongier          #+#    #+#             */
-/*   Updated: 2025/05/03 17:56:46 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/05 18:07:43 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,9 @@
 
 void	draw_ray(t_game *game, float angle)
 {
-	float	ray_x;
-	float	ray_y;
-
-	ray_x = game->player.x;
-	ray_y = game->player.y;
-	ray_tracing(game, angle, &ray_x, &ray_y);
+	game->ray.x = game->player.x;
+	game->ray.y = game->player.y;
+	ray_tracing(game, angle);
 }
 
 void	draw_square(int x, int y, int size, t_game *game)

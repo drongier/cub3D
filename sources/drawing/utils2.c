@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 14:22:08 by drongier          #+#    #+#             */
-/*   Updated: 2025/04/26 15:15:15 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:18:57 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,4 +38,14 @@ void	update_angle(t_player *player, float angle_speed)
 		player->angle -= 2 * PI;
 	if (player->angle < 0)
 		player->angle += 2 * PI;
+}
+
+int	get_cell_index(float coord)
+{
+	return ((int)coord / BLOCK);
+}
+
+int	is_diagonal(int curr_x, int curr_y, int next_x, int next_y)
+{
+	return (curr_x != next_x && curr_y != next_y);
 }

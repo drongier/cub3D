@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
+/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/05/05 11:52:36 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/06 18:19:39 by drongier         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,6 +110,10 @@ typedef struct s_texture
 
 typedef struct s_ray
 {
+	float			x;
+	float			y;
+	float			cos_a;
+	float			sin_a;
 	int				map_x;
 	int				map_y;
 	int				step_x;
@@ -149,6 +153,7 @@ typedef struct s_game
 	t_texture		textures[4];
 	int				map_width;
 	int				map_height;
+	t_ray			ray;
 	t_player		player;
 	t_map			*map;
 	t_scene			*scene;
@@ -223,11 +228,12 @@ void				draw_ceiling(int i, int start_y, t_game *game);
 
 // BONUS MINIMAP
 
+int					get_cell_index(float coord);
+int					is_diagonal(int curr_x, int curr_y, int next_x, int next_y);
 void				draw_mini_map(t_game *game);
 void				draw_scope(t_game *game);
 void				put_pixel_minimap(t_game *game, float x, float y,
 						t_minimap *mini);
-void				calcu_ray(float *x, float *y, float cos_a, float sin_a);
-void				ray_tracing(t_game *game, float angle, float *x, float *y);
+void				ray_tracing(t_game *game, float angle);
 
 #endif
