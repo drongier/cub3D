@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:07:44 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/20 18:45:32 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:15:22 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	parse_map(t_scene *scene)
 		ft_cleanup(scene);
 	extract_map(scene, map);
 	if (!map->player_o)
-		ft_error(scene);
+		ft_error(scene, "Missing spawning position / Wonrg direction value");
 	enclosed_map_check(scene, map);
 	encode_ceiling_color(scene, map);
 	encode_floor_color(scene, map);

@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:30:38 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/05 15:00:33 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:05:52 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_row_count(char *argv)
 	tmp = NULL;
 	fd = open(argv, O_RDONLY);
 	if (fd == -1)
-		ft_error(0);
+		ft_error(0, "Configuration file issue! Wrong path/File doesn't exist.");
 	while (1)
 	{
 		tmp = get_next_line(fd);
@@ -77,7 +77,7 @@ void	get_start_and_end_of_the_map(t_scene *scene)
 	while (i < scene->row && ft_is_emptyline(scene->lines[i]))
 		i++;
 	if (i != scene->row)
-		ft_error(scene);
+		ft_error(scene, "Inconsistent map configuration");
 }
 
 void	get_scene_data(char *argv, t_scene *scene)
@@ -90,6 +90,6 @@ void	get_scene_data(char *argv, t_scene *scene)
 		&& scene->ea_texture && scene->f_color && scene->c_color)
 		get_start_and_end_of_the_map(scene);
 	else
-		ft_error(scene);
+		ft_error(scene, "Missing color/texture!");
 	parse_map(scene);
 }

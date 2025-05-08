@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drongier <drongier@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/05/06 18:19:39 by drongier         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:03:06 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ void				parse_map(t_scene *scene);
 void				extract_map(t_scene *scene, t_map *map);
 int					ft_row_count(char *argv);
 void				ft_2dstrfree(char **str);
-void				ft_error(t_scene *scene);
+void				ft_error(t_scene *scene, char *message);
 void				enclosed_map_check(t_scene *scene, t_map *map);
 void				get_map(t_scene *scene, t_map *map);
 void				encode_ceiling_color(t_scene *scene, t_map *map);

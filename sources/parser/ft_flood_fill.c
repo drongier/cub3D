@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 15:04:57 by mekundur          #+#    #+#             */
-/*   Updated: 2025/03/20 17:22:59 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:40:29 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void	ft_flood_fill(t_scene *scene, bool *visited, int x, int y)
 	if (x < 0 || x >= map->row || y < 0 || y >= map->col)
 	{
 		free(visited);
-		ft_error(scene);
+		ft_error(scene, "Open map borders or player on is borderline! :s");
 	}
 	if (map->coor[x * map->col + y] == 1 || visited[x * map->col + y])
 		return ;

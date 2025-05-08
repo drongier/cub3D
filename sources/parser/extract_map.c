@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 18:18:01 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/05 15:01:22 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:38:33 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	extract_orientation_coor(t_scene *scene, int line, int i, int j)
 
 	map = scene->map;
 	if (map->player_flag)
-		ft_error(scene);
+		ft_error(scene, "Multiple spawning points!");
 	map->player_flag++;
 	map->player_x = i;
 	map->player_y = j;
@@ -60,7 +60,7 @@ int	extract_map_inner_loop(t_scene *scene, int line, int i, int *k)
 		else if (ft_is_orientation(scene->lines[line][j]))
 			extract_orientation_coor(scene, line, i, j);
 		else
-			ft_error(scene);
+			ft_error(scene, "Inconsistent map coordinates/lines!");
 	}
 	return (j);
 }

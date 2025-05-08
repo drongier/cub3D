@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 12:25:47 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/05 17:42:53 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:14:30 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	put_textures_contd(t_scene *scene, char **tmp)
 			ft_remove_trailing_new_line(scene->we_texture);
 		}
 		else
-			ft_error(scene);
+			ft_error(scene, "Texture path is missing!");
 	}
 	else if (ft_strnstr(*tmp, "EA", 2) && !scene->ea_texture)
 	{
@@ -34,7 +34,7 @@ void	put_textures_contd(t_scene *scene, char **tmp)
 			ft_remove_trailing_new_line(scene->ea_texture);
 		}
 		else
-			ft_error(scene);
+			ft_error(scene, "Texture path is missing!");
 	}
 }
 
@@ -50,7 +50,7 @@ void	put_textures(t_scene *scene, char **tmp)
 				ft_remove_trailing_new_line(scene->no_texture);
 			}
 			else
-				ft_error(scene);
+				ft_error(scene, "Texture path is missing!");
 		}
 		else if (ft_strnstr(*tmp, "SO", 2) && !scene->so_texture)
 		{
@@ -60,7 +60,7 @@ void	put_textures(t_scene *scene, char **tmp)
 				ft_remove_trailing_new_line(scene->so_texture);
 			}
 			else
-				ft_error(scene);
+				ft_error(scene, "Texture path is missing!");
 		}
 		put_textures_contd(scene, tmp);
 		tmp++;

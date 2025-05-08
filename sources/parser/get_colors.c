@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/20 17:29:08 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/05 17:43:44 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 19:15:40 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,15 +18,18 @@ void	encode_ceiling_color(t_scene *scene, t_map *map)
 	int		i;
 	int		num;
 
-	i = 0;
+	printf("%s\n", scene->c_color);
 	tmp = ft_split(scene->c_color, ',');
+	i = 0;
 	while (tmp[i])
 	{
+		printf("i:%d %p %c\n", i, tmp[i], tmp[i][0]);
 		num = ft_atoi(tmp[i]);
-		if (!(num >= 0 && num <= 255))
+		printf("%s %d\n", tmp[i], num);
+		if (!(num >= 0 && num <= 255) || (i < 3 && (!tmp[i][0] || tmp[i][0] == '\n')))
 		{
 			ft_2dstrfree(tmp);
-			ft_error(scene);
+			ft_error(scene, "Wrong color format for ceiling!");
 		}
 		map->ceiling = map->ceiling << 8;
 		map->ceiling += num;
@@ -34,7 +37,7 @@ void	encode_ceiling_color(t_scene *scene, t_map *map)
 	}
 	ft_2dstrfree(tmp);
 	if (i != 3)
-		ft_error(scene);
+		ft_error(scene, "Missing/redundant color channel for ceiling!");
 }
 
 void	encode_floor_color(t_scene *scene, t_map *map)
@@ -51,7 +54,7 @@ void	encode_floor_color(t_scene *scene, t_map *map)
 		if (!(num >= 0 && num <= 255))
 		{
 			ft_2dstrfree(tmp);
-			ft_error(scene);
+			ft_error(scene, "Wrong color format for floor!");
 		}
 		map->floor = map->floor << 8;
 		map->floor += num;
@@ -59,7 +62,7 @@ void	encode_floor_color(t_scene *scene, t_map *map)
 	}
 	ft_2dstrfree(tmp);
 	if (i != 3)
-		ft_error(scene);
+	ft_error(scene, "Missing color channel for floor!");
 }
 
 void	get_colors(t_scene *scene)

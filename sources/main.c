@@ -6,44 +6,52 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/05/02 17:33:03 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 17:28:32 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
+
+static void	ft_cleanup_continued(t_scene *scene)
+{
+	int	i;
+
+	i = 0;
+	while (scene && scene->map->map && scene->map->map[i])
+		free(scene->map->map[i++]);
+	if (scene && scene->map->map)
+		free(scene->map->map);
+}
 
 void	ft_cleanup(t_scene *scene)
 {
 	int	i;
 
 	i = 0;
-	while (scene->lines && scene->lines[i])
+	while (scene && scene->lines && scene->lines[i])
 		free(scene->lines[i++]);
-	if (scene->lines)
+	if (scene && scene->lines)
 		free(scene->lines);
-	if (scene->no_texture)
+	if (scene && scene->no_texture)
 		free(scene->no_texture);
-	if (scene->so_texture)
+	if (scene && scene->so_texture)
 		free(scene->so_texture);
-	if (scene->we_texture)
+	if (scene && scene->we_texture)
 		free(scene->we_texture);
-	if (scene->ea_texture)
+	if (scene && scene->ea_texture)
 		free(scene->ea_texture);
-	if (scene->f_color)
+	if (scene && scene->f_color)
 		free(scene->f_color);
-	if (scene->c_color)
+	if (scene && scene->c_color)
 		free(scene->c_color);
-	if (scene->map->coor)
+	if (scene && scene->map->coor)
 		free(scene->map->coor);
-	i = 0;
-	while (scene->map->map && scene->map->map[i])
-		free(scene->map->map[i++]);
-	free(scene->map->map);
+	ft_cleanup_continued(scene);
 }
 
-void	ft_error(t_scene *scene)
+void	ft_error(t_scene *scene, char *message)
 {
-	printf("Error\n");
+	printf("Error: %s\n", message);
 	ft_cleanup(scene);
 	exit(1);
 }

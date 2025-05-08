@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 11:39:19 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/03 17:51:07 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/08 14:06:07 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ void	init_textures(t_game *game)
 		game->textures[i].img = mlx_xpm_file_to_image(game->mlx, paths[i],
 				&game->textures[i].width, &game->textures[i].height);
 		if (!game->textures[i].img)
-			ft_error(game->scene);
+			ft_error(game->scene, "Issue about texture file!");
 		game->textures[i].data = mlx_get_data_addr(game->textures[i].img,
 				&game->textures[i].bpp, &game->textures[i].size_line,
 				&game->textures[i].endian);
