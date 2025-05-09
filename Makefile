@@ -6,7 +6,7 @@ SRC_DRW = bonus_map.c bonus_map2.c drawing2.c drawing.c \
 		player.c player_key.c player_mouv.c utils2.c \
 		utils.c utils_math.c ray_caster.c
 SRC_DRW := $(addprefix sources/drawing/, $(SRC_DRW))
-PRS_SRC = ft_flood_fill.c get_scene_data.c get_colors.c \
+PRS_SRC = ft_flood_fill.c get_scene_data.c get_colors.c file_check.c \
 		get_textures.c parse_map.c extract_map.c utils_2dstr.c
 PRS_SRC := $(addprefix sources/parser/, $(PRS_SRC))
 SRC += $(SRC_DRW)

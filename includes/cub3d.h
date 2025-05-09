@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/05/08 14:03:06 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:57:51 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,6 @@ typedef struct s_scene_data
 	char			*ea_texture;
 	char			*f_color;
 	char			*c_color;
-	int				del_line;
 	int				map_first_line;
 	int				map_last_line;
 	t_map			*map;
@@ -177,6 +176,8 @@ void				encode_floor_color(t_scene *scene, t_map *map);
 
 // EXIT
 
+void				ft_config_file_check(char *argv);
+void				ft_textures_files_check(t_scene *scene);
 void				ft_cleanup(t_scene *scene);
 void				exit_game(t_game *game);
 

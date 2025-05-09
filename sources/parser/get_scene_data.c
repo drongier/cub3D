@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:30:38 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/08 17:05:52 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/09 19:11:09 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_row_count(char *argv)
 	tmp = NULL;
 	fd = open(argv, O_RDONLY);
 	if (fd == -1)
-		ft_error(0, "Configuration file issue! Wrong path/File doesn't exist.");
+	 	ft_error(0, "Open error!");
 	while (1)
 	{
 		tmp = get_next_line(fd);
@@ -66,18 +66,34 @@ void	get_lines(char *argv, t_scene *scene)
 void	get_start_and_end_of_the_map(t_scene *scene)
 {
 	int	i;
+	
+	// printf("FIRST: %d\n", scene->map_first_line);
 
-	i = scene->map_first_line + 1;
+	i = scene->map_first_line;
 	while (i < scene->row && ft_is_emptyline(scene->lines[i]))
 		i++;
+	// printf("FIRST: %d\n", scene->map_first_line);
 	scene->map_first_line = i;
+	// printf("FIRST: %d\n", scene->map_first_line);
+	printf("i: %d\n", i);
 	while (i < scene->row && !ft_is_emptyline(scene->lines[i]))
 		i++;
-	scene->map_last_line = i - 1;
+	printf("i: %d\n", i);	
+	scene->map_last_line = i ;
+	scene->map->row = scene->map_last_line - scene->map_first_line;
+
+	printf("i: %d\n", i);
+	printf("FIRST: %d\n", scene->map_first_line);
+	printf("LAST: %d\n", scene->map_last_line);
+
 	while (i < scene->row && ft_is_emptyline(scene->lines[i]))
 		i++;
+	printf("map_row %d\n", scene->map->row);
+
+	printf("i %d ROW %d\n", i, scene->row);
+
 	if (i != scene->row)
-		ft_error(scene, "Inconsistent map configuration");
+		ft_error(scene, "There's mysterious stuff after map!");
 }
 
 void	get_scene_data(char *argv, t_scene *scene)

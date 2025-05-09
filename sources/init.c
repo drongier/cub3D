@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 11:39:19 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/08 14:06:07 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/09 16:27:18 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	init_parser(t_scene *scene, t_map *map)
 	scene->ea_texture = NULL;
 	scene->f_color = NULL;
 	scene->c_color = NULL;
-	scene->del_line = 0;
 	scene->map_first_line = 0;
 	scene->map_last_line = 0;
 	scene->map = map;
