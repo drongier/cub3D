@@ -13,8 +13,8 @@
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define WIDTH 1280
-# define HEIGHT 720
+# define WIDTH 1800
+# define HEIGHT 1200
 # define BLOCK 64
 # define BONUS 1
 # define MM_SIZE 8
@@ -69,8 +69,10 @@ typedef struct s_scene_data
 	char			*so_texture;
 	char			*we_texture;
 	char			*ea_texture;
+	int				texture_count;
 	char			*f_color;
 	char			*c_color;
+	int				color_count;
 	int				map_first_line;
 	int				map_last_line;
 	t_map			*map;

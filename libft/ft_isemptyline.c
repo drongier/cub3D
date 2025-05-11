@@ -16,10 +16,10 @@ int	ft_is_emptyline(char *s)
 {
 	int	i;
 
-	i = 0;
-	while (s && s[i] && ft_is_whitespace(s[i]))
-		i++;
-	if (s[i] == '\n')
+	if (!s)
 		return (1);
-	return (0);
+	i = 0;
+	while (s[i] && ft_is_whitespace(s[i]))
+		i++;
+	return (s[i] == '\n' || s[i] == '\0');
 }

@@ -22,6 +22,8 @@ void	init_parser(t_scene *scene, t_map *map)
 	scene->ea_texture = NULL;
 	scene->f_color = NULL;
 	scene->c_color = NULL;
+	scene->texture_count = 0;
+	scene->color_count = 0;
 	scene->map_first_line = 0;
 	scene->map_last_line = 0;
 	scene->map = map;
@@ -75,8 +77,8 @@ void	init_player_angle(t_player *player, t_map *map)
 void	init_player(t_player *player, t_map *map, t_game *game)
 {
 	player->o = map->player_o;
-	player->x = (float)map->player_x * BLOCK + BLOCK ;
-	player->y = (float)map->player_y * BLOCK + BLOCK ;
+	player->x = (float)map->player_x * BLOCK + BLOCK / 2;
+	player->y = (float)map->player_y * BLOCK + BLOCK / 2 ;
 	player->hit_dir = -1;
 	player->hit_x = 0;
 	player->hit_y = 0;

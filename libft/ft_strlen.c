@@ -17,17 +17,10 @@ size_t	ft_strlen(const char *s)
 	size_t	i;
 
 	i = 0;
-	while (*s != '\0')
+	while (s && *s != '\0')
 	{
 		i++;
 		s++;
 	}
 	return (i);
 }
-/*
-int	main(void)
-{
-	printf("%zu\n", ft_strlen(NULL));
-	printf("%zu\n", ft_strlen((void*)0));
-}
-*/

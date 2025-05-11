@@ -23,7 +23,7 @@ void	ft_flood_fill(t_scene *scene, bool *visited, int x, int y)
 		free(visited);
 		ft_error(scene, "Open map borders or player is borderline! :s");
 	}
-	if (map->coor[x * map->col + y] == 1 || visited[x * map->col + y])
+	if (map->coor[x * map->col + y] == 1 || visited[x * map->col + y] == 1)
 		return ;
 	else if (x >= 0 && x < map->row && y >= 0
 		&& y < map->col && map->coor[x * map->col + y] == 0)

@@ -81,8 +81,8 @@ int	main(int argc, char **argv)
 	ft_config_file_check(argv[1]);
 	init_parser(&scene, &map);
 	get_scene_data(argv[1], &scene);
-	get_map(&scene, &map);
 	ft_textures_files_check(&scene);
+	get_map(&scene, &map);
 	init_game(&game, &scene, &map);
 	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
 	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);

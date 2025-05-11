@@ -4,9 +4,9 @@ SO            ./maps/walls/south.xpm
 WE         ./maps/walls/west.xpm
 EA                            ./maps/walls/east.xpm
 
-F          50  ,  50  ,  50   
-F          50  ,  50  ,  50   
 C           255  ,   30    , 5 
+F          50  ,  50  ,  50   
+F          50  ,  50  ,  50   
 
         1111111111111111111111111
         1000000000110000000000001

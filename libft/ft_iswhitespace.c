@@ -16,8 +16,8 @@ int	ft_is_whitespace(char s)
 {
 	char	*whitespace;
 
-	whitespace = " \t\r\v";
+	whitespace = " \t\r\v\f";
 	if (ft_strchr(whitespace, s))
 		return (1);
 	return (0);
-}
+} 

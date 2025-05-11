@@ -60,7 +60,7 @@ int	extract_map_inner_loop(t_scene *scene, int line, int i)
 		else if (ft_is_orientation(scene->lines[line][j]))
 			extract_orientation_coor(scene, line, i, j);
 		else
-			ft_error(scene, "Inconsistent map coordinates/lines!");
+			ft_error(scene, "Broken or polluted map!");
 		j++;
 	}
 	return (j);
@@ -77,7 +77,7 @@ void	extract_map(t_scene *scene, t_map *map)
 	// printf("line: %d\n", line);
 	// printf("map_rows: %d\n", map->row);
 
-	while (line < scene->map_first_line + map->row)
+	while (line < scene->map_last_line)
 	{
 		// printf("map_line %d %s",line, scene->lines[line]);
 		j = extract_map_inner_loop(scene, line, i);

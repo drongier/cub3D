@@ -69,7 +69,7 @@ void	parse_map(t_scene *scene)
 		ft_cleanup(scene);
 	extract_map(scene, map);
 	if (!map->player_o)
-		ft_error(scene, "Missing spawning position / Wonrg direction value");
+		ft_error(scene, "Missing spawning position / Wrong direction value");
 	enclosed_map_check(scene, map);
 	encode_ceiling_color(scene, map);
 	encode_floor_color(scene, map);
