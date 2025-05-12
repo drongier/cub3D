@@ -41,7 +41,7 @@ void	get_lines(char *argv, t_scene *scene)
 	int	j;
 	int	fd;
 
-	scene->lines = (char **)calloc(scene->row + 1, sizeof(char *));
+	scene->lines = (char **)ft_calloc(scene->row + 1, sizeof(char *));
 	if (!scene->lines)
 		ft_error(scene, "Allocation error!");
 	scene->lines[scene->row] = NULL;
@@ -74,6 +74,8 @@ void	get_start_and_end_of_the_map(t_scene *scene)
 		i++;
 	if (i != scene->row)
 		ft_error(scene, "There's mysterious stuff before/after the map!");
+	if (scene->map_last_line <= scene->map_first_line)
+		ft_error(scene, "Map is no at the end of the file!");
 }
 
 void	get_scene_data(char *argv, t_scene *scene)
