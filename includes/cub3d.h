@@ -6,15 +6,15 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:43:05 by drongier          #+#    #+#             */
-/*   Updated: 2025/05/09 16:57:51 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/12 13:57:54 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define WIDTH 1800
-# define HEIGHT 1200
+# define WIDTH 1280
+# define HEIGHT 720
 # define BLOCK 64
 # define BONUS 1
 # define MM_SIZE 8
@@ -168,9 +168,8 @@ void				get_textures(t_scene *scene);
 void				get_scene_data(char *argv, t_scene *scene);
 void				parse_map(t_scene *scene);
 void				extract_map(t_scene *scene, t_map *map);
-int					ft_row_count(char *argv);
+int					ft_row_count(t_scene *scene, char *argv);
 void				ft_2dstrfree(char **str);
-void				ft_error(t_scene *scene, char *message);
 void				enclosed_map_check(t_scene *scene, t_map *map);
 void				get_map(t_scene *scene, t_map *map);
 void				encode_ceiling_color(t_scene *scene, t_map *map);
@@ -178,9 +177,10 @@ void				encode_floor_color(t_scene *scene, t_map *map);
 
 // EXIT
 
+void				ft_error(t_scene *scene, char *message);
 void				ft_config_file_check(char *argv);
 void				ft_textures_files_check(t_scene *scene);
-void				ft_cleanup(t_scene *scene);
+// void				ft_cleanup(t_scene *scene);
 void				exit_game(t_game *game);
 
 // INITIALISATION

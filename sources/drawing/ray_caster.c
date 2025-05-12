@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/05 12:04:43 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/05 12:35:22 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/12 14:54:49 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	ft_dda(t_player *player, t_ray *ray)
 			ray->map_y += ray->step_y;
 			ray->side = 1;
 		}
-		if (player->map->map[ray->map_y][ray->map_x] == '1')
+		if (player->game->map->map[ray->map_y][ray->map_x] == '1')
 			hit = true;
 	}
 }

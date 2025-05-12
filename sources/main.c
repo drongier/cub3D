@@ -6,24 +6,13 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/18 18:45:28 by drongier          #+#    #+#             */
-/*   Updated: 2025/05/09 16:58:12 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:13:54 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/cub3d.h"
 
-static void	ft_cleanup_continued(t_scene *scene)
-{
-	int	i;
-
-	i = 0;
-	while (scene && scene->map->map && scene->map->map[i])
-		free(scene->map->map[i++]);
-	if (scene && scene->map->map)
-		free(scene->map->map);
-}
-
-void	ft_cleanup(t_scene *scene)
+static void	ft_cleanup_scene(t_scene *scene)
 {
 	int	i;
 
@@ -44,15 +33,26 @@ void	ft_cleanup(t_scene *scene)
 		free(scene->f_color);
 	if (scene && scene->c_color)
 		free(scene->c_color);
-	if (scene && scene->map->coor)
-		free(scene->map->coor);
-	ft_cleanup_continued(scene);
+}
+
+static void	ft_cleanup_map(t_map *map)
+{
+	int	i;
+
+	i = 0;
+	while (map && map->map && map->map[i])
+		free(map->map[i++]);
+	if (map && map->coor)
+		free(map->coor);
+	if (map && map->map)
+		free(map->map);
 }
 
 void	ft_error(t_scene *scene, char *message)
 {
 	printf("Error: %s\n", message);
-	ft_cleanup(scene);
+	ft_cleanup_map(scene->map);
+	ft_cleanup_scene(scene);
 	exit(1);
 }
 
@@ -84,6 +84,7 @@ int	main(int argc, char **argv)
 	ft_textures_files_check(&scene);
 	get_map(&scene, &map);
 	init_game(&game, &scene, &map);
+	ft_cleanup_scene(&scene);
 	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
 	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
 	mlx_hook(game.win, 17, 0L, close_window, &game);
@@ -91,6 +92,6 @@ int	main(int argc, char **argv)
 	mlx_loop_hook(game.mlx, draw_loop, &game);
 	mlx_loop(game.mlx);
 	exit_game(&game);
-	ft_cleanup(&scene);
+	ft_cleanup_map(&map);
 	return (0);
 }

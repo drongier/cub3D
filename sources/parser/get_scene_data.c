@@ -6,13 +6,13 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:30:38 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/09 19:11:09 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/12 13:59:39 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/cub3d.h"
 
-int	ft_row_count(char *argv)
+int	ft_row_count(t_scene *scene, char *argv)
 {
 	int		row;
 	int		fd;
@@ -22,7 +22,7 @@ int	ft_row_count(char *argv)
 	tmp = NULL;
 	fd = open(argv, O_RDONLY);
 	if (fd == -1)
-	 	ft_error(0, "Open error!");
+		ft_error(scene, "Open error!");
 	while (1)
 	{
 		tmp = get_next_line(fd);
@@ -38,27 +38,21 @@ int	ft_row_count(char *argv)
 void	get_lines(char *argv, t_scene *scene)
 {
 	int	i;
-	int j;
+	int	j;
 	int	fd;
-	// int	len;
 
 	scene->lines = (char **)calloc(scene->row + 1, sizeof(char *));
 	if (!scene->lines)
-		ft_cleanup(scene);
+		ft_error(scene, "Allocation error!");
 	scene->lines[scene->row] = NULL;
 	fd = open(argv, O_RDONLY);
 	i = -1;
 	while (++i < scene->row)
-	{	
+	{
 		scene->lines[i] = get_next_line(fd);
-		// len = ft_strlen(scene->lines[i]);
-		// printf("len :%d %s", len, scene->lines[i]);
 		j = 0;
 		while (scene->lines[i][j] != '\0')
 			j++;
-		// if (scene->lines[i][j - 1] != '\n')
-		// 	scene->lines[i][j - 1] = '\n';
-		// printf("len :%d %s", len, scene->lines[i]);
 	}
 	close(fd);
 }
@@ -66,46 +60,29 @@ void	get_lines(char *argv, t_scene *scene)
 void	get_start_and_end_of_the_map(t_scene *scene)
 {
 	int	i;
-	
+
 	scene->map_first_line++;
 	i = scene->map_first_line;
-	// printf("FIRST: %d\n", scene->map_first_line);
 	while (i < scene->row && ft_is_emptyline(scene->lines[i]))
 		i++;
 	scene->map_first_line = i;
-	// printf("FIRST: %d\n", scene->map_first_line);
-	// printf("i: %d\n", i);
 	while (i < scene->row && !ft_is_emptyline(scene->lines[i]))
 		i++;
-	// printf("i: %d\n", i);	
 	scene->map_last_line = i ;
 	scene->map->row = scene->map_last_line - scene->map_first_line;
-
-	// printf("i: %d\n", i);
-	// printf("FIRST: %d\n", scene->map_first_line);
-	// printf("LAST: %d\n", scene->map_last_line);
-
 	while (i < scene->row && ft_is_emptyline(scene->lines[i]))
 		i++;
-	// printf("map_row %d\n", scene->map->row);
-
-	// printf("i %d ROW %d\n", i, scene->row);
-
 	if (i != scene->row)
 		ft_error(scene, "There's mysterious stuff before/after the map!");
 }
 
 void	get_scene_data(char *argv, t_scene *scene)
 {
-	scene->row = ft_row_count(argv);
+	scene->row = ft_row_count(scene, argv);
 	get_lines(argv, scene);
 	get_textures(scene);
 	ft_textures_files_check(scene);
 	get_colors(scene);
-	// if (scene->no_texture && scene->so_texture && scene->we_texture
-	// 	&& scene->ea_texture && scene->f_color && scene->c_color)
 	get_start_and_end_of_the_map(scene);
-	// else
-	// 	ft_error(scene, "Missing color/texture!");
 	parse_map(scene);
 }

@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/04 15:07:44 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/08 14:15:22 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/12 15:01:55 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,13 @@ void	get_map(t_scene *scene, t_map *map)
 
 	map->map = (char **)ft_calloc(map->row + 1, sizeof(char *));
 	if (!map->map)
-		ft_cleanup(scene);
+		ft_error(scene, "Allocation error!");
 	i = 0;
 	while (i < map->row)
 	{
 		map->map[i] = (char *)ft_calloc(map->col + 1, sizeof(char));
 		if (!map->map[i])
-			ft_cleanup(scene);
+			ft_error(scene, "Allocation error!");
 		j = 0;
 		while (j < map->col)
 		{
@@ -66,7 +66,7 @@ void	parse_map(t_scene *scene)
 	map_row_col(scene);
 	map->coor = (char *)ft_calloc(map->row * map->col, sizeof(char));
 	if (!map->coor)
-		ft_cleanup(scene);
+		ft_error(scene, "Allocation error!");
 	extract_map(scene, map);
 	if (!map->player_o)
 		ft_error(scene, "Missing spawning position / Wrong direction value");
