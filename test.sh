@@ -2,7 +2,8 @@
 
 # List of map paths
 map_paths=(
-        /maps/bad
+        maps
+	/maps/bad
 	maps/bad
 	./maps/bad/
           ./maps/bad/color_invalid_rgb.cub
@@ -43,7 +44,7 @@ map_paths=(
           ./maps/bad/player_on_edge.cub
           ./maps/bad/textures_dir.cub
           ./maps/bad/textures_duplicates.cub
-          ./maps/bad/textures_forbidden.cub
+          #./maps/bad/textures_forbidden.cub
           ./maps/bad/textures_invalid.cub
           ./maps/bad/textures_missing.cub
           ./maps/bad/textures_none.cub

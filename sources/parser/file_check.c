@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 16:20:39 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/15 11:06:15 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:11:39 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	ft_config_file_check(char *arg)
 	}
 	tmp = ft_strtrim(arg, " \t");
 	s = ft_strrchr(tmp, '.');
-	if (ft_strncmp(s + 1, "cub", 3))
+	if (!s || ft_strncmp(s + 1, "cub", 3))
 	{
 		printf("Error: Bad file or bad file extension!\n");
 		if (tmp)
