@@ -6,7 +6,7 @@
 /*   By: mekundur <mekundur@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/09 16:20:39 by mekundur          #+#    #+#             */
-/*   Updated: 2025/05/12 18:16:07 by mekundur         ###   ########.fr       */
+/*   Updated: 2025/05/15 11:06:15 by mekundur         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	ft_xpm_check(t_scene *scene, char *texture)
 		ft_error(scene, "Missing a texture path!");
 	tmp = ft_strtrim(texture, " \t\n");
 	s = ft_strrchr(tmp, '.');
-	if (!ft_strchr(texture, '.') || ft_strncmp(s + 1, "xpm", 3))
+	if (!s || !ft_strchr(texture, '.') || ft_strncmp(s + 1, "xpm", 3))
 	{
 		free(tmp);
 		ft_error(scene, "Texture files' format should be '.xpm' !");
@@ -73,7 +73,7 @@ void	ft_config_file_check(char *arg)
 	}
 	tmp = ft_strtrim(arg, " \t");
 	s = ft_strrchr(tmp, '.');
-	if (!s || ft_strncmp(s + 1, "cub", 3))
+	if (ft_strncmp(s + 1, "cub", 3))
 	{
 		printf("Error: Bad file or bad file extension!\n");
 		if (tmp)

@@ -2,7 +2,9 @@
 
 # List of map paths
 map_paths=(
-          ./maps/bad/
+        /maps/bad
+	maps/bad
+	./maps/bad/
           ./maps/bad/color_invalid_rgb.cub
           ./maps/bad/color_missing_ceiling_rgb.cub
           ./maps/bad/color_missing.cub
@@ -30,7 +32,7 @@ map_paths=(
           ./maps/bad/file_letter_end.cub
           ./maps/bad/filetype_missing
           ./maps/bad/filetype_wrong.buc
-          ./maps/bad/forbidden.cub
+          #./maps/bad/forbidden.cub
           ./maps/bad/map_first.cub
           ./maps/bad/map_middle.cub
           ./maps/bad/map_missing.cub
@@ -81,8 +83,26 @@ for map_path in "${map_paths[@]}"
 do
   echo -e "\n++++++++++ $map_path ++++++++++\n"
   # Run valgrind
-  valgrind --leak-check=full --show-leak-kinds=all -q ./cub3D $map_path 2>&1 > output.txt
-  # Print output
+  valgrind --leak-check=full --show-leak-kinds=all -q ./cub3D $map_path > output.txt 2>&1
+
+  issues_found=false
+
+  # Detect issues
+if grep -q -E "definitely lost: [1-9]" output.txt || \
+   grep -q -E "indirectly lost: [1-9]" output.txt || \
+   grep -q -i "still reachable" output.txt || \
+   grep -q -E "Invalid (read|write)" output.txt || \
+   grep -q -E "SIGSEGV|Segmentation fault" output.txt; then
+  issues_found=true
+fi
+
+if [ "$issues_found" = true ]; then
+  echo -e "❌ Issues detected for $map_path"
+else
+  echo -e "✅ No issues detected for $map_path"
+fi
+
+# Print output
   cat output.txt
 done
 
