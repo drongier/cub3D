@@ -32,7 +32,7 @@ $(MLX) :
 
 $(NAME) : $(HEADER) $(LIBFT) $(OBJ) Makefile
 	@echo "Creating the program <cub3D>"
-	@cc -g -Werror -Wall -Wextra -L$(MLX_DIR) $(OBJ) $(MLX_FLG) $(LIBFT) $(MLX) -Iinclude -ldl -lglfw -lm -o $(NAME)
+	@cc -g -Werror -Wall -Wextra -L$(MLX_DIR) $(OBJ) $(MLX_FLG) $(LIBFT) $(MLX) -Iinclude -ldl -lm -o $(NAME)
 
 %.o: %.c
 	$(CC) -g $(CFLAGS) -I$(MLX_DIR) -c $< -o $@
