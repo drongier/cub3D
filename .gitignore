@@ -1,0 +1,13 @@
+### Build artifacts
+*.o
+*.a
+cub3D
+
+### minilibx build output
+minilibx-linux/obj/
+
+### Editor and OS noise
+*.swp
+*.swo
+*~
+.DS_Store
