@@ -53,6 +53,7 @@
 # include "raster.h"
 # include "raycast.h"
 # include "pixels.h"
+# include "level.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -63,52 +64,18 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-typedef struct s_map_data
-{
-	int				row;
-	int				col;
-	char			*coor;
-	int				player_x;
-	int				player_y;
-	char			player_o;
-	int				player_flag;
-	char			**map;
-	int				ceiling;
-	int				floor;
-}					t_map;
-
-typedef struct s_scene_data
-{
-	int				row;
-	char			**lines;
-	char			*no_texture;
-	char			*so_texture;
-	char			*we_texture;
-	char			*ea_texture;
-	int				texture_count;
-	char			*f_color;
-	char			*c_color;
-	int				color_count;
-	int				map_first_line;
-	int				map_last_line;
-	t_map			*map;
-}					t_scene;
-
 typedef struct s_player
 {
 	float			x;
 	float			y;
 	float			angle;
-	char			o;
 	bool			key_up;
 	bool			key_down;
 	bool			key_left;
 	bool			key_right;
-	bool			key_exit;	
 	bool			left_rotate;
 	bool			right_rotate;
 	struct s_game	*game;
-	t_map			*map;
 }					t_player;
 
 typedef struct s_game
@@ -117,40 +84,18 @@ typedef struct s_game
 	uint32_t		*fb;
 	t_texture		textures[4];
 	t_player		player;
-	t_map			*map;
-	t_scene			*scene;
+	t_level			level;
 	t_grid			grid;
 	t_vec2			hits[WIDTH];
 }					t_game;
 
-// PARSER
+// GAME
 
-void				get_colors(t_scene *scene);
-void				get_textures(t_scene *scene);
-void				get_scene_data(char *argv, t_scene *scene);
-void				parse_map(t_scene *scene);
-void				extract_map(t_scene *scene, t_map *map);
-int					ft_row_count(t_scene *scene, char *argv);
-void				ft_2dstrfree(char **str);
-void				enclosed_map_check(t_scene *scene, t_map *map);
-void				get_map(t_scene *scene, t_map *map);
-void				encode_ceiling_color(t_scene *scene, t_map *map);
-void				encode_floor_color(t_scene *scene, t_map *map);
-
-// EXIT
-
-void				ft_error(t_scene *scene, char *message);
-void				ft_config_file_check(char *argv);
-void				ft_textures_files_check(t_scene *scene);
-// void				ft_cleanup(t_scene *scene);
+bool				game_init(t_game *game);
+bool				game_load_level(t_game *game, const char *path,
+						t_level_error *err);
+void				game_unload_level(t_game *game);
 void				game_destroy(t_game *game);
-
-// INITIALISATION
-
-void				init_parser(t_scene *scene, t_map *map);
-void				init_textures(t_game *game);
-void				init_player(t_player *player, t_map *map, t_game *game);
-void				init_game(t_game *game, t_scene *scene, t_map *map);
 
 // PLAYER MOVEMENT
 

@@ -1,86 +1,18 @@
 #!/bin/bash
 
-# List of map paths
-map_paths=(
-        maps
-	/maps/bad
-	maps/bad
-	./maps/bad/
-          ./maps/bad/color_invalid_rgb.cub
-          ./maps/bad/color_missing_ceiling_rgb.cub
-          ./maps/bad/color_missing.cub
-          ./maps/bad/color_missing_floor_rgb.cub
-          ./maps/bad/color_none.cub
-          ./maps/bad/empty.cub
-          ./maps/bad/error_map_borders.cub
-          ./maps/bad/error_map_chars.cub
-          ./maps/bad/error_map_chars_on_line.cub
-          ./maps/bad/error_map_colors_oor.cub
-          ./maps/bad/error_map_empty.cub
-          ./maps/bad/error_map_ending.txt
-          ./maps/bad/error_map_missing_color.cub
-          ./maps/bad/error_map_missing_map.cub
-          ./maps/bad/error_map_missing_text.cub
-          ./maps/bad/error_map_multiple_color.cub
-          ./maps/bad/error_map_multiple_player_pos.cub
-          ./maps/bad/error_map_multiple_textures.cub
-          ./maps/bad/error_map_order.cub
-          ./maps/bad/error_map_player_in_wall.cub
-          ./maps/bad/error_map_player_outside_wall.cub
-          ./maps/bad/error_map_spaces_on_line.cub
-          ./maps/bad/error_map_wrong_identifier.cub
-          ./maps/bad/error_map_wrong_texture.cub
-          ./maps/bad/file_letter_end.cub
-          ./maps/bad/filetype_missing
-          ./maps/bad/filetype_wrong.buc
-          #./maps/bad/forbidden.cub
-          ./maps/bad/map_first.cub
-          ./maps/bad/map_middle.cub
-          ./maps/bad/map_missing.cub
-          ./maps/bad/map_only.cub
-          ./maps/bad/map_too_small.cub
-          ./maps/bad/player_multiple.cub
-          ./maps/bad/player_none.cub
-          ./maps/bad/player_on_edge.cub
-          ./maps/bad/textures_dir.cub
-          ./maps/bad/textures_duplicates.cub
-          #./maps/bad/textures_forbidden.cub
-          ./maps/bad/textures_invalid.cub
-          ./maps/bad/textures_missing.cub
-          ./maps/bad/textures_none.cub
-          ./maps/bad/textures_not_xpm.cub
-          ./maps/bad/wall_hole_east.cub
-          ./maps/bad/wall_hole_north.cub
-          ./maps/bad/wall_hole_south.cub
-          ./maps/bad/wall_hole_west.cub
-          ./maps/bad/wall_none.cub
-            # ./maps/good/cheese_maze.cub
-            # ./maps/good/creepy.cub
-            # ./maps/good/dungeon.cub
-            # ./maps/good/library.cub
-            # ./maps/good/map.cub
-            # ./maps/good/matrix.cub
-            # ./maps/good/sad_face.cub
-            # ./maps/good/small.cub
-            # ./maps/good/square_map.cub
-            # ./maps/good/subject_map.cub
-            # ./maps/good/test_map.cub
-            # ./maps/good/test_map_hole.cub
-            # ./maps/good/test_pos_bottom.cub
-            # ./maps/good/test_pos_left.cub
-            # ./maps/good/test_pos_right.cub
-            # ./maps/good/test_pos_top.cub
-            # ./maps/good/test_textures.cub
-            # ./maps/good/test_whitespace.cub
-            # ./maps/good/valid_map_1.cub
-            # ./maps/good/valid_map_2.cub
-            # ./maps/good/valid_map_3.cub
-            # ./maps/good/valid_map_4.cub
-            # ./maps/good/works.cub
-)
+# Scènes à refuser : les dossiers eux-mêmes, puis tout maps/bad
+bad_paths=(maps /maps/bad maps/bad ./maps/bad/ ./maps/bad/*)
+# Scènes à accepter, vérifiées sans fenêtre avec --check
+good_paths=(./maps/good/*.cub)
 
 TIMEOUT=5
 out=$(mktemp)
+# git ne garde pas les droits de lecture : on retire ceux de la texture
+# "interdite" le temps des tests
+forbidden=textures/test/forbidden.xpm
+forbidden_mode=$(stat -c %a "$forbidden" 2>/dev/null || stat -f %Lp "$forbidden")
+chmod 000 "$forbidden"
+trap 'chmod "$forbidden_mode" "$forbidden"; rm -f "$out"' EXIT
 total=0
 passed=0
 
@@ -109,24 +41,28 @@ else
   echo "valgrind not found: checking exit codes and error messages only"
 fi
 
-for map_path in "${map_paths[@]}"
-do
+# check <attendu: bad|good> <chemin>
+check() {
+  local want=$1 map_path=$2 extra=()
+  [ "$want" = good ] && extra=(--check)
   echo -e "\n++++++++++ $map_path ++++++++++\n"
   total=$((total + 1))
   if [ "$use_valgrind" = true ]; then
-    run_with_timeout valgrind --leak-check=full --show-leak-kinds=all -q ./cub3D "$map_path"
+    run_with_timeout valgrind --leak-check=full --show-leak-kinds=all -q ./cub3D "${extra[@]}" "$map_path"
   else
-    run_with_timeout ./cub3D "$map_path"
+    run_with_timeout ./cub3D "${extra[@]}" "$map_path"
   fi
 
   issues_found=false
   reason=""
   if [ "$rc" -eq 124 ]; then
-    issues_found=true; reason="still running after ${TIMEOUT}s (map accepted?)"
+    issues_found=true; reason="still running after ${TIMEOUT}s"
   elif [ "$rc" -ge 128 ]; then
     issues_found=true; reason="crashed (exit $rc)"
-  elif [ "$rc" -ne 1 ] || ! grep -q "Error" "$out"; then
+  elif [ "$want" = bad ] && { [ "$rc" -ne 1 ] || ! grep -q "Error" "$out"; }; then
     issues_found=true; reason="expected exit 1 with an Error message, got exit $rc"
+  elif [ "$want" = good ] && { [ "$rc" -ne 0 ] || ! grep -q "^OK" "$out"; }; then
+    issues_found=true; reason="expected the scene to load, got exit $rc"
   elif [ "$use_valgrind" = true ] && { grep -q -E "definitely lost: [1-9]" "$out" || \
        grep -q -E "indirectly lost: [1-9]" "$out" || \
        grep -q -i "still reachable" "$out" || \
@@ -141,8 +77,10 @@ do
     passed=$((passed + 1))
   fi
   cat "$out"
-done
+}
 
-rm -f "$out"
+for map_path in "${bad_paths[@]}"; do check bad "$map_path"; done
+for map_path in "${good_paths[@]}"; do check good "$map_path"; done
+
 echo -e "\n++++++++++ Test Finished: $passed/$total ok ++++++++++\n"
 [ "$passed" -eq "$total" ]

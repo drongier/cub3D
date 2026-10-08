@@ -58,12 +58,13 @@ optimization.
 ## Run
 
 ```sh
-./cub3D [--no-vsync] [--fps N] [--bench [N]] maps/good/cheese_maze.cub
+./cub3D [--check] [--no-vsync] [--fps N] [--bench [N]] maps/good/cheese_maze.cub
 ```
 
 One `.cub` scene file, options in any order. The window title shows the frame rate, the frame time
 and the time spent rendering, refreshed twice a second.
 
+- `--check` loads the scene and its textures, prints `OK` and exits without a window
 - `--no-vsync` renders as fast as possible instead of following the screen refresh
 - `--fps N` caps the frame rate at N (10 to 1000); with vsync on, the slower of the two wins
 - `--bench [N]` plays N frames (1000 by default) with vsync off and no cap, turning on the spot
@@ -107,41 +108,55 @@ C 225,30,0
 1111111
 ```
 
-`NO`, `SO`, `WE` and `EA` are the wall textures for the north, south, west and east faces. Paths
-must point to an `.xpm` file that exists and can be read.
+The six elements can come in any order, one per line, with any amount of spaces or tabs around
+them. Each must appear exactly once.
 
-`F` and `C` are the floor and ceiling colors, three integers between 0 and 255 separated by commas.
-Spaces around the numbers are fine, `F 50 , 50 , 50` is accepted.
+`NO`, `SO`, `WE` and `EA` are the wall textures for the north, south, west and east faces: one
+path, without spaces, ending in `.xpm`, to a file that exists and can be read.
+
+`F` and `C` are the floor and ceiling colors: exactly three numbers from 0 to 255, separated by
+commas. Spaces around the numbers are fine, `F 50 , 50 , 50` is accepted; `F 1,2`, `F 1,2,3,`,
+`F 12x,4,5` or `F a,b,c` are not.
 
 The grid comes last. `1` is a wall, `0` is an empty cell, a whitespace character counts as empty,
 and one of `N`, `S`, `E`, `W` marks where the player starts and which way they look. Exactly one
-spawn point. Rows can be shorter than the longest one, the parser pads them.
+spawn point. Rows can be shorter than the longest one, the parser pads them. The grid is limited to
+1000 x 1000 cells and the file to 16 MB. Windows line endings (`\r\n`) are accepted.
 
 ## What the parser refuses
 
-The parser is strict on purpose, and every failure prints a message that names the problem.
+The parser is strict on purpose. It never exits on its own: it returns the error to the caller,
+which prints `Error`, then the line of the file at fault when there is one, then the reason.
 
-- a missing or duplicated element (`Multiple/missing NO texture path!`, `Multiple color entry!`)
-- a texture path that does not exist, has no read rights, or is not an `.xpm`
-  (`Texture files' format should be '.xpm' !`)
-- malformed colors (`Wrong color format for ceiling!`, `Missing/redundant color channel for ceiling!`)
-- a map character outside `0`, `1`, whitespace and `NSEW` (`Broken or polluted map!`)
-- no spawn point, or more than one (`Multiple spawning points!`)
-- a grid that is not sealed: the parser flood fills from the player, and the fill escaping the
-  borders is an error (`Open map borders or player is borderline!`)
-- anything other than blank lines before or after the grid (`There's mysterious stuff
-  before/after the map!`)
+```
+Error
+line 5: color must be three numbers from 0 to 255, as R,G,B
+```
 
-`maps/bad/` holds 49 files, one per rejected case, so the parser can be regression tested by hand.
+- a file that is not a regular `.cub` file, cannot be read, or holds a NUL byte
+- an unknown identifier (`N`, `NOO`, `hello`...), or an element given twice
+- a texture path that is missing, is not a single word, does not end in `.xpm`, or cannot be
+  loaded
+- a malformed color
+- a map that starts before all six elements are given, or anything but blank lines after it,
+  including an empty line inside the grid
+- a map character outside `0`, `1`, whitespace and `NSEW`
+- no spawn point, or more than one
+- a grid that is not sealed: everything the player can reach from the spawn without crossing a
+  wall, diagonals included, must stay inside the grid. The check walks the grid with an explicit
+  stack, so a 1000 x 1000 map is checked in a few milliseconds without recursion.
+
+`maps/bad/` holds one file per rejected case. `./cub3D --check <scene.cub>` loads a scene, its
+textures included, prints `OK` and exits without opening a window.
 
 ## Tests
 
 `make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill,
-ray casting, wall columns).
+ray casting, wall columns, scene parsing).
 
-`test.sh` runs the binary over the whole `maps/bad/` batch and expects every scene to be refused:
+`test.sh` runs the binary over the whole `maps/bad/` folder and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
-seconds. When valgrind is installed (Linux), it also checks for leaks and invalid accesses. It
+seconds. It then runs `--check` on every scene of `maps/good/` and expects `OK`. When valgrind is installed (Linux), it also checks for leaks and invalid accesses. It
 ends with a `passed/total` line and a non-zero exit code on failure.
 
 ```sh
@@ -154,9 +169,8 @@ Benchmarks are tracked in `docs/perf/benchmarks.md`.
 ## Project layout
 
 ```
-includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h, motion.h, raster.h,
-                      grid.h, raycast.h, pixels.h
-sources/main.c        entry point and cleanup
+includes/             cub3d.h (structs, constants) and one header per module
+sources/main.c        entry point
 sources/loop.c        main loop, fps counter, benchmark
 sources/options.c     command line
 sources/stats.c       benchmark statistics
@@ -165,16 +179,16 @@ sources/raster.c      alpha blending, spans and polygon fill
 sources/grid.c        flat map grid, void outside the map found by flood fill
 sources/raycast.c     camera, DDA ray casting, wall height
 sources/pixels.c      row fills, textured wall columns, column-major textures
-sources/init.c        game, player and texture setup
 sources/platform/     SDL3 window, input and clock; XPM loader
-sources/parser/       scene parsing and validation
-sources/drawing/      raycasting, walls, floor, ceiling, minimap
+sources/level/        scene file parsing and validation (no exit, errors with line numbers)
+sources/game.c        load and unload a scene: textures, grid, player
+sources/drawing/      frame drawing, player update, minimap
 libft/                our own libft, including ft_printf and get_next_line
 tests/                unit tests
 maps/good/            valid scenes, from small test maps to full mazes
-maps/bad/             49 scenes that must be rejected
+maps/bad/             scenes that must be rejected, one per error case
 textures/             xpm textures
-test.sh               batch tester for invalid scenes
+test.sh               batch tester: every bad scene refused, every good one loads
 docs/                 specs, plans and benchmarks
 ```
 

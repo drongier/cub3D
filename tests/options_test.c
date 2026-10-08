@@ -25,6 +25,7 @@ int	main(void)
 	char		*b5[] = {"cub3D", "--bench", "99999999", "a.cub"};
 	char		*b6[] = {"cub3D", "--bench", "200"};
 	char		*a6[] = {"cub3D", "--fps", "30", "map.cub"};
+	char		*a7[] = {"cub3D", "map.cub", "--check"};
 	char		*b7[] = {"cub3D", "--fps", "9", "a.cub"};
 	char		*b8[] = {"cub3D", "--fps", "1001", "a.cub"};
 	char		*b9[] = {"cub3D", "a.cub", "--fps"};
@@ -47,6 +48,9 @@ int	main(void)
 	CHECK(!parse_options(ARGC(b8), b8, &o), "--fps too high");
 	CHECK(!parse_options(ARGC(b9), b9, &o), "--fps without value");
 	CHECK(!parse_options(ARGC(b10), b10, &o), "--fps not a number");
+	CHECK(parse_options(ARGC(a1), a1, &o) && !o.check, "no check by default");
+	CHECK(parse_options(ARGC(a7), a7, &o) && o.check
+		&& strcmp(o.scene_path, "map.cub") == 0, "--check");
 	CHECK(!parse_options(ARGC(b1), b1, &o), "no map");
 	CHECK(!parse_options(ARGC(b2), b2, &o), "two maps");
 	CHECK(!parse_options(ARGC(b3), b3, &o), "unknown option");

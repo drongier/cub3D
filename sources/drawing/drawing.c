@@ -39,9 +39,9 @@ int	draw_loop(t_game *game)
 	int			i;
 
 	fill_rows(game->fb, WIDTH, 0, HEIGHT / 2,
-		(uint32_t)game->map->ceiling & 0xFFFFFF);
+		game->level.ceiling);
 	fill_rows(game->fb, WIDTH, HEIGHT / 2, HEIGHT,
-		(uint32_t)game->map->floor & 0xFFFFFF);
+		game->level.floor);
 	cam = camera_make((t_vec2){game->player.x / BLOCK,
 			game->player.y / BLOCK}, game->player.angle, WIDTH);
 	i = 0;

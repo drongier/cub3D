@@ -16,8 +16,8 @@ static bool	near(double a, double b)
 
 int	main(void)
 {
-	char		*rows[] = {"11111", "10001", "10001", "10001", "11111"};
-	char		*open_rows[] = {"  111", " 1001", "11001", "10001", "11111"};
+	const char	*rows = "11111" "10001" "10001" "10001" "11111";
+	const char	*open_rows = "  111" " 1001" "11001" "10001" "11111";
 	t_grid		g;
 	t_hit		h;
 	t_camera	cam;

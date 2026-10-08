@@ -10,25 +10,25 @@ CFLAGS		:= -Wall -Wextra -Werror -MMD -MP $(OPT) -g $(EXTRA_CFLAGS) $(SDL_CFLAGS
 LDFLAGS		:= $(EXTRA_LDFLAGS)
 LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
-SRC			:= sources/main.c sources/init.c \
+LEVEL_SRC	:= sources/level/level.c sources/level/level_lines.c \
+			   sources/level/level_header.c sources/level/level_map.c
+
+SRC			:= sources/main.c sources/game.c \
 			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
 			   sources/raster.c sources/grid.c sources/raycast.c sources/pixels.c \
+			   $(LEVEL_SRC) \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
 			   sources/drawing/minimap.c \
 			   sources/drawing/drawing.c \
 			   sources/drawing/player.c \
-			   sources/drawing/utils.c \
-			   sources/parser/ft_flood_fill.c sources/parser/get_scene_data.c \
-			   sources/parser/get_colors.c sources/parser/file_check.c \
-			   sources/parser/get_textures.c sources/parser/parse_map.c \
-			   sources/parser/extract_map.c sources/parser/utils_2dstr.c
+			   sources/drawing/utils.c
 OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 
 TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test \
 			   $(BUILD)/tests/raster_test $(BUILD)/tests/raycast_test \
-			   $(BUILD)/tests/pixels_test
+			   $(BUILD)/tests/pixels_test $(BUILD)/tests/level_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -83,6 +83,10 @@ $(BUILD)/tests/raycast_test: tests/raycast_test.c $(BUILD)/sources/raycast.o \
 
 $(BUILD)/tests/pixels_test: tests/pixels_test.c $(BUILD)/sources/pixels.o \
 		$(BUILD)/sources/platform/xpm_loader.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
+
+$(BUILD)/tests/level_test: tests/level_test.c $(LEVEL_SRC:%.c=$(BUILD)/%.o)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
 

@@ -8,13 +8,17 @@
 # define FPS_CAP_MIN 10
 # define FPS_CAP_MAX 1000
 
-/* bench_frames == 0 : partie normale ; fps_cap == 0 : pas de limite */
+/*
+ * bench_frames == 0 : partie normale ; fps_cap == 0 : pas de limite ;
+ * check : charge la scène, affiche OK et quitte, sans fenêtre
+ */
 typedef struct s_options
 {
 	const char	*scene_path;
 	bool		vsync;
 	int			bench_frames;
 	int			fps_cap;
+	bool		check;
 }	t_options;
 
 bool	parse_options(int argc, char **argv, t_options *opt);

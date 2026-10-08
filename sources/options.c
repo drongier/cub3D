@@ -57,11 +57,14 @@ bool	parse_options(int argc, char **argv, t_options *opt)
 	opt->vsync = true;
 	opt->bench_frames = 0;
 	opt->fps_cap = 0;
+	opt->check = false;
 	i = 1;
 	while (i < argc)
 	{
 		if (strcmp(argv[i], "--no-vsync") == 0)
 			opt->vsync = false;
+		else if (strcmp(argv[i], "--check") == 0)
+			opt->check = true;
 		else if (strcmp(argv[i], "--bench") == 0)
 		{
 			if (!parse_bench(argc, argv, &i, opt))
@@ -88,5 +91,6 @@ bool	parse_options(int argc, char **argv, t_options *opt)
 
 void	print_usage(void)
 {
-	fprintf(stderr, "Usage: ./cub3D [--no-vsync] [--fps N] [--bench [N]] <scene.cub>\n");
+	fprintf(stderr, "Usage: ./cub3D [--check] [--no-vsync] [--fps N] [--bench [N]] "
+		"<scene.cub>\n");
 }

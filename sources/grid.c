@@ -36,7 +36,7 @@ static void	flood_outside(t_grid *g, int *stack)
 	}
 }
 
-bool	grid_init(t_grid *g, char **rows, int w, int h)
+bool	grid_init(t_grid *g, const char *cells, int w, int h)
 {
 	int	*stack;
 	int	i;
@@ -55,7 +55,7 @@ bool	grid_init(t_grid *g, char **rows, int w, int h)
 	while (++i < w * h)
 	{
 		g->cells[i] = CELL_FLOOR;
-		if (rows[i / w][i % w] == '1')
+		if (cells[i] == '1')
 			g->cells[i] = CELL_WALL;
 	}
 	flood_outside(g, stack);

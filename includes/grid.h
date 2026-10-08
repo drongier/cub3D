@@ -19,8 +19,8 @@ typedef struct s_grid
 	int		h;
 }	t_grid;
 
-/* rows : h lignes d'au moins w caractères, '1' pour un mur */
-bool	grid_init(t_grid *g, char **rows, int w, int h);
+/* cells : w x h caractères, '1' pour un mur */
+bool	grid_init(t_grid *g, const char *cells, int w, int h);
 void	grid_free(t_grid *g);
 uint8_t	grid_at(const t_grid *g, int x, int y);
 
