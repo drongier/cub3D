@@ -79,35 +79,70 @@ map_paths=(
             # ./maps/good/works.cub
 )
 
-# Loop through each map path
+TIMEOUT=5
+out=$(mktemp)
+total=0
+passed=0
+
+# Lance "$@" en arrière-plan, le tue après $TIMEOUT s ; met le code dans rc (124 = timeout)
+run_with_timeout() {
+  "$@" >"$out" 2>&1 &
+  local pid=$! i=0
+  while kill -0 "$pid" 2>/dev/null && [ "$i" -lt $((TIMEOUT * 10)) ]; do
+    sleep 0.1
+    i=$((i + 1))
+  done
+  if kill -0 "$pid" 2>/dev/null; then
+    kill "$pid" 2>/dev/null
+    wait "$pid" 2>/dev/null
+    rc=124
+  else
+    wait "$pid"
+    rc=$?
+  fi
+}
+
+if command -v valgrind >/dev/null 2>&1; then
+  use_valgrind=true
+else
+  use_valgrind=false
+  echo "valgrind not found: checking exit codes and error messages only"
+fi
+
 for map_path in "${map_paths[@]}"
 do
   echo -e "\n++++++++++ $map_path ++++++++++\n"
-  # Run valgrind
-  valgrind --leak-check=full --show-leak-kinds=all -q ./cub3D $map_path > output.txt 2>&1
+  total=$((total + 1))
+  if [ "$use_valgrind" = true ]; then
+    run_with_timeout valgrind --leak-check=full --show-leak-kinds=all -q ./cub3D "$map_path"
+  else
+    run_with_timeout ./cub3D "$map_path"
+  fi
 
   issues_found=false
+  reason=""
+  if [ "$rc" -eq 124 ]; then
+    issues_found=true; reason="still running after ${TIMEOUT}s (map accepted?)"
+  elif [ "$rc" -ge 128 ]; then
+    issues_found=true; reason="crashed (exit $rc)"
+  elif [ "$rc" -ne 1 ] || ! grep -q "Error" "$out"; then
+    issues_found=true; reason="expected exit 1 with an Error message, got exit $rc"
+  elif [ "$use_valgrind" = true ] && { grep -q -E "definitely lost: [1-9]" "$out" || \
+       grep -q -E "indirectly lost: [1-9]" "$out" || \
+       grep -q -i "still reachable" "$out" || \
+       grep -q -E "Invalid (read|write)" "$out"; }; then
+    issues_found=true; reason="valgrind reported a memory issue"
+  fi
 
-  # Detect issues
-if grep -q -E "definitely lost: [1-9]" output.txt || \
-   grep -q -E "indirectly lost: [1-9]" output.txt || \
-   grep -q -i "still reachable" output.txt || \
-   grep -q -E "Invalid (read|write)" output.txt || \
-   grep -q -E "SIGSEGV|Segmentation fault" output.txt; then
-  issues_found=true
-fi
-
-if [ "$issues_found" = true ]; then
-  echo -e "❌ Issues detected for $map_path"
-else
-  echo -e "✅ No issues detected for $map_path"
-fi
-
-# Print output
-  cat output.txt
+  if [ "$issues_found" = true ]; then
+    echo -e "❌ $map_path: $reason"
+  else
+    echo -e "✅ $map_path"
+    passed=$((passed + 1))
+  fi
+  cat "$out"
 done
 
-echo -e "\n++++++++++ Test Finished ++++++++++\n"
-
-# Remove the output file
-rm output.txt
+rm -f "$out"
+echo -e "\n++++++++++ Test Finished: $passed/$total ok ++++++++++\n"
+[ "$passed" -eq "$total" ]
