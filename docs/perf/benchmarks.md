@@ -22,6 +22,10 @@ de 0.03 rad par frame sur place). Chaque ligne est le run médian sur 3.
 | 4. Raycaster | -O0 | square_map | 5.83 | 6.70 | 6.40 | 7.51 | 156.3 |
 | 4. Raycaster | -O2 | cheese_maze | 2.39 | 4.19 | 3.16 | 8.43 | 316.7 |
 | 4. Raycaster | -O2 | square_map | 1.76 | 2.24 | 3.27 | 3.27 | 305.4 |
+| 5. Boucle de pixels | -O0 | cheese_maze | 4.17 | 4.76 | 4.79 | 6.39 | 208.7 |
+| 5. Boucle de pixels | -O0 | square_map | 2.30 | 3.17 | 3.02 | 7.94 | 331.5 |
+| 5. Boucle de pixels | -O2 | cheese_maze | 1.93 | 2.25 | 2.69 | 8.43 | 371.9 |
+| 5. Boucle de pixels | -O2 | square_map | 0.82 | 1.28 | 1.79 | 9.13 | 558.4 |
 
 Étape 2 : le rendu ne change pas (même image, le déplacement sort juste de `draw_loop`). Les
 écarts de `frame avg` viennent de blocages d'environ 1 s dans `platform_present` (colonne `max`
@@ -39,3 +43,10 @@ murs sont environ 1.5x plus hauts à l'écran, donc plus de pixels texturés par
 cheese_maze passe de 3.14 à 2.39 ms ; square_map, dont le coût est surtout le remplissage des
 pixels, reste à 1.76 ms (sous-projet 5). Le `frame avg` de square_map -O2 est gonflé par deux
 blocages d'environ 1 s dans `platform_present` sur ce run.
+
+Étape 5 : écriture directe en `uint32_t` (plus de `put_pixel` octet par octet avec test de
+bornes), plafond et sol remplis par lignes entières, textures transposées au chargement pour
+lire chaque colonne de mur en mémoire contiguë, indice de texel avancé sans division. Images
+identiques octet pour octet à l'étape 4 (32 images comparées sur 8 maps). square_map passe de
+1.76 à 0.82 ms, cheese_maze de 2.39 à 1.93 ms. L'envoi de l'image à l'écran (`frame - render`,
+environ 0.8 ms) pèse maintenant autant que le rendu sur square_map.

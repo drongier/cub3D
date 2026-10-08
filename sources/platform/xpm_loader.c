@@ -280,6 +280,7 @@ bool	xpm_load(const char *path, t_texture *out)
 		return (false);
 	}
 	out->data = (char *)px;
+	out->columns = NULL;
 	out->width = x.width;
 	out->height = x.height;
 	out->bpp = 32;
@@ -291,4 +292,6 @@ void	texture_free(t_texture *t)
 {
 	free(t->data);
 	t->data = NULL;
+	free(t->columns);
+	t->columns = NULL;
 }

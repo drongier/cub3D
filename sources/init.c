@@ -51,7 +51,8 @@ void	init_textures(t_game *game)
 	i = 0;
 	while (i < 4)
 	{
-		if (!xpm_load(paths[i], &game->textures[i]))
+		if (!xpm_load(paths[i], &game->textures[i])
+			|| !texture_build_columns(&game->textures[i]))
 		{
 			game_destroy(game);
 			ft_error(game->scene, "Issue about texture file!");
@@ -108,7 +109,4 @@ void	init_game(t_game *game, t_scene *scene, t_map *map)
 		game_destroy(game);
 		ft_error(scene, "Allocation error!");
 	}
-	game->data = (char *)game->fb;
-	game->bpp = 32;
-	game->size_line = WIDTH * (int)sizeof(uint32_t);
 }

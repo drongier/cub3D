@@ -23,6 +23,11 @@ also tells which face was struck, to pick the north, south, west or east texture
 face, so the texture is read left to right on every face. Floor and ceiling are flat colors read
 from the scene file.
 
+Each frame starts by filling the top half with the ceiling color and the bottom half with the floor
+color, one whole row at a time, then draws the wall columns over it. Textures are transposed at
+load time so that walking down a wall column reads contiguous memory, and the texel index moves
+down with an integer step and remainder instead of a division per pixel.
+
 Each frame is drawn into a framebuffer in memory and pushed to the window through SDL3 in one
 call, at 1280x720.
 
@@ -132,7 +137,7 @@ The parser is strict on purpose, and every failure prints a message that names t
 ## Tests
 
 `make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill,
-ray casting).
+ray casting, wall columns).
 
 `test.sh` runs the binary over the whole `maps/bad/` batch and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -150,7 +155,7 @@ Benchmarks are tracked in `docs/perf/benchmarks.md`.
 
 ```
 includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h, motion.h, raster.h,
-                      grid.h, raycast.h
+                      grid.h, raycast.h, pixels.h
 sources/main.c        entry point and cleanup
 sources/loop.c        main loop, fps counter, benchmark
 sources/options.c     command line
@@ -159,6 +164,7 @@ sources/motion.c      movement and rotation per second, frame time clamp
 sources/raster.c      alpha blending, spans and polygon fill
 sources/grid.c        flat map grid, void outside the map found by flood fill
 sources/raycast.c     camera, DDA ray casting, wall height
+sources/pixels.c      row fills, textured wall columns, column-major textures
 sources/init.c        game, player and texture setup
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/parser/       scene parsing and validation

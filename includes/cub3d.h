@@ -52,6 +52,7 @@
 # include "motion.h"
 # include "raster.h"
 # include "raycast.h"
+# include "pixels.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -114,18 +115,7 @@ typedef struct s_game
 {
 	t_platform		*platform;
 	uint32_t		*fb;
-	char			*data;
-	int				bpp;
-	int				size_line;
-	char			*tex_no;
-	int				tex_no_width;
-	int				tex_no_height;
-	char			*tex_so;
-	char			*tex_ea;
-	char			*tex_we;
 	t_texture		textures[4];
-	int				map_width;
-	int				map_height;
 	t_player		player;
 	t_map			*map;
 	t_scene			*scene;
@@ -174,11 +164,6 @@ int					run_loop(t_game *game, const t_options *opt);
 
 int					draw_loop(t_game *game);
 bool				touch(float px, float py, t_game *game);
-void				put_pixel(int x, int y, int color, t_game *game);
-void				draw_ground(int i, int start_y, t_game *game);
-void				draw_wall(int i, int start_y, int height, const t_hit *hit,
-						t_game *game);
-void				draw_ceiling(int i, int start_y, t_game *game);
 
 // BONUS MINIMAP
 

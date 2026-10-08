@@ -12,32 +12,24 @@
 
 #include "../../includes/cub3d.h"
 
-void	put_pixel(int x, int y, int color, t_game *game)
-{
-	int	index;
-
-	if (x >= WIDTH || y >= HEIGHT || x < 0 || y < 0)
-		return ;
-	index = y * game->size_line + x * game->bpp / 8;
-	game->data[index] = color & 0xFF;
-	game->data[index + 1] = (color >> 8) & 0xFF;
-	game->data[index + 2] = (color >> 16) & 0xFF;
-}
-
-/* Une colonne : plafond, mur texturé, sol */
+/* Une colonne de mur ; plafond et sol sont déjà remplis */
 static void	draw_column(t_game *game, const t_camera *cam, int i)
 {
-	t_hit	hit;
-	int		height;
-	int		start_y;
+	t_hit		hit;
+	t_texture	*tex;
+	t_wall_span	span;
 
 	hit = cast_ray(&game->grid, cam->pos, camera_ray(cam, i, WIDTH));
 	game->hits[i] = (t_vec2){hit.point.x * BLOCK, hit.point.y * BLOCK};
-	height = wall_height(cam, hit.dist);
-	start_y = (HEIGHT - height) / 2;
-	draw_ceiling(i, start_y, game);
-	draw_wall(i, start_y, height, &hit, game);
-	draw_ground(i, start_y + height, game);
+	span.height = wall_height(cam, hit.dist);
+	if (span.height <= 0)
+		return ;
+	span.start_y = (HEIGHT - span.height) / 2;
+	span.screen_h = HEIGHT;
+	span.stride = WIDTH;
+	tex = &game->textures[hit.face];
+	draw_tex_column(game->fb + i, &span,
+		texture_column(tex, (int)(hit.wall_x * tex->width)), tex->height);
 }
 
 /* GRAPHIC ENGINE */
@@ -46,6 +38,10 @@ int	draw_loop(t_game *game)
 	t_camera	cam;
 	int			i;
 
+	fill_rows(game->fb, WIDTH, 0, HEIGHT / 2,
+		(uint32_t)game->map->ceiling & 0xFFFFFF);
+	fill_rows(game->fb, WIDTH, HEIGHT / 2, HEIGHT,
+		(uint32_t)game->map->floor & 0xFFFFFF);
 	cam = camera_make((t_vec2){game->player.x / BLOCK,
 			game->player.y / BLOCK}, game->player.angle, WIDTH);
 	i = 0;

@@ -12,11 +12,11 @@ LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
 SRC			:= sources/main.c sources/init.c \
 			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
-			   sources/raster.c sources/grid.c sources/raycast.c \
+			   sources/raster.c sources/grid.c sources/raycast.c sources/pixels.c \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
 			   sources/drawing/minimap.c \
-			   sources/drawing/drawing.c sources/drawing/drawing2.c \
+			   sources/drawing/drawing.c \
 			   sources/drawing/player.c \
 			   sources/drawing/utils.c \
 			   sources/parser/ft_flood_fill.c sources/parser/get_scene_data.c \
@@ -27,7 +27,8 @@ OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 
 TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test \
-			   $(BUILD)/tests/raster_test $(BUILD)/tests/raycast_test
+			   $(BUILD)/tests/raster_test $(BUILD)/tests/raycast_test \
+			   $(BUILD)/tests/pixels_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -79,6 +80,11 @@ $(BUILD)/tests/raycast_test: tests/raycast_test.c $(BUILD)/sources/raycast.o \
 		$(BUILD)/sources/grid.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
+
+$(BUILD)/tests/pixels_test: tests/pixels_test.c $(BUILD)/sources/pixels.o \
+		$(BUILD)/sources/platform/xpm_loader.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
 
 clean:
 	rm -rf build build-debug

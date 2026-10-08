@@ -66,7 +66,6 @@ void	game_destroy(t_game *game)
 	free(game->fb);
 	game->fb = NULL;
 	grid_free(&game->grid);
-	game->data = NULL;
 	platform_destroy(game->platform);
 	game->platform = NULL;
 }
