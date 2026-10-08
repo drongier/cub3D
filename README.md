@@ -20,31 +20,45 @@ texture. The xpm image is then sampled along the wall stripe with a column ratio
 perspective right even with the nose against the wall. Floor and ceiling are flat colors read from
 the scene file.
 
-Each frame is drawn into an mlx image buffer and pushed to the window in one call, at 1280x720.
+Each frame is drawn into a framebuffer in memory and pushed to the window through SDL3 in one
+call, at 1280x720.
 
 ## Build
 
-You need a C compiler, make, and the X11 development files.
+You need a C compiler, make, pkg-config and SDL3.
 
 ```sh
-sudo apt install build-essential libx11-dev libxext-dev
+brew install sdl3 pkg-config          # macOS
+sudo apt install libsdl3-dev          # recent Debian/Ubuntu (25.04+), Fedora and Arch have it too
 make
 ```
 
-minilibx ships inside the repository (`minilibx-linux/`) and the Makefile builds it for you. The
-link uses the X11 backend (`libmlx_Linux.a`), so GLFW is not required.
+On older distributions (Ubuntu 22.04/24.04), build SDL3 from source once:
 
-Useful targets: `make` builds `cub3D`, `make clean` drops the object files, `make fclean` also
-removes the binaries and the libraries, `make re` rebuilds everything from scratch.
+```sh
+git clone --depth 1 --branch release-3.4.12 https://github.com/libsdl-org/SDL.git
+cmake -S SDL -B SDL/build -DCMAKE_BUILD_TYPE=Release
+cmake --build SDL/build -j
+sudo cmake --install SDL/build
+```
+
+Targets: `make` builds an optimized `cub3D` (`-O2`, objects in `build/`), `make debug` builds
+`cub3D_debug` with AddressSanitizer and UBSan (objects in `build-debug/`), `make test` runs the
+unit tests, `make clean`, `make fclean` and `make re` do the usual. `make OPT=-O0` builds without
+optimization.
 
 ## Run
 
 ```sh
-./cub3D maps/good/cheese_maze.cub
+./cub3D [--no-vsync] [--bench [N]] maps/good/cheese_maze.cub
 ```
 
-Exactly one argument, a `.cub` scene file. Anything else prints an error and exits. You need a
-graphical session since the rendering goes straight to an X11 window.
+One `.cub` scene file, options in any order. The window title shows the frame rate, the frame time
+and the time spent rendering, refreshed twice a second.
+
+- `--no-vsync` renders as fast as possible instead of following the screen refresh
+- `--bench [N]` plays N frames (1000 by default) with vsync off, turning on the spot, then prints
+  the average, median, p99, min and max render and frame times and exits
 
 | Key | Action |
 |---|---|
@@ -53,6 +67,8 @@ graphical session since the rendering goes straight to an X11 window.
 | `Left` / `Right` | turn |
 | `Esc` | quit |
 | window close button | quit |
+
+Keys are read by physical position: on an AZERTY keyboard, walk with `Z` `Q` `S` `D`.
 
 The player cannot walk through walls. Each axis is tested on its own before the move is applied, so
 you slide along a wall instead of sticking to it.
@@ -106,32 +122,39 @@ The parser is strict on purpose, and every failure prints a message that names t
 
 ## Tests
 
-`test.sh` runs the binary under valgrind over the whole `maps/bad/` batch plus a list of valid maps,
-then greps the output for leaks, invalid reads and writes, and segfaults. It prints one line per map
-and writes the raw valgrind report to `output.txt`, which it deletes at the end. Build first, then:
+`make test` runs the unit tests (XPM loader, command line, statistics).
+
+`test.sh` runs the binary over the whole `maps/bad/` batch and expects every scene to be refused:
+exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
+seconds. When valgrind is installed (Linux), it also checks for leaks and invalid accesses. It
+ends with a `passed/total` line and a non-zero exit code on failure.
 
 ```sh
-chmod +x test.sh
-./test.sh
+make && ./test.sh
 ```
 
-valgrind has to be installed (`sudo apt install valgrind`).
+On macOS, check leaks with `leaks --atExit -- ./cub3D --bench 200 maps/good/cheese_maze.cub`.
+Benchmarks are tracked in `docs/perf/benchmarks.md`.
 
 ## Project layout
 
 ```
-includes/cub3d.h      structs, key codes, window and grid constants
-sources/main.c        entry point, mlx hooks, cleanup on exit
+includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h
+sources/main.c        entry point and cleanup
+sources/loop.c        main loop, fps counter, benchmark
+sources/options.c     command line
+sources/stats.c       benchmark statistics
 sources/init.c        game, player and texture setup
+sources/platform/     SDL3 window, input and clock; XPM loader
 sources/parser/       scene parsing and validation
 sources/drawing/      raycasting, walls, floor, ceiling, minimap
 libft/                our own libft, including ft_printf and get_next_line
-minilibx-linux/       vendored minilibx, X11 backend
+tests/                unit tests
 maps/good/            valid scenes, from small test maps to full mazes
 maps/bad/             49 scenes that must be rejected
-maps/walls/           wall textures used by most scenes
-textures/             more xpm textures
-test.sh               valgrind batch tester
+textures/             xpm textures
+test.sh               batch tester for invalid scenes
+docs/                 specs, plans and benchmarks
 ```
 
 ## Bonus features
