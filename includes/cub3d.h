@@ -44,11 +44,6 @@
 
 # define PI 3.14159265359
 
-# define NORD 0
-# define SUD 1
-# define WEST 2
-# define EAST 3
-
 # include "../libft/libft.h"
 # include "platform.h"
 # include "texture.h"
@@ -56,6 +51,7 @@
 # include "stats.h"
 # include "motion.h"
 # include "raster.h"
+# include "raycast.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -110,47 +106,9 @@ typedef struct s_player
 	bool			key_exit;	
 	bool			left_rotate;
 	bool			right_rotate;
-	int				hit_dir;
-	float			hit_x;
-	float			hit_y;
 	struct s_game	*game;
 	t_map			*map;
 }					t_player;
-
-typedef struct s_ray
-{
-	float			x;
-	float			y;
-	float			cos_a;
-	float			sin_a;
-	int				map_x;
-	int				map_y;
-	int				step_x;
-	int				step_y;
-	float			side_dist_x;
-	float			side_dist_y;
-	float			delta_dist_x;
-	float			delta_dist_y;
-	float			angle;
-	float			dir_x;
-	float			dir_y;
-	int				side;
-}					t_ray;
-
-enum e_mm_cell
-{
-	MM_FLOOR,
-	MM_WALL,
-	MM_VOID
-};
-
-/* Cases de la map pour le radar, w x h, préparées au chargement */
-typedef struct s_minimap
-{
-	uint8_t			*grid;
-	int				w;
-	int				h;
-}					t_minimap;
 
 typedef struct s_game
 {
@@ -171,7 +129,7 @@ typedef struct s_game
 	t_player		player;
 	t_map			*map;
 	t_scene			*scene;
-	t_minimap		minimap;
+	t_grid			grid;
 	t_vec2			hits[WIDTH];
 }					t_game;
 
@@ -208,19 +166,6 @@ void				init_game(t_game *game, t_scene *scene, t_map *map);
 
 void				update_player(t_player *player, double dt);
 
-// UTILS
-
-int					is_nord_sud(float start_x);
-int					is_west_east(float start_x);
-
-// UTILS MATH
-
-float				distance(float x, float y);
-void				calc_ray(t_player *player, float start_x, float *ray_x,
-						float *ray_y);
-float				calculate_height(t_player *player, float ray_x,
-						float ray_y);
-
 // MAIN LOOP
 
 int					run_loop(t_game *game, const t_options *opt);
@@ -231,14 +176,13 @@ int					draw_loop(t_game *game);
 bool				touch(float px, float py, t_game *game);
 void				put_pixel(int x, int y, int color, t_game *game);
 void				draw_ground(int i, int start_y, t_game *game);
-void				draw_wall(int i, int *start_y, int end, t_game *game);
+void				draw_wall(int i, int start_y, int height, const t_hit *hit,
+						t_game *game);
 void				draw_ceiling(int i, int start_y, t_game *game);
 
 // BONUS MINIMAP
 
 void				draw_minimap(t_game *game);
-bool				minimap_init(t_minimap *mm, const t_map *map);
-void				minimap_free(t_minimap *mm);
 void				draw_scope(t_game *game);
 
 #endif

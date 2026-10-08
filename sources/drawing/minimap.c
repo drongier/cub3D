@@ -2,88 +2,22 @@
 
 /*
  * Radar en bas à droite : joueur au centre, nord en haut, la carte défile.
- * Cases préparées une fois au chargement ; à chaque frame, fond, cône de
+ * Cases lues dans game->grid ; à chaque frame, fond, cône de
  * vision construit avec les impacts du rendu 3D, flèche du joueur, cadre.
  */
 
-static void	flood_outside(t_minimap *mm, int *stack)
-{
-	int	top;
-	int	i;
-	int	x;
-	int	y;
-
-	top = 0;
-	i = -1;
-	while (++i < mm->w * mm->h)
-		if ((i % mm->w == 0 || i % mm->w == mm->w - 1 || i / mm->w == 0
-				|| i / mm->w == mm->h - 1) && mm->grid[i] == MM_FLOOR)
-			stack[top++] = i;
-	while (top > 0)
-	{
-		i = stack[--top];
-		if (mm->grid[i] != MM_FLOOR)
-			continue ;
-		mm->grid[i] = MM_VOID;
-		x = i % mm->w;
-		y = i / mm->w;
-		if (x > 0 && mm->grid[i - 1] == MM_FLOOR)
-			stack[top++] = i - 1;
-		if (x < mm->w - 1 && mm->grid[i + 1] == MM_FLOOR)
-			stack[top++] = i + 1;
-		if (y > 0 && mm->grid[i - mm->w] == MM_FLOOR)
-			stack[top++] = i - mm->w;
-		if (y < mm->h - 1 && mm->grid[i + mm->w] == MM_FLOOR)
-			stack[top++] = i + mm->w;
-	}
-}
-
-/* Les cases vides reliées au bord de la grille sont hors de la map */
-bool	minimap_init(t_minimap *mm, const t_map *map)
-{
-	int	*stack;
-	int	i;
-
-	mm->w = map->col;
-	mm->h = map->row;
-	mm->grid = malloc((size_t)mm->w * mm->h);
-	stack = malloc(sizeof(int) * ((size_t)mm->w * mm->h * 5 + 1));
-	if (!mm->grid || !stack)
-	{
-		free(stack);
-		minimap_free(mm);
-		return (false);
-	}
-	i = -1;
-	while (++i < mm->w * mm->h)
-	{
-		mm->grid[i] = MM_FLOOR;
-		if (map->map[i / mm->w][i % mm->w] == '1')
-			mm->grid[i] = MM_WALL;
-	}
-	flood_outside(mm, stack);
-	free(stack);
-	return (true);
-}
-
-void	minimap_free(t_minimap *mm)
-{
-	free(mm->grid);
-	mm->grid = NULL;
-}
-
-static uint8_t	cell_at(const t_minimap *mm, float wx, float wy)
+static uint8_t	cell_at(const t_grid *g, float wx, float wy)
 {
 	int	x;
 	int	y;
 
 	if (wx < 0 || wy < 0)
-		return (MM_VOID);
+		return (CELL_VOID);
 	x = (int)(wx / BLOCK);
 	y = (int)(wy / BLOCK);
-	if (x >= mm->w || y >= mm->h)
-		return (MM_VOID);
-	return (mm->grid[y * mm->w + x]);
+	if (x >= g->w || y >= g->h)
+		return (CELL_VOID);
+	return (g->cells[y * g->w + x]);
 }
 
 /* Fond : chaque pixel du radar prend la case du monde qu'il recouvre */
@@ -104,7 +38,7 @@ static void	draw_background(t_game *g, t_canvas *c)
 		xy[0] = c->x0 - 1;
 		while (++xy[0] < c->x1)
 		{
-			cell = cell_at(&g->minimap, g->player.x
+			cell = cell_at(&g->grid, g->player.x
 					+ (xy[0] + 0.5f - (c->x0 + MM_SIZE / 2.0f)) * scale, wy);
 			c->px[xy[1] * c->stride + xy[0]] = blend(
 					c->px[xy[1] * c->stride + xy[0]], color[cell], alpha[cell]);

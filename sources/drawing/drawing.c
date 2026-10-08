@@ -24,46 +24,33 @@ void	put_pixel(int x, int y, int color, t_game *game)
 	game->data[index + 2] = (color >> 16) & 0xFF;
 }
 
-/* RAYCASTING FONCTION  
-	-> Calculate ray and define direction of player
-	-> Define height of wall to play with perspective
-	-> Draw wall / Celling / floor */
-void	draw_line(t_player *player, t_game *game, float start_x, int i)
+/* Une colonne : plafond, mur texturé, sol */
+static void	draw_column(t_game *game, const t_camera *cam, int i)
 {
-	float	ray_x;
-	float	ray_y;
-	float	height;
+	t_hit	hit;
+	int		height;
 	int		start_y;
-	int		end;
 
-	calc_ray(player, start_x, &ray_x, &ray_y);
-	game->hits[i] = (t_vec2){ray_x, ray_y};
-	height = calculate_height(player, ray_x, ray_y);
+	hit = cast_ray(&game->grid, cam->pos, camera_ray(cam, i, WIDTH));
+	game->hits[i] = (t_vec2){hit.point.x * BLOCK, hit.point.y * BLOCK};
+	height = wall_height(cam, hit.dist);
 	start_y = (HEIGHT - height) / 2;
-	end = start_y + height;
 	draw_ceiling(i, start_y, game);
-	draw_wall(i, &start_y, end, game);
-	draw_ground(i, start_y, game);
+	draw_wall(i, start_y, height, &hit, game);
+	draw_ground(i, start_y + height, game);
 }
 
 /* GRAPHIC ENGINE */
 int	draw_loop(t_game *game)
 {
-	t_player	*player;
-	float		fraction;
-	float		start_x;
+	t_camera	cam;
 	int			i;
 
-	player = &game->player;
-	fraction = PI / 3 / WIDTH;
-	start_x = player->angle - PI / 6;
+	cam = camera_make((t_vec2){game->player.x / BLOCK,
+			game->player.y / BLOCK}, game->player.angle, WIDTH);
 	i = 0;
 	while (i < WIDTH)
-	{
-		draw_line(player, game, start_x, i);
-		start_x += fraction;
-		i++;
-	}
+		draw_column(game, &cam, i++);
 	if (BONUS == 1)
 	{
 		draw_minimap(game);

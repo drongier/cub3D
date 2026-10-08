@@ -12,13 +12,16 @@ Mertcan Kunduraci ([@mekundur](https://github.com/mekundur)).
 
 ## How the rendering works
 
-The map is a grid of 64 pixel blocks stored as a 2D char array. Every frame the engine walks the
-1280 pixels of the window from left to right, and for each column it casts a ray inside a 60 degree
-field of view. The ray advances cell by cell until it lands on a wall, which tells the engine how
-far the wall is and which face it hit, so it knows whether to sample the north, south, west or east
-texture. The xpm image is then sampled along the wall stripe with a column ratio, which keeps the
-perspective right even with the nose against the wall. Floor and ceiling are flat colors read from
-the scene file.
+The map is a grid of 64 pixel blocks, stored once at load time as a flat array of cells. Every
+frame the engine builds a camera from the player position, the view direction and a camera plane
+perpendicular to it, sized for a 66 degree field of view. Each of the 1280 columns gets a ray
+through its point on that plane, and the ray walks the grid line by line (DDA) until it lands on a
+wall. The DDA gives the distance to the camera plane directly, so there is no fisheye correction and
+no trigonometry per column, and straight walls stay straight up to the screen edges. The wall
+height uses the focal length that matches the field of view, so a block looks like a cube. The hit
+also tells which face was struck, to pick the north, south, west or east texture, and where on the
+face, so the texture is read left to right on every face. Floor and ceiling are flat colors read
+from the scene file.
 
 Each frame is drawn into a framebuffer in memory and pushed to the window through SDL3 in one
 call, at 1280x720.
@@ -128,7 +131,8 @@ The parser is strict on purpose, and every failure prints a message that names t
 
 ## Tests
 
-`make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill).
+`make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill,
+ray casting).
 
 `test.sh` runs the binary over the whole `maps/bad/` batch and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -145,13 +149,16 @@ Benchmarks are tracked in `docs/perf/benchmarks.md`.
 ## Project layout
 
 ```
-includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h, motion.h, raster.h
+includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h, motion.h, raster.h,
+                      grid.h, raycast.h
 sources/main.c        entry point and cleanup
 sources/loop.c        main loop, fps counter, benchmark
 sources/options.c     command line
 sources/stats.c       benchmark statistics
 sources/motion.c      movement and rotation per second, frame time clamp
 sources/raster.c      alpha blending, spans and polygon fill
+sources/grid.c        flat map grid, void outside the map found by flood fill
+sources/raycast.c     camera, DDA ray casting, wall height
 sources/init.c        game, player and texture setup
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/parser/       scene parsing and validation

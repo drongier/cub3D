@@ -50,47 +50,28 @@ int	get_texture_color(t_texture *texture, int tex_x, int tex_y)
 	return (*(int *)(texture->data + index));
 }
 
-void	select_texture(t_game *game, int *tex_x)
+/* Seule la partie visible du mur est parcourue */
+void	draw_wall(int i, int start_y, int height, const t_hit *hit,
+		t_game *game)
 {
 	t_texture	*texture;
-
-	if (game->player.hit_dir == NORD)
-		texture = &game->textures[0];
-	else if (game->player.hit_dir == SUD)
-		texture = &game->textures[1];
-	else if (game->player.hit_dir == WEST)
-		texture = &game->textures[2];
-	else
-		texture = &game->textures[3];
-	if (game->player.hit_dir == NORD || game->player.hit_dir == SUD)
-		*tex_x = (int)game->player.hit_x % BLOCK * texture->width / BLOCK;
-	else
-		*tex_x = (int)game->player.hit_y % BLOCK * texture->width / BLOCK;
-}
-
-void	draw_wall(int i, int *start_y, int end, t_game *game)
-{
 	int			tex_x;
-	int			tex_y;
-	int			wall_height;
-	t_texture	*texture;
+	int			y;
+	int			end;
 
-	wall_height = end - *start_y;
-	select_texture(game, &tex_x);
-	if (game->player.hit_dir == NORD)
-		texture = &game->textures[0];
-	else if (game->player.hit_dir == SUD)
-		texture = &game->textures[1];
-	else if (game->player.hit_dir == WEST)
-		texture = &game->textures[2];
-	else
-		texture = &game->textures[3];
-	while (*start_y < end)
+	texture = &game->textures[hit->face];
+	tex_x = (int)(hit->wall_x * texture->width);
+	y = start_y;
+	if (y < 0)
+		y = 0;
+	end = start_y + height;
+	if (end > HEIGHT)
+		end = HEIGHT;
+	while (y < end)
 	{
-		tex_y = (*start_y - (HEIGHT / 2) + (wall_height / 2)) * texture->height
-			/ wall_height;
-		put_pixel(i, (*start_y)++, get_texture_color(texture, tex_x, tex_y),
-			game);
+		put_pixel(i, y, get_texture_color(texture, tex_x,
+				(int)((long)(y - start_y) * texture->height / height)), game);
+		y++;
 	}
 }
 

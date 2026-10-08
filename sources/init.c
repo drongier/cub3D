@@ -77,9 +77,6 @@ void	init_player(t_player *player, t_map *map, t_game *game)
 	player->o = map->player_o;
 	player->x = (float)map->player_x * BLOCK + BLOCK / 2;
 	player->y = (float)map->player_y * BLOCK + BLOCK / 2 ;
-	player->hit_dir = -1;
-	player->hit_x = 0;
-	player->hit_y = 0;
 	player->key_up = false;
 	player->key_down = false;
 	player->key_right = false;
@@ -106,7 +103,7 @@ void	init_game(t_game *game, t_scene *scene, t_map *map)
 		game_destroy(game);
 		ft_error(scene, "Allocation error!");
 	}
-	if (BONUS == 1 && !minimap_init(&game->minimap, map))
+	if (!grid_init(&game->grid, map->map, map->col, map->row))
 	{
 		game_destroy(game);
 		ft_error(scene, "Allocation error!");

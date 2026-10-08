@@ -12,15 +12,13 @@ LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
 SRC			:= sources/main.c sources/init.c \
 			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
-			   sources/raster.c \
+			   sources/raster.c sources/grid.c sources/raycast.c \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
 			   sources/drawing/minimap.c \
 			   sources/drawing/drawing.c sources/drawing/drawing2.c \
 			   sources/drawing/player.c \
 			   sources/drawing/utils.c \
-			   sources/drawing/utils2.c sources/drawing/utils_math.c \
-			   sources/drawing/ray_caster.c \
 			   sources/parser/ft_flood_fill.c sources/parser/get_scene_data.c \
 			   sources/parser/get_colors.c sources/parser/file_check.c \
 			   sources/parser/get_textures.c sources/parser/parse_map.c \
@@ -29,7 +27,7 @@ OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 
 TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test \
-			   $(BUILD)/tests/raster_test
+			   $(BUILD)/tests/raster_test $(BUILD)/tests/raycast_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -74,6 +72,11 @@ $(BUILD)/tests/motion_test: tests/motion_test.c $(BUILD)/sources/motion.o
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 
 $(BUILD)/tests/raster_test: tests/raster_test.c $(BUILD)/sources/raster.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
+
+$(BUILD)/tests/raycast_test: tests/raycast_test.c $(BUILD)/sources/raycast.o \
+		$(BUILD)/sources/grid.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 

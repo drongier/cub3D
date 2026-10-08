@@ -18,6 +18,10 @@ de 0.03 rad par frame sur place). Chaque ligne est le run médian sur 3.
 | 3. Minimap | -O0 | square_map | 5.63 | 6.34 | 6.20 | 7.17 | 161.4 |
 | 3. Minimap | -O2 | cheese_maze | 3.14 | 3.75 | 3.75 | 6.00 | 266.6 |
 | 3. Minimap | -O2 | square_map | 1.73 | 2.03 | 2.40 | 8.69 | 416.2 |
+| 4. Raycaster | -O0 | cheese_maze | 7.83 | 8.44 | 8.41 | 9.44 | 118.9 |
+| 4. Raycaster | -O0 | square_map | 5.83 | 6.70 | 6.40 | 7.51 | 156.3 |
+| 4. Raycaster | -O2 | cheese_maze | 2.39 | 4.19 | 3.16 | 8.43 | 316.7 |
+| 4. Raycaster | -O2 | square_map | 1.76 | 2.24 | 3.27 | 3.27 | 305.4 |
 
 Étape 2 : le rendu ne change pas (même image, le déplacement sort juste de `draw_loop`). Les
 écarts de `frame avg` viennent de blocages d'environ 1 s dans `platform_present` (colonne `max`
@@ -28,3 +32,10 @@ des runs bruts, jusqu'à 1060 ms), présents aussi à l'étape 1 et sans lien av
 (512x336 sur square_map) : 0.6 ms sur cheese_maze, 3.3 ms sur square_map (65 % du rendu). Le
 radar de taille fixe réutilise les impacts du rendu 3D et coûte environ 0.1 ms ; le rendu
 avec radar est à 0.1 ms près celui d'un build sans minimap (`BONUS 0`).
+
+Étape 4 : plus de trigonométrie par colonne (plan caméra, distance perpendiculaire donnée par le
+DDA) et une grille plate. Champ de vision passé de 60° à 66° avec la focale correspondante : les
+murs sont environ 1.5x plus hauts à l'écran, donc plus de pixels texturés par image. Malgré cela,
+cheese_maze passe de 3.14 à 2.39 ms ; square_map, dont le coût est surtout le remplissage des
+pixels, reste à 1.76 ms (sous-projet 5). Le `frame avg` de square_map -O2 est gonflé par deux
+blocages d'environ 1 s dans `platform_present` sur ce run.

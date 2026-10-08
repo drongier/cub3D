@@ -17,14 +17,6 @@
 */
 bool	touch(float px, float py, t_game *game)
 {
-	int		x;
-	int		y;
-	char	**map;
-
-	map = game->map->map;
-	x = px / BLOCK;
-	y = py / BLOCK;
-	if (map[y][x] == '1')
-		return (true);
-	return (false);
+	return (grid_at(&game->grid, (int)floorf(px / BLOCK),
+			(int)floorf(py / BLOCK)) == CELL_WALL);
 }
