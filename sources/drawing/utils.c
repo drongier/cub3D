@@ -28,10 +28,3 @@ bool	touch(float px, float py, t_game *game)
 		return (true);
 	return (false);
 }
-
-int	close_window(t_game *game)
-{
-	mlx_destroy_window(game->mlx, game->win);
-	exit(0);
-	return (0);
-}

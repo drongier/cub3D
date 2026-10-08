@@ -6,9 +6,6 @@ build/
 build-debug/
 cub3D_debug
 
-### minilibx build output
-minilibx-linux/obj/
-
 ### Editor and OS noise
 *.swp
 *.swo

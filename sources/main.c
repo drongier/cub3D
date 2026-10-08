@@ -56,18 +56,18 @@ void	ft_error(t_scene *scene, char *message)
 	exit(1);
 }
 
-void	exit_game(t_game *game)
+void	game_destroy(t_game *game)
 {
-	if (game->img)
-		mlx_destroy_image(game->mlx, game->img);
-	if (game->win)
-		mlx_destroy_window(game->mlx, game->win);
-	if (game->mlx)
-	{
-		mlx_loop_end(game->mlx);
-		mlx_destroy_display(game->mlx);
-		free(game->mlx);
-	}
+	int	i;
+
+	i = 0;
+	while (i < 4)
+		texture_free(&game->textures[i++]);
+	free(game->fb);
+	game->fb = NULL;
+	game->data = NULL;
+	platform_destroy(game->platform);
+	game->platform = NULL;
 }
 
 int	main(int argc, char **argv)
@@ -84,14 +84,15 @@ int	main(int argc, char **argv)
 	ft_textures_files_check(&scene);
 	get_map(&scene, &map);
 	init_game(&game, &scene, &map);
+	game.platform = platform_init(WIDTH, HEIGHT, true);
+	if (!game.platform)
+	{
+		game_destroy(&game);
+		ft_error(&scene, "Window initialisation failed!");
+	}
 	ft_cleanup_scene(&scene);
-	mlx_hook(game.win, 2, 1L << 0, key_press, &game.player);
-	mlx_hook(game.win, 3, 1L << 1, key_release, &game.player);
-	mlx_hook(game.win, 17, 0L, close_window, &game);
-	draw_loop(&game);
-	mlx_loop_hook(game.mlx, draw_loop, &game);
-	mlx_loop(game.mlx);
-	exit_game(&game);
+	run_loop(&game);
+	game_destroy(&game);
 	ft_cleanup_map(&map);
 	return (0);
 }

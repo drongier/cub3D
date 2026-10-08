@@ -11,10 +11,11 @@ LDFLAGS		:= $(EXTRA_LDFLAGS)
 LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
 SRC			:= sources/main.c sources/init.c \
+			   sources/loop.c sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
 			   sources/drawing/bonus_map.c sources/drawing/bonus_map2.c \
 			   sources/drawing/drawing.c sources/drawing/drawing2.c \
-			   sources/drawing/player.c sources/drawing/player_key.c \
+			   sources/drawing/player.c \
 			   sources/drawing/player_mouv.c sources/drawing/utils.c \
 			   sources/drawing/utils2.c sources/drawing/utils_math.c \
 			   sources/drawing/ray_caster.c \

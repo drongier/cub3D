@@ -36,9 +36,9 @@
 # define EAST 3
 
 # include "../libft/libft.h"
-# include "../minilibx-linux/mlx.h"
+# include "platform.h"
 # include "texture.h"
-# include <bits/types.h>
+# include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
 # include <math.h>
@@ -128,13 +128,11 @@ typedef struct s_minimap
 
 typedef struct s_game
 {
-	void			*mlx;
-	void			*win;
-	void			*img;
+	t_platform		*platform;
+	uint32_t		*fb;
 	char			*data;
 	int				bpp;
 	int				size_line;
-	int				endian;
 	char			*tex_no;
 	int				tex_no_width;
 	int				tex_no_height;
@@ -171,7 +169,7 @@ void				ft_error(t_scene *scene, char *message);
 void				ft_config_file_check(char *argv);
 void				ft_textures_files_check(t_scene *scene);
 // void				ft_cleanup(t_scene *scene);
-void				exit_game(t_game *game);
+void				game_destroy(t_game *game);
 
 // INITIALISATION
 
@@ -182,8 +180,6 @@ void				init_game(t_game *game, t_scene *scene, t_map *map);
 
 // PLAYER MOVEMENT
 
-int					key_release(int keycode, t_player *player);
-int					key_press(int keycode, t_player *player);
 void				move_player(t_player *player);
 void				m_up(t_player *player, int cos_angle, int sin_angle,
 						int speed);
@@ -198,7 +194,6 @@ void				check_boundaries(t_player *player);
 
 // UTILS
 
-int					close_window(t_game *game);
 int					is_nord_sud(float start_x);
 int					is_west_east(float start_x);
 
@@ -209,6 +204,10 @@ void				calc_ray(t_player *player, float start_x, float *ray_x,
 						float *ray_y);
 float				calculate_height(t_player *player, float ray_x,
 						float ray_y);
+
+// MAIN LOOP
+
+void				run_loop(t_game *game);
 
 // DRAWING FUNCTIONS
 

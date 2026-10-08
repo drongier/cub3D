@@ -51,13 +51,11 @@ void	init_textures(t_game *game)
 	i = 0;
 	while (i < 4)
 	{
-		game->textures[i].img = mlx_xpm_file_to_image(game->mlx, paths[i],
-				&game->textures[i].width, &game->textures[i].height);
-		if (!game->textures[i].img)
+		if (!xpm_load(paths[i], &game->textures[i]))
+		{
+			game_destroy(game);
 			ft_error(game->scene, "Issue about texture file!");
-		game->textures[i].data = mlx_get_data_addr(game->textures[i].img,
-				&game->textures[i].bpp, &game->textures[i].size_line,
-				&game->textures[i].endian);
+		}
 		i++;
 	}
 }
@@ -96,16 +94,19 @@ void	init_player(t_player *player, t_map *map, t_game *game)
 // initialisation functions
 void	init_game(t_game *game, t_scene *scene, t_map *map)
 {
+	ft_bzero(game, sizeof(*game));
 	game->map = map;
 	game->scene = scene;
 	game->player.map = map;
 	init_player(&game->player, map, game);
-	game->player.game = game;
-	game->mlx = mlx_init();
 	init_textures(game);
-	game->win = mlx_new_window(game->mlx, WIDTH, HEIGHT, "cub3D");
-	game->img = mlx_new_image(game->mlx, WIDTH, HEIGHT);
-	game->data = mlx_get_data_addr(game->img, &game->bpp, &game->size_line,
-			&game->endian);
-	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+	game->fb = ft_calloc((size_t)WIDTH * HEIGHT, sizeof(uint32_t));
+	if (!game->fb)
+	{
+		game_destroy(game);
+		ft_error(scene, "Allocation error!");
+	}
+	game->data = (char *)game->fb;
+	game->bpp = 32;
+	game->size_line = WIDTH * (int)sizeof(uint32_t);
 }

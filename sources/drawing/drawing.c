@@ -69,6 +69,5 @@ int	draw_loop(t_game *game)
 		draw_mini_map(game);
 		draw_scope(game);
 	}
-	mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 	return (0);
 }
