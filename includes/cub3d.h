@@ -38,6 +38,8 @@
 # include "../libft/libft.h"
 # include "platform.h"
 # include "texture.h"
+# include "options.h"
+# include "stats.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -207,7 +209,7 @@ float				calculate_height(t_player *player, float ray_x,
 
 // MAIN LOOP
 
-void				run_loop(t_game *game);
+int					run_loop(t_game *game, const t_options *opt);
 
 // DRAWING FUNCTIONS
 

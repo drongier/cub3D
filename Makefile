@@ -11,7 +11,8 @@ LDFLAGS		:= $(EXTRA_LDFLAGS)
 LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
 SRC			:= sources/main.c sources/init.c \
-			   sources/loop.c sources/platform/platform_sdl.c \
+			   sources/loop.c sources/options.c sources/stats.c \
+			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
 			   sources/drawing/bonus_map.c sources/drawing/bonus_map2.c \
 			   sources/drawing/drawing.c sources/drawing/drawing2.c \
@@ -25,7 +26,8 @@ SRC			:= sources/main.c sources/init.c \
 			   sources/parser/extract_map.c sources/parser/utils_2dstr.c
 OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 
-TEST_BINS	:= $(BUILD)/tests/xpm_test
+TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
+			   $(BUILD)/tests/stats_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -56,6 +58,14 @@ test: $(TEST_BINS)
 $(BUILD)/tests/xpm_test: tests/xpm_test.c $(BUILD)/sources/platform/xpm_loader.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD)/tests/options_test: tests/options_test.c $(BUILD)/sources/options.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $^ -o $@
+
+$(BUILD)/tests/stats_test: tests/stats_test.c $(BUILD)/sources/stats.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $^ -lm -o $@
 
 clean:
 	rm -rf build build-debug

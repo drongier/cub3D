@@ -72,27 +72,29 @@ void	game_destroy(t_game *game)
 
 int	main(int argc, char **argv)
 {
-	t_game	game;
-	t_scene	scene;
-	t_map	map;
+	t_game		game;
+	t_scene		scene;
+	t_map		map;
+	t_options	opt;
+	int			status;
 
-	if (argc != 2)
-		return (printf("Execute the program as: ./cub3D <scene.cub>\n"), 0);
-	ft_config_file_check(argv[1]);
+	if (!parse_options(argc, argv, &opt))
+		return (print_usage(), 1);
+	ft_config_file_check((char *)opt.scene_path);
 	init_parser(&scene, &map);
-	get_scene_data(argv[1], &scene);
+	get_scene_data((char *)opt.scene_path, &scene);
 	ft_textures_files_check(&scene);
 	get_map(&scene, &map);
 	init_game(&game, &scene, &map);
-	game.platform = platform_init(WIDTH, HEIGHT, true);
+	game.platform = platform_init(WIDTH, HEIGHT, opt.vsync);
 	if (!game.platform)
 	{
 		game_destroy(&game);
 		ft_error(&scene, "Window initialisation failed!");
 	}
 	ft_cleanup_scene(&scene);
-	run_loop(&game);
+	status = run_loop(&game, &opt);
 	game_destroy(&game);
 	ft_cleanup_map(&map);
-	return (0);
+	return (status);
 }
