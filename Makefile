@@ -12,9 +12,10 @@ LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
 SRC			:= sources/main.c sources/init.c \
 			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
+			   sources/raster.c \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
-			   sources/drawing/bonus_map.c sources/drawing/bonus_map2.c \
+			   sources/drawing/minimap.c \
 			   sources/drawing/drawing.c sources/drawing/drawing2.c \
 			   sources/drawing/player.c \
 			   sources/drawing/utils.c \
@@ -27,7 +28,8 @@ SRC			:= sources/main.c sources/init.c \
 OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 
 TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
-			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test
+			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test \
+			   $(BUILD)/tests/raster_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -68,6 +70,10 @@ $(BUILD)/tests/stats_test: tests/stats_test.c $(BUILD)/sources/stats.o
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 
 $(BUILD)/tests/motion_test: tests/motion_test.c $(BUILD)/sources/motion.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
+
+$(BUILD)/tests/raster_test: tests/raster_test.c $(BUILD)/sources/raster.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 

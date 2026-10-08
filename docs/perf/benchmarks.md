@@ -14,8 +14,17 @@ de 0.03 rad par frame sur place). Chaque ligne est le run médian sur 3.
 | 2. Boucle de jeu | -O0 | square_map | 16.06 | 23.33 | 17.60 | 24.07 | 56.8 |
 | 2. Boucle de jeu | -O2 | cheese_maze | 3.67 | 5.14 | 6.82 | 9.28 | 146.7 |
 | 2. Boucle de jeu | -O2 | square_map | 4.98 | 7.28 | 5.62 | 8.65 | 177.9 |
+| 3. Minimap | -O0 | cheese_maze | 10.83 | 12.63 | 11.41 | 13.48 | 87.6 |
+| 3. Minimap | -O0 | square_map | 5.63 | 6.34 | 6.20 | 7.17 | 161.4 |
+| 3. Minimap | -O2 | cheese_maze | 3.14 | 3.75 | 3.75 | 6.00 | 266.6 |
+| 3. Minimap | -O2 | square_map | 1.73 | 2.03 | 2.40 | 8.69 | 416.2 |
 
 Étape 2 : le rendu ne change pas (même image, le déplacement sort juste de `draw_loop`). Les
 écarts de `frame avg` viennent de blocages d'environ 1 s dans `platform_present` (colonne `max`
 des runs bruts, jusqu'à 1060 ms), présents aussi à l'étape 1 et sans lien avec le code de jeu :
 à surveiller, `render` est la colonne fiable pour comparer les étapes.
+
+Étape 3 : l'ancienne minimap relançait 1280 rayons pixel par pixel et redessinait toute la map
+(512x336 sur square_map) : 0.6 ms sur cheese_maze, 3.3 ms sur square_map (65 % du rendu). Le
+radar de taille fixe réutilise les impacts du rendu 3D et coûte environ 0.1 ms ; le rendu
+avec radar est à 0.1 ms près celui d'un build sans minimap (`BONUS 0`).

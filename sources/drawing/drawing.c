@@ -37,6 +37,7 @@ void	draw_line(t_player *player, t_game *game, float start_x, int i)
 	int		end;
 
 	calc_ray(player, start_x, &ray_x, &ray_y);
+	game->hits[i] = (t_vec2){ray_x, ray_y};
 	height = calculate_height(player, ray_x, ray_y);
 	start_y = (HEIGHT - height) / 2;
 	end = start_y + height;
@@ -65,7 +66,7 @@ int	draw_loop(t_game *game)
 	}
 	if (BONUS == 1)
 	{
-		draw_mini_map(game);
+		draw_minimap(game);
 		draw_scope(game);
 	}
 	return (0);

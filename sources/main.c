@@ -65,6 +65,7 @@ void	game_destroy(t_game *game)
 		texture_free(&game->textures[i++]);
 	free(game->fb);
 	game->fb = NULL;
+	minimap_free(&game->minimap);
 	game->data = NULL;
 	platform_destroy(game->platform);
 	game->platform = NULL;

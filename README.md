@@ -128,7 +128,7 @@ The parser is strict on purpose, and every failure prints a message that names t
 
 ## Tests
 
-`make test` runs the unit tests (XPM loader, command line, statistics, movement).
+`make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill).
 
 `test.sh` runs the binary over the whole `maps/bad/` batch and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -145,12 +145,13 @@ Benchmarks are tracked in `docs/perf/benchmarks.md`.
 ## Project layout
 
 ```
-includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h, motion.h
+includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h, motion.h, raster.h
 sources/main.c        entry point and cleanup
 sources/loop.c        main loop, fps counter, benchmark
 sources/options.c     command line
 sources/stats.c       benchmark statistics
 sources/motion.c      movement and rotation per second, frame time clamp
+sources/raster.c      alpha blending, spans and polygon fill
 sources/init.c        game, player and texture setup
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/parser/       scene parsing and validation
@@ -168,8 +169,10 @@ docs/                 specs, plans and benchmarks
 
 Both are compiled in by default and can be turned off with `BONUS 0` in `includes/cub3d.h`.
 
-- a minimap in the bottom right corner, scaled to fit the map, drawing the walls, the player and
-  the fan of rays for the current field of view
+- a 200x200 radar in the bottom right corner, centered on the player with north up, 12 pixels per
+  block whatever the map size: translucent floor, light walls, darker void outside the map, a green
+  arrow for the player and a translucent cone for the field of view, built from the wall hits of the
+  3D view so it costs about 0.1 ms per frame
 - a small crosshair at the center of the screen
 
 ## Known limits

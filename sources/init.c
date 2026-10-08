@@ -106,6 +106,11 @@ void	init_game(t_game *game, t_scene *scene, t_map *map)
 		game_destroy(game);
 		ft_error(scene, "Allocation error!");
 	}
+	if (BONUS == 1 && !minimap_init(&game->minimap, map))
+	{
+		game_destroy(game);
+		ft_error(scene, "Allocation error!");
+	}
 	game->data = (char *)game->fb;
 	game->bpp = 32;
 	game->size_line = WIDTH * (int)sizeof(uint32_t);

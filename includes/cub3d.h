@@ -17,7 +17,21 @@
 # define HEIGHT 720
 # define BLOCK 64
 # define BONUS 1
-# define MM_SIZE 8
+# define MM_SIZE 200
+# define MM_MARGIN 16
+# define MM_CELL 12
+# define MM_CONE_STEP 8
+# define MM_FLOOR_RGB 0x000000
+# define MM_FLOOR_A 140
+# define MM_WALL_RGB 0xC8C8C8
+# define MM_WALL_A 230
+# define MM_VOID_RGB 0x000000
+# define MM_VOID_A 210
+# define MM_CONE_RGB 0xFFE070
+# define MM_CONE_A 90
+# define MM_PLAYER_RGB 0x40FF40
+# define MM_FRAME_RGB 0xFFFFFF
+# define MM_FRAME_A 160
 # define COLLISION_MARG 10
 
 # define W 119
@@ -41,6 +55,7 @@
 # include "options.h"
 # include "stats.h"
 # include "motion.h"
+# include "raster.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -122,11 +137,19 @@ typedef struct s_ray
 	int				side;
 }					t_ray;
 
+enum e_mm_cell
+{
+	MM_FLOOR,
+	MM_WALL,
+	MM_VOID
+};
+
+/* Cases de la map pour le radar, w x h, préparées au chargement */
 typedef struct s_minimap
 {
-	int				bottom_right_x;
-	int				bottom_right_y;
-	int				square_size;
+	uint8_t			*grid;
+	int				w;
+	int				h;
 }					t_minimap;
 
 typedef struct s_game
@@ -145,11 +168,11 @@ typedef struct s_game
 	t_texture		textures[4];
 	int				map_width;
 	int				map_height;
-	t_ray			ray;
 	t_player		player;
 	t_map			*map;
 	t_scene			*scene;
-	t_minimap		*minimap;
+	t_minimap		minimap;
+	t_vec2			hits[WIDTH];
 }					t_game;
 
 // PARSER
@@ -213,12 +236,9 @@ void				draw_ceiling(int i, int start_y, t_game *game);
 
 // BONUS MINIMAP
 
-int					get_cell_index(float coord);
-int					is_diagonal(int curr_x, int curr_y, int next_x, int next_y);
-void				draw_mini_map(t_game *game);
+void				draw_minimap(t_game *game);
+bool				minimap_init(t_minimap *mm, const t_map *map);
+void				minimap_free(t_minimap *mm);
 void				draw_scope(t_game *game);
-void				put_pixel_minimap(t_game *game, float x, float y,
-						t_minimap *mini);
-void				ray_tracing(t_game *game, float angle);
 
 #endif

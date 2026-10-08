@@ -27,13 +27,3 @@ int	is_nord_sud(float start_x)
 	else
 		return (NORD);
 }
-
-int	get_cell_index(float coord)
-{
-	return ((int)coord / BLOCK);
-}
-
-int	is_diagonal(int curr_x, int curr_y, int next_x, int next_y)
-{
-	return (curr_x != next_x && curr_y != next_y);
-}
