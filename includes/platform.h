@@ -24,6 +24,7 @@ void		platform_present(t_platform *p, const uint32_t *fb);
 void		platform_set_title(t_platform *p, const char *title);
 uint64_t	platform_ticks(void);
 double		platform_ticks_to_ms(uint64_t ticks);
+void		platform_sleep_ns(uint64_t ns);
 void		platform_destroy(t_platform *p);
 
 #endif

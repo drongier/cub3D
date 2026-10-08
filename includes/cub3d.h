@@ -40,6 +40,7 @@
 # include "texture.h"
 # include "options.h"
 # include "stats.h"
+# include "motion.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -182,17 +183,7 @@ void				init_game(t_game *game, t_scene *scene, t_map *map);
 
 // PLAYER MOVEMENT
 
-void				move_player(t_player *player);
-void				m_up(t_player *player, int cos_angle, int sin_angle,
-						int speed);
-void				m_down(t_player *player, int cos_angle, int sin_angle,
-						int speed);
-void				m_left(t_player *player, int cos_angle, int sin_angle,
-						int speed);
-void				m_right(t_player *player, int cos_angle, int sin_angle,
-						int speed);
-void				update_angle(t_player *player, float angle_speed);
-void				check_boundaries(t_player *player);
+void				update_player(t_player *player, double dt);
 
 // UTILS
 

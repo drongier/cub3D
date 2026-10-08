@@ -28,18 +28,6 @@ int	is_nord_sud(float start_x)
 		return (NORD);
 }
 
-void	update_angle(t_player *player, float angle_speed)
-{
-	if (player->left_rotate)
-		player->angle -= angle_speed;
-	if (player->right_rotate)
-		player->angle += angle_speed;
-	if (player->angle > 2 * PI)
-		player->angle -= 2 * PI;
-	if (player->angle < 0)
-		player->angle += 2 * PI;
-}
-
 int	get_cell_index(float coord)
 {
 	return ((int)coord / BLOCK);

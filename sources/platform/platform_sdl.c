@@ -98,6 +98,11 @@ uint64_t	platform_ticks(void)
 	return (SDL_GetPerformanceCounter());
 }
 
+void	platform_sleep_ns(uint64_t ns)
+{
+	SDL_DelayPrecise(ns);
+}
+
 double	platform_ticks_to_ms(uint64_t ticks)
 {
 	return ((double)ticks * 1000.0 / (double)SDL_GetPerformanceFrequency());

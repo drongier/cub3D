@@ -50,15 +50,17 @@ optimization.
 ## Run
 
 ```sh
-./cub3D [--no-vsync] [--bench [N]] maps/good/cheese_maze.cub
+./cub3D [--no-vsync] [--fps N] [--bench [N]] maps/good/cheese_maze.cub
 ```
 
 One `.cub` scene file, options in any order. The window title shows the frame rate, the frame time
 and the time spent rendering, refreshed twice a second.
 
 - `--no-vsync` renders as fast as possible instead of following the screen refresh
-- `--bench [N]` plays N frames (1000 by default) with vsync off, turning on the spot, then prints
-  the average, median, p99, min and max render and frame times and exits
+- `--fps N` caps the frame rate at N (10 to 1000); with vsync on, the slower of the two wins
+- `--bench [N]` plays N frames (1000 by default) with vsync off and no cap, turning on the spot
+  with a fixed 1/60 s step, then prints the average, median, p99, min and max render and frame
+  times and exits
 
 | Key | Action |
 |---|---|
@@ -69,6 +71,10 @@ and the time spent rendering, refreshed twice a second.
 | window close button | quit |
 
 Keys are read by physical position: on an AZERTY keyboard, walk with `Z` `Q` `S` `D`.
+
+Movement follows the clock, not the frame count: the player walks about 2.8 blocks and turns
+about 103 degrees per second at any frame rate, and walking diagonally is not faster. A frame that
+took longer than 50 ms counts as 50 ms, so a stall never makes the player jump.
 
 The player cannot walk through walls. Each axis is tested on its own before the move is applied, so
 you slide along a wall instead of sticking to it.
@@ -122,7 +128,7 @@ The parser is strict on purpose, and every failure prints a message that names t
 
 ## Tests
 
-`make test` runs the unit tests (XPM loader, command line, statistics).
+`make test` runs the unit tests (XPM loader, command line, statistics, movement).
 
 `test.sh` runs the binary over the whole `maps/bad/` batch and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -139,11 +145,12 @@ Benchmarks are tracked in `docs/perf/benchmarks.md`.
 ## Project layout
 
 ```
-includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h
+includes/             cub3d.h (structs, constants), platform.h, texture.h, options.h, stats.h, motion.h
 sources/main.c        entry point and cleanup
 sources/loop.c        main loop, fps counter, benchmark
 sources/options.c     command line
 sources/stats.c       benchmark statistics
+sources/motion.c      movement and rotation per second, frame time clamp
 sources/init.c        game, player and texture setup
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/parser/       scene parsing and validation

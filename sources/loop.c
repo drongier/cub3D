@@ -81,6 +81,31 @@ static void	frame_input(t_game *game, const t_options *opt, const t_input *in)
 	apply_input(&game->player, &scripted);
 }
 
+/* Temps écoulé depuis la frame précédente, fixe en bench */
+static double	frame_dt(const t_options *opt, uint64_t *last, uint64_t now)
+{
+	double	dt;
+
+	dt = platform_ticks_to_ms(now - *last) / 1000.0;
+	*last = now;
+	if (opt->bench_frames > 0)
+		return (MOTION_BENCH_DT);
+	return (motion_clamp_dt(dt));
+}
+
+/* --fps N : attend la fin du créneau de 1/N s commencé en début de frame */
+static void	cap_fps(const t_options *opt, uint64_t frame_start)
+{
+	double	left_ms;
+
+	if (opt->fps_cap == 0)
+		return ;
+	left_ms = 1000.0 / opt->fps_cap
+		- platform_ticks_to_ms(platform_ticks() - frame_start);
+	if (left_ms > 0)
+		platform_sleep_ns((uint64_t)(left_ms * 1e6));
+}
+
 int	run_loop(t_game *game, const t_options *opt)
 {
 	t_input			input;
@@ -88,6 +113,7 @@ int	run_loop(t_game *game, const t_options *opt)
 	double			*render;
 	double			*frame;
 	uint64_t		t[4];
+	uint64_t		last;
 	int				n;
 
 	render = NULL;
@@ -107,6 +133,7 @@ int	run_loop(t_game *game, const t_options *opt)
 	ft_bzero(&input, sizeof(input));
 	ft_bzero(&win, sizeof(win));
 	win.start = platform_ticks();
+	last = win.start;
 	n = 0;
 	while (opt->bench_frames == 0 || n < opt->bench_frames)
 	{
@@ -115,6 +142,7 @@ int	run_loop(t_game *game, const t_options *opt)
 		if (input.quit)
 			break ;
 		frame_input(game, opt, &input);
+		update_player(&game->player, frame_dt(opt, &last, t[0]));
 		t[1] = platform_ticks();
 		draw_loop(game);
 		t[2] = platform_ticks();
@@ -128,6 +156,7 @@ int	run_loop(t_game *game, const t_options *opt)
 		n++;
 		update_title(game->platform, &win, platform_ticks_to_ms(t[3] - t[0]),
 			platform_ticks_to_ms(t[2] - t[1]));
+		cap_fps(opt, t[0]);
 	}
 	if (render && n > 0)
 		print_report(opt, render, frame, n);

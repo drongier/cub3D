@@ -34,6 +34,21 @@ static bool	parse_bench(int argc, char **argv, int *i, t_options *opt)
 	return (true);
 }
 
+/* --fps N : N obligatoire, entre FPS_CAP_MIN et FPS_CAP_MAX */
+static bool	parse_fps(int argc, char **argv, int *i, t_options *opt)
+{
+	long	n;
+
+	if (*i + 1 >= argc || !is_number(argv[*i + 1]) || strlen(argv[*i + 1]) > 4)
+		return (false);
+	(*i)++;
+	n = strtol(argv[*i], NULL, 10);
+	if (n < FPS_CAP_MIN || n > FPS_CAP_MAX)
+		return (false);
+	opt->fps_cap = (int)n;
+	return (true);
+}
+
 bool	parse_options(int argc, char **argv, t_options *opt)
 {
 	int	i;
@@ -41,6 +56,7 @@ bool	parse_options(int argc, char **argv, t_options *opt)
 	opt->scene_path = NULL;
 	opt->vsync = true;
 	opt->bench_frames = 0;
+	opt->fps_cap = 0;
 	i = 1;
 	while (i < argc)
 	{
@@ -51,6 +67,11 @@ bool	parse_options(int argc, char **argv, t_options *opt)
 			if (!parse_bench(argc, argv, &i, opt))
 				return (false);
 		}
+		else if (strcmp(argv[i], "--fps") == 0)
+		{
+			if (!parse_fps(argc, argv, &i, opt))
+				return (false);
+		}
 		else if (argv[i][0] == '-' || opt->scene_path)
 			return (false);
 		else
@@ -58,11 +79,14 @@ bool	parse_options(int argc, char **argv, t_options *opt)
 		i++;
 	}
 	if (opt->bench_frames > 0)
+	{
 		opt->vsync = false;
+		opt->fps_cap = 0;
+	}
 	return (opt->scene_path != NULL);
 }
 
 void	print_usage(void)
 {
-	fprintf(stderr, "Usage: ./cub3D [--no-vsync] [--bench [N]] <scene.cub>\n");
+	fprintf(stderr, "Usage: ./cub3D [--no-vsync] [--fps N] [--bench [N]] <scene.cub>\n");
 }

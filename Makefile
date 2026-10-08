@@ -11,13 +11,13 @@ LDFLAGS		:= $(EXTRA_LDFLAGS)
 LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
 SRC			:= sources/main.c sources/init.c \
-			   sources/loop.c sources/options.c sources/stats.c \
+			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
 			   sources/drawing/bonus_map.c sources/drawing/bonus_map2.c \
 			   sources/drawing/drawing.c sources/drawing/drawing2.c \
 			   sources/drawing/player.c \
-			   sources/drawing/player_mouv.c sources/drawing/utils.c \
+			   sources/drawing/utils.c \
 			   sources/drawing/utils2.c sources/drawing/utils_math.c \
 			   sources/drawing/ray_caster.c \
 			   sources/parser/ft_flood_fill.c sources/parser/get_scene_data.c \
@@ -27,7 +27,7 @@ SRC			:= sources/main.c sources/init.c \
 OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 
 TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
-			   $(BUILD)/tests/stats_test
+			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -57,15 +57,19 @@ test: $(TEST_BINS)
 
 $(BUILD)/tests/xpm_test: tests/xpm_test.c $(BUILD)/sources/platform/xpm_loader.o
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
 
 $(BUILD)/tests/options_test: tests/options_test.c $(BUILD)/sources/options.o
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
 
 $(BUILD)/tests/stats_test: tests/stats_test.c $(BUILD)/sources/stats.o
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) $^ -lm -o $@
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
+
+$(BUILD)/tests/motion_test: tests/motion_test.c $(BUILD)/sources/motion.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 
 clean:
 	rm -rf build build-debug

@@ -5,13 +5,16 @@
 
 # define BENCH_DEFAULT_FRAMES 1000
 # define BENCH_MAX_FRAMES 1000000
+# define FPS_CAP_MIN 10
+# define FPS_CAP_MAX 1000
 
-/* bench_frames == 0 : partie normale */
+/* bench_frames == 0 : partie normale ; fps_cap == 0 : pas de limite */
 typedef struct s_options
 {
 	const char	*scene_path;
 	bool		vsync;
 	int			bench_frames;
+	int			fps_cap;
 }	t_options;
 
 bool	parse_options(int argc, char **argv, t_options *opt);
