@@ -2,6 +2,9 @@
 *.o
 *.a
 cub3D
+build/
+build-debug/
+cub3D_debug
 
 ### minilibx build output
 minilibx-linux/obj/

@@ -1,53 +1,72 @@
-NAME = cub3D
-HEADER = includes/cub3d.h 
-SRC =  main.c init.c
-SRC := $(addprefix sources/, $(SRC))
-SRC_DRW = bonus_map.c bonus_map2.c drawing2.c drawing.c \
-		player.c player_key.c player_mouv.c utils2.c \
-		utils.c utils_math.c ray_caster.c
-SRC_DRW := $(addprefix sources/drawing/, $(SRC_DRW))
-PRS_SRC = ft_flood_fill.c get_scene_data.c get_colors.c file_check.c \
-		get_textures.c parse_map.c extract_map.c utils_2dstr.c
-PRS_SRC := $(addprefix sources/parser/, $(PRS_SRC))
-SRC += $(SRC_DRW)
-SRC += $(PRS_SRC)
-OBJ = ${SRC:%.c=%.o}
-MLX_DIR = ./minilibx-linux
-MLX_FLG = -lmlx -lX11 -lXext -lm
-MLX = ./minilibx-linux/libmlx_Linux.a
-LIBFT = ./libft/libft.a
+NAME		?= cub3D
+BUILD		?= build
+OPT			?= -O2
 
-all : $(NAME) 
+LIBFT		:= libft/libft.a
+SDL_CFLAGS	:= $(shell pkg-config --cflags sdl3 2>/dev/null)
+SDL_LIBS	:= $(shell pkg-config --libs sdl3 2>/dev/null)
 
-$(LIBFT) :
-	@echo "<Compiling libft>"
-	@make -C ./libft
+CFLAGS		:= -Wall -Wextra -Werror -MMD -MP $(OPT) -g $(EXTRA_CFLAGS) $(SDL_CFLAGS)
+LDFLAGS		:= $(EXTRA_LDFLAGS)
+LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
-$(MLX) :
-	@echo "<Compiling minilibx>"
-	@make -C ./minilibx-linux
+SRC			:= sources/main.c sources/init.c \
+			   sources/platform/xpm_loader.c \
+			   sources/drawing/bonus_map.c sources/drawing/bonus_map2.c \
+			   sources/drawing/drawing.c sources/drawing/drawing2.c \
+			   sources/drawing/player.c sources/drawing/player_key.c \
+			   sources/drawing/player_mouv.c sources/drawing/utils.c \
+			   sources/drawing/utils2.c sources/drawing/utils_math.c \
+			   sources/drawing/ray_caster.c \
+			   sources/parser/ft_flood_fill.c sources/parser/get_scene_data.c \
+			   sources/parser/get_colors.c sources/parser/file_check.c \
+			   sources/parser/get_textures.c sources/parser/parse_map.c \
+			   sources/parser/extract_map.c sources/parser/utils_2dstr.c
+OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 
-%.o: %.c Makefile $(LIBFT) $(MLX)
-	@cc -c -g -Werror -Wall -Wextra $< -o $@ 
+TEST_BINS	:= $(BUILD)/tests/xpm_test
 
-$(NAME) : $(HEADER) $(LIBFT) $(OBJ) Makefile
-	@echo "Creating the program <cub3D>"
-	@cc -g -Werror -Wall -Wextra -L$(MLX_DIR) $(OBJ) $(MLX_FLG) $(LIBFT) $(MLX) -Iinclude -ldl -lm -o $(NAME)
+ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
+ifeq ($(SDL_LIBS),)
+$(error SDL3 introuvable via pkg-config. macOS : brew install sdl3 | Linux récent : paquet libsdl3-dev | sinon : compiler SDL3 depuis https://github.com/libsdl-org/SDL)
+endif
+endif
 
-%.o: %.c
-	$(CC) -g $(CFLAGS) -I$(MLX_DIR) -c $< -o $@
+all: $(NAME)
 
-clean :
-	@echo "Removing object files"
-	@rm -f $(OBJ)
-	@make clean -C ./libft	
-	@make clean -C ./minilibx-linux
+$(NAME): $(OBJ) $(LIBFT)
+	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $@
 
-fclean : clean 
-	@echo "Removing the executable <cub3D>"
-	@rm -f cub3D
-	@make fclean -C ./libft
+$(BUILD)/%.o: %.c
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -c $< -o $@
 
-re : fclean all
+$(LIBFT):
+	$(MAKE) -C libft
 
-.PHONY: all, clean, fclean, re
+debug:
+	$(MAKE) NAME=cub3D_debug BUILD=build-debug OPT=-O0 \
+		EXTRA_CFLAGS="-fsanitize=address,undefined" \
+		EXTRA_LDFLAGS="-fsanitize=address,undefined"
+
+test: $(TEST_BINS)
+	@for t in $(TEST_BINS); do ./$$t || exit 1; done
+
+$(BUILD)/tests/xpm_test: tests/xpm_test.c $(BUILD)/sources/platform/xpm_loader.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $^ -o $@
+
+clean:
+	rm -rf build build-debug
+	$(MAKE) -C libft clean
+
+fclean: clean
+	rm -f cub3D cub3D_debug
+	$(MAKE) -C libft fclean
+
+re: fclean
+	$(MAKE) all
+
+.PHONY: all debug test clean fclean re
+
+-include $(OBJ:.o=.d) $(wildcard $(BUILD)/tests/*.d)

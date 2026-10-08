@@ -37,6 +37,7 @@
 
 # include "../libft/libft.h"
 # include "../minilibx-linux/mlx.h"
+# include "texture.h"
 # include <bits/types.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -97,17 +98,6 @@ typedef struct s_player
 	struct s_game	*game;
 	t_map			*map;
 }					t_player;
-
-typedef struct s_texture
-{
-	void			*img;
-	char			*data;
-	int				width;
-	int				height;
-	int				bpp;
-	int				size_line;
-	int				endian;
-}					t_texture;
 
 typedef struct s_ray
 {
