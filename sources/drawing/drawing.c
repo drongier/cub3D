@@ -32,13 +32,13 @@ static void	draw_column(t_game *game, const t_camera *cam, int i)
 		texture_column(tex, (int)(hit.wall_x * tex->width)), tex->height);
 }
 
-/* Arme en bas au centre, décalée par le balancement et le recul */
+/* Arme en bas au centre, décalée par le balancement */
 void	draw_weapon(t_game *game)
 {
 	const t_texture	*tex;
 	t_vec2			o;
 
-	tex = &game->weapon_tex[weapon_flash(&game->weapon)];
+	tex = &game->weapon_tex[weapon_frame(&game->weapon)];
 	o = weapon_offset(&game->weapon);
 	blit_sprite(game->fb, WIDTH, HEIGHT, tex, (t_blit){
 		WIDTH / 2 - tex->width * WEAPON_SCALE / 2 + (int)o.x,

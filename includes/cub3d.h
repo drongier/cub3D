@@ -90,7 +90,7 @@ typedef struct s_game
 	t_grid			grid;
 	t_vec2			hits[WIDTH];
 	t_weapon		weapon;
-	t_texture		weapon_tex[2];
+	t_texture		weapon_tex[WEAPON_FRAMES];
 	bool			trigger;
 }					t_game;
 

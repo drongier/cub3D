@@ -182,7 +182,7 @@ sources/raster.c      alpha blending, spans and polygon fill
 sources/grid.c        flat map grid, void outside the map found by flood fill
 sources/raycast.c     camera, DDA ray casting, wall height
 sources/pixels.c      row fills, textured wall columns, column-major textures, sprite blit
-sources/weapon.c      pistol state: fire rate, muzzle flash, recoil, sway
+sources/weapon.c      pistol state: fire rate, animation frame, sway
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/level/        scene file parsing and validation (no exit, errors with line numbers)
 sources/game.c        load and unload a scene: textures, grid, player
@@ -192,6 +192,7 @@ tests/                unit tests
 maps/good/            valid scenes, from small test maps to full mazes
 maps/bad/             scenes that must be rejected, one per error case
 textures/             xpm textures, including the pistol in textures/weapon/
+tools/                sheet_to_xpm.py, cuts weapon frames out of a sprite sheet
 test.sh               batch tester: every bad scene refused, every good one loads
 docs/                 specs, plans and benchmarks
 ```
@@ -208,15 +209,26 @@ Both are compiled in by default and can be turned off with `BONUS 0` in `include
 
 ## Weapon
 
-A pistol is drawn at the bottom of the screen over the 3D view, from two 48x48 XPM images in
-`textures/weapon/` shown five times larger: `pistol_idle.xpm`, and `pistol_fire.xpm` with the muzzle
-flash, shown for 60 ms after a shot. Pixels set to `None` in the XPM are transparent. The gun kicks
-down on each shot and comes back in 0.2 s, and sways while walking, faster when sprinting. All of it
-follows the clock, so it looks the same at any frame rate. Shots do not hit anything yet: there are
-no targets in the scenes.
+The pistol is the one from Wolfenstein 3D: five 64x64 frames (ready, raised, muzzle flash, kick,
+return) in `textures/weapon/pistol_0.xpm` to `pistol_4.xpm`, drawn at the bottom center over the 3D
+view. As in the original, the whole frame is about the height of the screen (64 x 11 = 704 pixels).
+Pixels set to `None` in the XPM are transparent, and only the opaque part of each row is drawn.
 
-To use your own art, replace the two XPM files (any size works, keep the transparent background as
-`None`), and adjust `WEAPON_SCALE` and the timings in `includes/weapon.h`.
+A shot plays the five frames in 0.25 s, the fire rate limit, and the gun sways while walking,
+faster when sprinting. All of it follows the clock, so it looks the same at any frame rate. Shots
+do not hit anything yet: there are no targets in the scenes.
+
+The frames are cut from `textures/weapon/wolf3d_weapons.png`, a sheet of the four Wolfenstein 3D
+weapons ripped by PGE, with `tools/sheet_to_xpm.py` (needs Python and Pillow):
+
+```sh
+tools/sheet_to_xpm.py textures/weapon/wolf3d_weapons.png 1 textures/weapon/pistol
+```
+
+Row 0 is the knife, 1 the pistol, 2 the machine gun and 3 the chain gun. Timings and the scale are
+in `includes/weapon.h`. Like the wall textures in `textures/wolfenstein/`, these images are
+copyright id Software: fine for a school or personal project, to be replaced by free art before
+publishing the game.
 
 ## Known limits
 

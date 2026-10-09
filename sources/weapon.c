@@ -44,24 +44,26 @@ bool	weapon_update(t_weapon *w, bool trigger, t_move move, double dt)
 	return (fired);
 }
 
-bool	weapon_flash(const t_weapon *w)
+int	weapon_frame(const t_weapon *w)
 {
-	return (w->since_shot < WEAPON_FLASH_TIME);
+	if (w->since_shot < WEAPON_ANIM_1)
+		return (1);
+	if (w->since_shot < WEAPON_ANIM_2)
+		return (2);
+	if (w->since_shot < WEAPON_ANIM_3)
+		return (3);
+	if (w->since_shot < WEAPON_ANIM_4)
+		return (4);
+	return (0);
 }
 
-/* Balancement en huit couché (x sur un pas, y sur deux) et recul */
+/* Balancement en huit couché : x sur un pas, y sur deux */
 t_vec2	weapon_offset(const t_weapon *w)
 {
 	t_vec2	o;
-	float	k;
 
 	o.x = sinf(w->bob_phase) * WEAPON_BOB_PX * w->bob_amount;
 	o.y = (1.0f - cosf(2.0f * w->bob_phase)) * 0.5f * WEAPON_BOB_PX * 0.5f
 		* w->bob_amount;
-	if (w->since_shot < WEAPON_RECOIL_TIME)
-	{
-		k = 1.0f - (float)(w->since_shot / WEAPON_RECOIL_TIME);
-		o.y += WEAPON_RECOIL_PX * k;
-	}
 	return (o);
 }

@@ -3,8 +3,8 @@
 /* Ce qui ne dépend pas de la map : framebuffer, arme */
 bool	game_init(t_game *game, t_level_error *err)
 {
-	static const char	*paths[2] = {WEAPON_IDLE_XPM, WEAPON_FIRE_XPM};
-	int					i;
+	char	path[256];
+	int		i;
 
 	ft_bzero(game, sizeof(*game));
 	err->line = 0;
@@ -13,10 +13,13 @@ bool	game_init(t_game *game, t_level_error *err)
 	if (!game->fb)
 		return (snprintf(err->msg, sizeof(err->msg), "out of memory"), false);
 	i = -1;
-	while (++i < 2)
-		if (!xpm_load(paths[i], &game->weapon_tex[i]))
+	while (++i < WEAPON_FRAMES)
+	{
+		snprintf(path, sizeof(path), "%s_%d.xpm", WEAPON_XPM_PREFIX, i);
+		if (!xpm_load(path, &game->weapon_tex[i]))
 			return (snprintf(err->msg, sizeof(err->msg),
-					"cannot load texture '%s'", paths[i]), false);
+					"cannot load texture '%s'", path), false);
+	}
 	return (true);
 }
 
@@ -101,9 +104,12 @@ void	game_unload_level(t_game *game)
 
 void	game_destroy(t_game *game)
 {
+	int	i;
+
 	game_unload_level(game);
-	texture_free(&game->weapon_tex[0]);
-	texture_free(&game->weapon_tex[1]);
+	i = 0;
+	while (i < WEAPON_FRAMES)
+		texture_free(&game->weapon_tex[i++]);
 	free(game->fb);
 	game->fb = NULL;
 	platform_destroy(game->platform);

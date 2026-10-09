@@ -77,12 +77,25 @@ const uint32_t	*texture_column(const t_texture *t, int x)
 	return (t->columns + (long)x * t->height);
 }
 
+/* Colonnes [*from, *to) de la ligne qui contiennent des pixels opaques */
+static void	opaque_span(const uint32_t *row, int w, int *from, int *to)
+{
+	*from = 0;
+	while (*from < w && (row[*from] & TEX_TRANSPARENT))
+		(*from)++;
+	*to = w;
+	while (*to > *from && (row[*to - 1] & TEX_TRANSPARENT))
+		(*to)--;
+}
+
+/* Chaque ligne source n'est parcourue que sur sa partie opaque */
 void	blit_sprite(uint32_t *fb, int fb_w, int fb_h, const t_texture *t,
 			t_blit at)
 {
 	const uint32_t	*src;
-	uint32_t		c;
+	int				span[2];
 	int				x;
+	int				end;
 	int				y;
 
 	y = at.y;
@@ -92,14 +105,17 @@ void	blit_sprite(uint32_t *fb, int fb_w, int fb_h, const t_texture *t,
 	{
 		src = (const uint32_t *)t->data + (long)((y - at.y) / at.scale)
 			* t->width;
-		x = at.x;
+		opaque_span(src, t->width, &span[0], &span[1]);
+		x = at.x + span[0] * at.scale;
 		if (x < 0)
 			x = 0;
-		while (x < at.x + t->width * at.scale && x < fb_w)
+		end = at.x + span[1] * at.scale;
+		if (end > fb_w)
+			end = fb_w;
+		while (x < end)
 		{
-			c = src[(x - at.x) / at.scale];
-			if (!(c & TEX_TRANSPARENT))
-				fb[(long)y * fb_w + x] = c;
+			if (!(src[(x - at.x) / at.scale] & TEX_TRANSPARENT))
+				fb[(long)y * fb_w + x] = src[(x - at.x) / at.scale];
 			x++;
 		}
 		y++;
