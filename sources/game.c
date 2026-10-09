@@ -1,11 +1,23 @@
 #include "../includes/cub3d.h"
 
-/* Ce qui ne dépend pas de la map : framebuffer */
-bool	game_init(t_game *game)
+/* Ce qui ne dépend pas de la map : framebuffer, arme */
+bool	game_init(t_game *game, t_level_error *err)
 {
+	static const char	*paths[2] = {WEAPON_IDLE_XPM, WEAPON_FIRE_XPM};
+	int					i;
+
 	ft_bzero(game, sizeof(*game));
+	err->line = 0;
+	weapon_init(&game->weapon);
 	game->fb = ft_calloc((size_t)WIDTH * HEIGHT, sizeof(uint32_t));
-	return (game->fb != NULL);
+	if (!game->fb)
+		return (snprintf(err->msg, sizeof(err->msg), "out of memory"), false);
+	i = -1;
+	while (++i < 2)
+		if (!xpm_load(paths[i], &game->weapon_tex[i]))
+			return (snprintf(err->msg, sizeof(err->msg),
+					"cannot load texture '%s'", paths[i]), false);
+	return (true);
 }
 
 static void	init_player(t_player *player, const t_level *lv, t_game *game)
@@ -90,6 +102,8 @@ void	game_unload_level(t_game *game)
 void	game_destroy(t_game *game)
 {
 	game_unload_level(game);
+	texture_free(&game->weapon_tex[0]);
+	texture_free(&game->weapon_tex[1]);
 	free(game->fb);
 	game->fb = NULL;
 	platform_destroy(game->platform);

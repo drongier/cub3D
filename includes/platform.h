@@ -14,6 +14,7 @@ typedef struct s_input
 	bool	rot_left;
 	bool	rot_right;
 	bool	sprint;
+	bool	fire;
 	bool	quit;
 }	t_input;
 

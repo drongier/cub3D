@@ -54,6 +54,7 @@
 # include "raycast.h"
 # include "pixels.h"
 # include "level.h"
+# include "weapon.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -88,11 +89,14 @@ typedef struct s_game
 	t_level			level;
 	t_grid			grid;
 	t_vec2			hits[WIDTH];
+	t_weapon		weapon;
+	t_texture		weapon_tex[2];
+	bool			trigger;
 }					t_game;
 
 // GAME
 
-bool				game_init(t_game *game);
+bool				game_init(t_game *game, t_level_error *err);
 bool				game_load_level(t_game *game, const char *path,
 						t_level_error *err);
 void				game_unload_level(t_game *game);
@@ -101,6 +105,7 @@ void				game_destroy(t_game *game);
 // PLAYER MOVEMENT
 
 void				update_player(t_player *player, double dt);
+t_move				player_move(const t_player *player);
 
 // MAIN LOOP
 
@@ -114,6 +119,7 @@ bool				touch(float px, float py, t_game *game);
 // BONUS MINIMAP
 
 void				draw_minimap(t_game *game);
+void				draw_weapon(t_game *game);
 void				draw_scope(t_game *game);
 
 #endif

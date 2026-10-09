@@ -54,6 +54,29 @@ static void	column_cases(void)
 	CHECK(bad == 0, "column matches the reference formula (%d cases off)", bad);
 }
 
+/* 2 x 2 texture, pixel (1, 0) transparent, agrandie 2 fois */
+static void	blit_cases(void)
+{
+	uint32_t	px[4] = {0xA, TEX_TRANSPARENT, 0xC, 0xD};
+	uint32_t	fb[W * H];
+	t_texture	t;
+
+	t.data = (char *)px;
+	t.width = 2;
+	t.height = 2;
+	for (int i = 0; i < W * H; i++)
+		fb[i] = 7;
+	blit_sprite(fb, W, H, &t, (t_blit){-1, H - 2, 2});
+	CHECK(fb[(H - 2) * W + 0] == 0xA && fb[(H - 2) * W + 1] == 7
+		&& fb[(H - 2) * W + 2] == 7 && fb[(H - 1) * W + 0] == 0xA,
+		"top row: left texel clipped to one column, transparent skipped");
+	CHECK(fb[(H - 3) * W + 0] == 7 && fb[(H - 3) * W + 1] == 7,
+		"nothing above the sprite");
+	blit_sprite(fb, W, H, &t, (t_blit){0, H - 1, 2});
+	CHECK(fb[(H - 1) * W + 0] == 0xA && fb[(H - 1) * W + 1] == 0xA,
+		"rows below the screen are clipped");
+}
+
 int	main(void)
 {
 	uint32_t	fb[W * H];
@@ -80,6 +103,7 @@ int	main(void)
 	CHECK(texture_column(&t, -4) == texture_column(&t, 0)
 		&& texture_column(&t, 9) == texture_column(&t, 2), "x is clamped");
 	texture_free(&t);
+	blit_cases();
 	if (g_fail)
 		printf("pixels_test: %d check(s) failed\n", g_fail);
 	else

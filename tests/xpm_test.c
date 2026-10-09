@@ -89,7 +89,8 @@ static void	test_short_hex_and_none(void)
 	if (t.data)
 	{
 		CHECK(pixel(&t, 0, 0) == 0xFF00AA, "#F0A = %06X", pixel(&t, 0, 0));
-		CHECK(pixel(&t, 1, 0) == 0x000000, "None = %06X", pixel(&t, 1, 0));
+		CHECK(pixel(&t, 1, 0) == TEX_TRANSPARENT, "None = %08X",
+			pixel(&t, 1, 0));
 		texture_free(&t);
 	}
 }

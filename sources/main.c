@@ -16,8 +16,12 @@ int	main(int argc, char **argv)
 
 	if (!parse_options(argc, argv, &opt))
 		return (print_usage(), 1);
-	if (!game_init(&game))
-		return (fail(&game, "out of memory"));
+	if (!game_init(&game, &err))
+	{
+		level_print_error(&err);
+		game_destroy(&game);
+		return (1);
+	}
 	if (!game_load_level(&game, opt.scene_path, &err))
 	{
 		level_print_error(&err);

@@ -76,3 +76,32 @@ const uint32_t	*texture_column(const t_texture *t, int x)
 		x = t->width - 1;
 	return (t->columns + (long)x * t->height);
 }
+
+void	blit_sprite(uint32_t *fb, int fb_w, int fb_h, const t_texture *t,
+			t_blit at)
+{
+	const uint32_t	*src;
+	uint32_t		c;
+	int				x;
+	int				y;
+
+	y = at.y;
+	if (y < 0)
+		y = 0;
+	while (y < at.y + t->height * at.scale && y < fb_h)
+	{
+		src = (const uint32_t *)t->data + (long)((y - at.y) / at.scale)
+			* t->width;
+		x = at.x;
+		if (x < 0)
+			x = 0;
+		while (x < at.x + t->width * at.scale && x < fb_w)
+		{
+			c = src[(x - at.x) / at.scale];
+			if (!(c & TEX_TRANSPARENT))
+				fb[(long)y * fb_w + x] = c;
+			x++;
+		}
+		y++;
+	}
+}

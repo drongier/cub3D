@@ -36,16 +36,17 @@ static void	check_collision(t_player *player, t_vec2 step)
 		player->y += step.y;
 }
 
+/* Touches de déplacement enfoncées, combinées */
+t_move	player_move(const t_player *player)
+{
+	return ((t_move){player->key_up - player->key_down,
+		player->key_right - player->key_left, player->sprint});
+}
+
 void	update_player(t_player *player, double dt)
 {
-	int	forward;
-	int	strafe;
-	int	turn;
-
-	turn = player->right_rotate - player->left_rotate;
-	forward = player->key_up - player->key_down;
-	strafe = player->key_right - player->key_left;
-	player->angle = motion_turn(player->angle, turn, dt);
-	check_collision(player, motion_step(player->angle,
-			(t_move){forward, strafe, player->sprint}, dt));
+	player->angle = motion_turn(player->angle,
+			player->right_rotate - player->left_rotate, dt);
+	check_collision(player, motion_step(player->angle, player_move(player),
+			dt));
 }

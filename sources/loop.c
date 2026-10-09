@@ -75,8 +75,10 @@ static void	frame_input(t_game *game, const t_options *opt, const t_input *in)
 	if (opt->bench_frames == 0)
 	{
 		apply_input(&game->player, in);
+		game->trigger = in->fire;
 		return ;
 	}
+	game->trigger = false;
 	ft_bzero(&scripted, sizeof(scripted));
 	scripted.rot_right = true;
 	apply_input(&game->player, &scripted);
@@ -115,6 +117,7 @@ int	run_loop(t_game *game, const t_options *opt)
 	double			*frame;
 	uint64_t		t[4];
 	uint64_t		last;
+	double			dt;
 	int				n;
 
 	render = NULL;
@@ -143,7 +146,10 @@ int	run_loop(t_game *game, const t_options *opt)
 		if (input.quit)
 			break ;
 		frame_input(game, opt, &input);
-		update_player(&game->player, frame_dt(opt, &last, t[0]));
+		dt = frame_dt(opt, &last, t[0]);
+		update_player(&game->player, dt);
+		weapon_update(&game->weapon, game->trigger,
+			player_move(&game->player), dt);
 		t[1] = platform_ticks();
 		draw_loop(game);
 		t[2] = platform_ticks();

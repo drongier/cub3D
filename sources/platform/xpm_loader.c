@@ -137,7 +137,7 @@ static int	hex_value(char c)
 	return (-1);
 }
 
-/* "#RRGGBB", "#RGB" ou "None" (transparent, rendu en noir pour l'instant) */
+/* "#RRGGBB", "#RGB" ou "None" (TEX_TRANSPARENT) */
 static bool	parse_color_value(const char *v, size_t len, int32_t *out)
 {
 	int32_t	value;
@@ -146,7 +146,7 @@ static bool	parse_color_value(const char *v, size_t len, int32_t *out)
 
 	if (len == 4 && strncasecmp(v, "None", 4) == 0)
 	{
-		*out = 0;
+		*out = (int32_t)TEX_TRANSPARENT;
 		return (true);
 	}
 	if (v[0] != '#' || (len != 7 && len != 4))

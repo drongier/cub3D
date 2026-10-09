@@ -77,6 +77,7 @@ and the time spent rendering, refreshed twice a second.
 | `A` / `D` | strafe left / right |
 | `Left` / `Right` | turn |
 | `Shift` (hold) | sprint, 1.75x the walking speed |
+| `Space` / left click | fire the pistol (one shot per press, at most 4 per second) |
 | `Esc` | quit |
 | window close button | quit |
 
@@ -154,7 +155,7 @@ textures included, prints `OK` and exits without opening a window.
 ## Tests
 
 `make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill,
-ray casting, wall columns, scene parsing).
+ray casting, wall columns, scene parsing, weapon).
 
 `test.sh` runs the binary over the whole `maps/bad/` folder and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -180,7 +181,8 @@ sources/motion.c      movement and rotation per second, frame time clamp
 sources/raster.c      alpha blending, spans and polygon fill
 sources/grid.c        flat map grid, void outside the map found by flood fill
 sources/raycast.c     camera, DDA ray casting, wall height
-sources/pixels.c      row fills, textured wall columns, column-major textures
+sources/pixels.c      row fills, textured wall columns, column-major textures, sprite blit
+sources/weapon.c      pistol state: fire rate, muzzle flash, recoil, sway
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/level/        scene file parsing and validation (no exit, errors with line numbers)
 sources/game.c        load and unload a scene: textures, grid, player
@@ -189,7 +191,7 @@ libft/                our own libft, including ft_printf and get_next_line
 tests/                unit tests
 maps/good/            valid scenes, from small test maps to full mazes
 maps/bad/             scenes that must be rejected, one per error case
-textures/             xpm textures
+textures/             xpm textures, including the pistol in textures/weapon/
 test.sh               batch tester: every bad scene refused, every good one loads
 docs/                 specs, plans and benchmarks
 ```
@@ -203,6 +205,18 @@ Both are compiled in by default and can be turned off with `BONUS 0` in `include
   arrow for the player and a translucent cone for the field of view, built from the wall hits of the
   3D view so it costs about 0.1 ms per frame
 - a small crosshair at the center of the screen
+
+## Weapon
+
+A pistol is drawn at the bottom of the screen over the 3D view, from two 48x48 XPM images in
+`textures/weapon/` shown five times larger: `pistol_idle.xpm`, and `pistol_fire.xpm` with the muzzle
+flash, shown for 60 ms after a shot. Pixels set to `None` in the XPM are transparent. The gun kicks
+down on each shot and comes back in 0.2 s, and sways while walking, faster when sprinting. All of it
+follows the clock, so it looks the same at any frame rate. Shots do not hit anything yet: there are
+no targets in the scenes.
+
+To use your own art, replace the two XPM files (any size works, keep the transparent background as
+`None`), and adjust `WEAPON_SCALE` and the timings in `includes/weapon.h`.
 
 ## Known limits
 

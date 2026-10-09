@@ -16,6 +16,7 @@ LEVEL_SRC	:= sources/level/level.c sources/level/level_lines.c \
 SRC			:= sources/main.c sources/game.c \
 			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
 			   sources/raster.c sources/grid.c sources/raycast.c sources/pixels.c \
+			   sources/weapon.c \
 			   $(LEVEL_SRC) \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
@@ -28,7 +29,8 @@ OBJ			:= $(SRC:%.c=$(BUILD)/%.o)
 TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test \
 			   $(BUILD)/tests/raster_test $(BUILD)/tests/raycast_test \
-			   $(BUILD)/tests/pixels_test $(BUILD)/tests/level_test
+			   $(BUILD)/tests/pixels_test $(BUILD)/tests/level_test \
+			   $(BUILD)/tests/weapon_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -89,6 +91,10 @@ $(BUILD)/tests/pixels_test: tests/pixels_test.c $(BUILD)/sources/pixels.o \
 $(BUILD)/tests/level_test: tests/level_test.c $(LEVEL_SRC:%.c=$(BUILD)/%.o)
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
+
+$(BUILD)/tests/weapon_test: tests/weapon_test.c $(BUILD)/sources/weapon.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 
 clean:
 	rm -rf build build-debug

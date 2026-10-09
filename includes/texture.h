@@ -5,6 +5,12 @@
 # include <stdint.h>
 
 /*
+ * Pixel transparent ("None" dans le XPM) : un bit qu'aucune couleur RGB
+ * n'utilise. SDL ignore l'octet du haut, donc sur un mur il reste noir.
+ */
+# define TEX_TRANSPARENT 0x01000000u
+
+/*
  * data pointe sur un uint32_t[width * height], pixels en 0x00RRGGBB.
  * columns : la même image transposée (colonne x contiguë), ou NULL.
  */

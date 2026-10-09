@@ -83,6 +83,8 @@ void	platform_poll(t_platform *p, t_input *in)
 	}
 	keys = SDL_GetKeyboardState(NULL);
 	in->sprint = keys[SDL_SCANCODE_LSHIFT] || keys[SDL_SCANCODE_RSHIFT];
+	in->fire = keys[SDL_SCANCODE_SPACE]
+		|| (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON_LMASK);
 }
 
 void	platform_present(t_platform *p, const uint32_t *fb)
