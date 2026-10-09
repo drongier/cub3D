@@ -10,17 +10,22 @@ CFLAGS		:= -Wall -Wextra -Werror -MMD -MP $(OPT) -g $(EXTRA_CFLAGS) $(SDL_CFLAGS
 LDFLAGS		:= $(EXTRA_LDFLAGS)
 LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
 
+ENEMY_SRC	:= sources/enemy/enemy.c sources/enemy/enemy_move.c \
+			   sources/enemy/enemy_view.c
+
 LEVEL_SRC	:= sources/level/level.c sources/level/level_lines.c \
 			   sources/level/level_header.c sources/level/level_map.c
 
-SRC			:= sources/main.c sources/game.c \
+SRC			:= sources/main.c sources/game.c sources/game_update.c \
 			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
 			   sources/raster.c sources/grid.c sources/raycast.c sources/pixels.c \
+			   sources/font.c \
 			   sources/weapon.c \
-			   $(LEVEL_SRC) \
+			   $(LEVEL_SRC) $(ENEMY_SRC) \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
-			   sources/drawing/minimap.c \
+			   sources/drawing/minimap.c sources/drawing/sprites.c \
+			   sources/drawing/hud.c \
 			   sources/drawing/drawing.c \
 			   sources/drawing/player.c \
 			   sources/drawing/utils.c
@@ -30,7 +35,8 @@ TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 			   $(BUILD)/tests/stats_test $(BUILD)/tests/motion_test \
 			   $(BUILD)/tests/raster_test $(BUILD)/tests/raycast_test \
 			   $(BUILD)/tests/pixels_test $(BUILD)/tests/level_test \
-			   $(BUILD)/tests/weapon_test
+			   $(BUILD)/tests/weapon_test $(BUILD)/tests/enemy_test \
+			   $(BUILD)/tests/font_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -95,6 +101,15 @@ $(BUILD)/tests/level_test: tests/level_test.c $(LEVEL_SRC:%.c=$(BUILD)/%.o)
 $(BUILD)/tests/weapon_test: tests/weapon_test.c $(BUILD)/sources/weapon.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
+
+$(BUILD)/tests/enemy_test: tests/enemy_test.c $(ENEMY_SRC:%.c=$(BUILD)/%.o) \
+		$(BUILD)/sources/grid.o $(BUILD)/sources/raycast.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
+
+$(BUILD)/tests/font_test: tests/font_test.c $(BUILD)/sources/font.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
 
 clean:
 	rm -rf build build-debug

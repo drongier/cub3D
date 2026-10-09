@@ -38,7 +38,18 @@ typedef struct s_camera
 	float	focal;
 }	t_camera;
 
+/* Point du monde vu par la caméra : profondeur, colonne, taille d'un bloc */
+typedef struct s_proj
+{
+	float	depth;
+	float	screen_x;
+	int		size;
+}	t_proj;
+
 t_camera	camera_make(t_vec2 pos, float angle, int screen_w);
+/* false si le point est derrière la caméra (ou presque collé) */
+bool		camera_project(const t_camera *cam, t_vec2 p, int screen_w,
+				t_proj *out);
 t_vec2		camera_ray(const t_camera *cam, int column, int screen_w);
 t_hit		cast_ray(const t_grid *g, t_vec2 pos, t_vec2 ray);
 int			wall_height(const t_camera *cam, float dist);

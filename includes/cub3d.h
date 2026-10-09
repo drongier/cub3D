@@ -30,9 +30,18 @@
 # define MM_CONE_RGB 0xFFE070
 # define MM_CONE_A 90
 # define MM_PLAYER_RGB 0x40FF40
+# define MM_ENEMY_RGB 0xFF3030
 # define MM_FRAME_RGB 0xFFFFFF
 # define MM_FRAME_A 160
 # define COLLISION_MARG 10
+# define PLAYER_MAX_HP 100
+/* Rayon du joueur face aux ennemis, en cases */
+# define PLAYER_RADIUS 0.25f
+/* Durée du flash rouge quand le joueur est touché */
+# define HURT_FLASH_TIME 0.35
+/* Délai avant de pouvoir recommencer après la mort */
+# define RESTART_DELAY 1.0
+# define MUTANT_XPM "textures/enemies/mutant.xpm"
 
 # define W 119
 # define A 97
@@ -55,6 +64,8 @@
 # include "pixels.h"
 # include "level.h"
 # include "weapon.h"
+# include "enemy.h"
+# include "font.h"
 # include <stdint.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -92,6 +103,14 @@ typedef struct s_game
 	t_weapon		weapon;
 	t_texture		weapon_tex[WEAPON_FRAMES];
 	bool			trigger;
+	bool			trigger_was_down;
+	float			zbuf[WIDTH];
+	t_horde			horde;
+	t_texture		mutant_tex;
+	const char		*level_path;
+	int				hp;
+	double			hurt_t;
+	double			dead_t;
 }					t_game;
 
 // GAME
@@ -101,6 +120,8 @@ bool				game_load_level(t_game *game, const char *path,
 						t_level_error *err);
 void				game_unload_level(t_game *game);
 void				game_destroy(t_game *game);
+/* Une frame de jeu ; false si la partie ne peut pas continuer */
+bool				game_update(t_game *game, double dt);
 
 // PLAYER MOVEMENT
 
@@ -115,6 +136,9 @@ int					run_loop(t_game *game, const t_options *opt);
 
 int					draw_loop(t_game *game);
 bool				touch(float px, float py, t_game *game);
+bool				player_blocked(t_game *game, float px, float py);
+void				draw_enemies(t_game *game, const t_camera *cam);
+void				draw_hud(t_game *game);
 
 // BONUS MINIMAP
 

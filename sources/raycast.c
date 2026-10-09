@@ -115,3 +115,25 @@ int	wall_height(const t_camera *cam, float dist)
 		dist = MIN_DIST;
 	return ((int)(cam->focal / dist));
 }
+
+/*
+ * p - pos = depth * dir + b * plane : dir et plane sont perpendiculaires,
+ * donc depth = rel . dir et b = rel . plane / |plane|^2. La colonne vient de
+ * b / depth, de -1 (bord gauche) à 1 (bord droit).
+ */
+bool	camera_project(const t_camera *cam, t_vec2 p, int screen_w,
+		t_proj *out)
+{
+	t_vec2	rel;
+	float	b;
+
+	rel = (t_vec2){p.x - cam->pos.x, p.y - cam->pos.y};
+	out->depth = rel.x * cam->dir.x + rel.y * cam->dir.y;
+	if (out->depth < 0.05f)
+		return (false);
+	b = (rel.x * cam->plane.x + rel.y * cam->plane.y)
+		/ (cam->plane.x * cam->plane.x + cam->plane.y * cam->plane.y);
+	out->screen_x = (b / out->depth + 1.0f) * screen_w / 2.0f;
+	out->size = wall_height(cam, out->depth);
+	return (true);
+}

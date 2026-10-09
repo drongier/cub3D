@@ -65,6 +65,14 @@ static void	valid_cases(void)
 	CHECK(lv.w == 6 && lv.h == 4 && lv.cells[0] == ' ' && lv.cells[2] == '1'
 		&& lv.cells[3 * 6 + 5] == '1', "outside stays ' ', last char kept");
 	level_free(&lv);
+	CHECK(parse(HEAD "\n111111\n1M0N01\n10M001\n111111\n", &lv, &err),
+		"mutants: %s", err.msg);
+	CHECK(lv.n_enemies == 2 && lv.enemies[0].x == 1 && lv.enemies[0].y == 1
+		&& lv.enemies[1].x == 2 && lv.enemies[1].y == 2
+		&& lv.cells[1 * lv.w + 1] == '0' && lv.cells[2 * lv.w + 2] == '0',
+		"mutant cells are floor and their positions are kept");
+	level_free(&lv);
+	CHECK(lv.enemies == NULL && lv.n_enemies == 0, "level_free clears enemies");
 }
 
 static void	big_map(int side, bool want_ok)
@@ -128,6 +136,9 @@ int	main(void)
 	expect_error(HEAD "\n1111\n1NS1\n1111\n", 9, "more than one starting");
 	expect_error(HEAD "\n1111\n1001\n1111\n", 8, "no starting position");
 	expect_error(HEAD "\n1111\n1N21\n1111\n", 9, "unexpected character '2'");
+	expect_error(HEAD "\n11111111\n1N01M001\n11111111\n", 9,
+		"mutant outside the area");
+	expect_error(HEAD "\n1111\n1NM\n1111\n", 9, "not closed");
 	expect_error(HEAD "\n1111\n1N01\n1101\n", 9, "not closed");
 	expect_error(HEAD "\n1111\nN001\n1111\n", 9, "not closed");
 	expect_error(HEAD "\n 111\n1N01\n1111\n", 9, "not closed");

@@ -77,7 +77,7 @@ and the time spent rendering, refreshed twice a second.
 | `A` / `D` | strafe left / right |
 | `Left` / `Right` | turn |
 | `Shift` (hold) | sprint, 1.75x the walking speed |
-| `Space` / left click | fire the pistol (one shot per press, at most 4 per second) |
+| `Space` / left click | fire the pistol (one shot per press, at most 4 per second); restart after death |
 | `Esc` | quit |
 | window close button | quit |
 
@@ -123,7 +123,7 @@ commas. Spaces around the numbers are fine, `F 50 , 50 , 50` is accepted; `F 1,2
 
 The grid comes last. `1` is a wall, `0` is an empty cell, a whitespace character counts as empty,
 and one of `N`, `S`, `E`, `W` marks where the player starts and which way they look. Exactly one
-spawn point. Rows can be shorter than the longest one, the parser pads them. The grid is limited to
+spawn point. Each `M` places a mutant on an empty cell (up to 256), facing south. Rows can be shorter than the longest one, the parser pads them. The grid is limited to
 1000 x 1000 cells and the file to 16 MB. Windows line endings (`\r\n`) are accepted.
 
 ## What the parser refuses
@@ -145,6 +145,7 @@ line 5: color must be three numbers from 0 to 255, as R,G,B
   including an empty line inside the grid
 - a map character outside `0`, `1`, whitespace and `NSEW`
 - no spawn point, or more than one
+- a mutant the player cannot reach (more than 256 mutants is refused too)
 - a grid that is not sealed: everything the player can reach from the spawn without crossing a
   wall, diagonals included, must stay inside the grid. The check walks the grid with an explicit
   stack, so a 1000 x 1000 map is checked in a few milliseconds without recursion.
@@ -155,7 +156,8 @@ textures included, prints `OK` and exits without opening a window.
 ## Tests
 
 `make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill,
-ray casting, wall columns, scene parsing, weapon).
+ray casting, wall columns, scene parsing, weapon,
+enemies, font).
 
 `test.sh` runs the binary over the whole `maps/bad/` folder and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -183,16 +185,19 @@ sources/grid.c        flat map grid, void outside the map found by flood fill
 sources/raycast.c     camera, DDA ray casting, wall height
 sources/pixels.c      row fills, textured wall columns, column-major textures, sprite blit
 sources/weapon.c      pistol state: fire rate, animation frame, sway
+sources/enemy/        mutant AI: states, distance field, line of sight, shots, sprite frames
+sources/game_update.c one frame of play: player, weapon, mutants, health, death and restart
+sources/font.c        5x7 bitmap font for the HUD
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/level/        scene file parsing and validation (no exit, errors with line numbers)
 sources/game.c        load and unload a scene: textures, grid, player
-sources/drawing/      frame drawing, player update, minimap
+sources/drawing/      frame drawing, player update, minimap, enemy sprites, HUD
 libft/                our own libft, including ft_printf and get_next_line
 tests/                unit tests
 maps/good/            valid scenes, from small test maps to full mazes
 maps/bad/             scenes that must be rejected, one per error case
 textures/             xpm textures, including the pistol in textures/weapon/
-tools/                sheet_to_xpm.py, cuts weapon frames out of a sprite sheet
+tools/                sheet_to_xpm.py (weapon frames from a sheet), png_to_xpm.py
 test.sh               batch tester: every bad scene refused, every good one loads
 docs/                 specs, plans and benchmarks
 ```
@@ -215,8 +220,9 @@ view. As in the original, the whole frame is about the height of the screen (64 
 Pixels set to `None` in the XPM are transparent, and only the opaque part of each row is drawn.
 
 A shot plays the five frames in 0.25 s, the fire rate limit, and the gun sways while walking,
-faster when sprinting. All of it follows the clock, so it looks the same at any frame rate. Shots
-do not hit anything yet: there are no targets in the scenes.
+faster when sprinting. All of it follows the clock, so it looks the same at any frame rate. A shot
+is a ray from the center of the screen: it hits the nearest living mutant close enough to that line
+and in front of the wall (see Enemies).
 
 The frames are cut from `textures/weapon/wolf3d_weapons.png`, a sheet of the four Wolfenstein 3D
 weapons ripped by PGE, with `tools/sheet_to_xpm.py` (needs Python and Pillow):
@@ -230,9 +236,40 @@ in `includes/weapon.h`. Like the wall textures in `textures/wolfenstein/`, these
 copyright id Software: fine for a school or personal project, to be replaced by free art before
 publishing the game.
 
+## Enemies
+
+Mutants from Wolfenstein 3D, placed with `M` in the grid (`maps/good/mutants.cub` has eight). Each
+one is a sprite drawn after the walls: it is projected with the same camera, sorted from far to
+near, and a column is only drawn where the mutant is closer than the wall hit of that column (the
+wall distances are kept in a z-buffer). The picture depends on where it faces compared to where you
+stand: eight views, four walking frames, a two-shot attack, pain and a death that leaves a body on
+the floor.
+
+Each mutant runs a small state machine:
+
+- **idle**: stands still until it sees you (in front of it, within 16 cells, no wall in between,
+  checked with a ray on the grid) or hears a shot within 8 cells
+- **chase**: walks toward you along a distance field, a breadth-first search from your cell over
+  the whole grid, recomputed only when you change cell. Each mutant steps to the free neighboring
+  cell closest to you, and walks around another mutant that stands in the way.
+- **attack**: when it sees you within 10 cells and its delay is over, it stops, aims and fires
+  twice. The hit chance drops with distance, each hit takes 5 to 15 health points.
+- **pain**: a hit from your pistol (20 to 35 damage against 50 health) freezes it for 0.2 s
+- **dying**, then **dead**: the body stays and no longer blocks the way
+
+You and the mutants cannot walk through each other. Your health (100) is shown at the bottom left,
+the number of mutants still alive at the top left, a red flash marks each hit, and mutants show as
+red dots on the radar. When your health reaches 0 the game stops; after one second, `Space` or a
+click reloads the scene. Randomness comes from a fixed seed, so a given sequence of inputs always
+plays the same way. Every setting is in `includes/enemy.h`.
+
+The mutant sheet is `textures/enemies/mutant_sheet.png` (ripped by 16-Bit Globe), turned into
+`mutant.xpm` with `tools/png_to_xpm.py`, its gray background made transparent. Like the other
+Wolfenstein 3D images, it is copyright id Software.
+
 ## Known limits
 
 - the field of view, the movement and sprint speeds and the block size (64) are constants, and
   there is no mouse look
 - floors and ceilings are solid colors, only the walls are textured
-- no sprites and no doors, so nothing moves in the scene but the player
+- one kind of enemy, no doors, no items to pick up and no sound

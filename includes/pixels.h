@@ -37,6 +37,10 @@ typedef struct s_blit
 void	blit_sprite(uint32_t *fb, int fb_w, int fb_h, const t_texture *t,
 			t_blit at);
 
+/* Comme draw_tex_column, mais les texels TEX_TRANSPARENT sont sautés */
+void	draw_sprite_column(uint32_t *dst, const t_wall_span *s,
+			const uint32_t *col, int tex_h);
+
 /* Copie transposée de la texture : la colonne x est contiguë */
 bool	texture_build_columns(t_texture *t);
 const uint32_t	*texture_column(const t_texture *t, int x);

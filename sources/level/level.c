@@ -19,6 +19,9 @@ void	level_free(t_level *lv)
 	}
 	free(lv->cells);
 	lv->cells = NULL;
+	free(lv->enemies);
+	lv->enemies = NULL;
+	lv->n_enemies = 0;
 }
 
 static const char	*missing_ids(unsigned seen)

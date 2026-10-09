@@ -71,6 +71,29 @@ static void	draw_cone(t_game *g, t_canvas *c, t_vec2 center)
 	fill_polygon(c, pts, n, MM_CONE_RGB, MM_CONE_A);
 }
 
+/* Mutants vivants : carrés rouges de 5 pixels, s'ils sont dans le radar */
+static void	draw_enemy_dots(t_game *g, t_canvas *c, t_vec2 center)
+{
+	t_vec2	p;
+	int		i;
+	int		y;
+
+	i = -1;
+	while (++i < g->horde.n)
+	{
+		if (g->horde.v[i].state == EN_DYING || g->horde.v[i].state == EN_DEAD)
+			continue ;
+		p.x = center.x + (g->horde.v[i].pos.x * BLOCK - g->player.x)
+			* MM_CELL / BLOCK;
+		p.y = center.y + (g->horde.v[i].pos.y * BLOCK - g->player.y)
+			* MM_CELL / BLOCK;
+		y = (int)p.y - 3;
+		while (++y <= (int)p.y + 2)
+			fill_span(c, y, (int)p.x - 2, (int)p.x + 3, MM_ENEMY_RGB,
+				ALPHA_OPAQUE);
+	}
+}
+
 static void	draw_arrow(t_game *g, t_canvas *c, t_vec2 o)
 {
 	t_vec2	d;
@@ -109,6 +132,7 @@ void	draw_minimap(t_game *g)
 	center = (t_vec2){c.x0 + MM_SIZE / 2.0f, c.y0 + MM_SIZE / 2.0f};
 	draw_background(g, &c);
 	draw_cone(g, &c, center);
+	draw_enemy_dots(g, &c, center);
 	draw_arrow(g, &c, center);
 	draw_frame(&c);
 }

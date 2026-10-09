@@ -30,10 +30,17 @@ static void	check_collision(t_player *player, t_vec2 step)
 	probe = fmaxf(COLLISION_MARG, len);
 	next_x = player->x + step.x / len * probe;
 	next_y = player->y + step.y / len * probe;
-	if (!touch(next_x, player->y, player->game))
+	if (!player_blocked(player->game, next_x, player->y))
 		player->x += step.x;
-	if (!touch(player->x, next_y, player->game))
+	if (!player_blocked(player->game, player->x, next_y))
 		player->y += step.y;
+}
+
+/* Mur, ou ennemi vivant, au point (px, py) en pixels du monde */
+bool	player_blocked(t_game *game, float px, float py)
+{
+	return (touch(px, py, game) || horde_blocks(&game->horde,
+			(t_vec2){px / BLOCK, py / BLOCK}, PLAYER_RADIUS));
 }
 
 /* Touches de déplacement enfoncées, combinées */

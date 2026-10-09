@@ -57,6 +57,20 @@ int	main(void)
 	CHECK(wall_height(&cam, 1.0f) == (int)cam.focal,
 		"a block one cell away is as tall as it is wide on screen");
 	CHECK(wall_height(&cam, 0.0f) > 0, "zero distance does not divide by 0");
+	{
+		t_proj	p;
+		t_vec2	edge;
+
+		CHECK(camera_project(&cam, (t_vec2){4.5f, 2.5f}, 1280, &p)
+			&& near(p.depth, 2) && near(p.screen_x, 640)
+			&& p.size == wall_height(&cam, 2.0f), "point straight ahead");
+		edge = (t_vec2){2.5f + 2 * (cam.dir.x - cam.plane.x),
+			2.5f + 2 * (cam.dir.y - cam.plane.y)};
+		CHECK(camera_project(&cam, edge, 1280, &p) && fabs(p.screen_x) < 0.01,
+			"point on the left edge of the view: %f", p.screen_x);
+		CHECK(!camera_project(&cam, (t_vec2){1.5f, 2.5f}, 1280, &p),
+			"point behind the camera");
+	}
 	grid_free(&g);
 
 	CHECK(grid_init(&g, open_rows, 5, 5), "grid init");

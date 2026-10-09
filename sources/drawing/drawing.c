@@ -21,6 +21,7 @@ static void	draw_column(t_game *game, const t_camera *cam, int i)
 
 	hit = cast_ray(&game->grid, cam->pos, camera_ray(cam, i, WIDTH));
 	game->hits[i] = (t_vec2){hit.point.x * BLOCK, hit.point.y * BLOCK};
+	game->zbuf[i] = hit.dist;
 	span.height = wall_height(cam, hit.dist);
 	if (span.height <= 0)
 		return ;
@@ -60,11 +61,14 @@ int	draw_loop(t_game *game)
 	i = 0;
 	while (i < WIDTH)
 		draw_column(game, &cam, i++);
-	draw_weapon(game);
+	draw_enemies(game, &cam);
+	if (game->hp > 0)
+		draw_weapon(game);
 	if (BONUS == 1)
 	{
 		draw_minimap(game);
 		draw_scope(game);
 	}
+	draw_hud(game);
 	return (0);
 }

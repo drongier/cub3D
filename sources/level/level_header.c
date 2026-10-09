@@ -145,7 +145,7 @@ bool	looks_like_map(const t_line *l)
 	i = 0;
 	while (i < l->len)
 	{
-		if (!is_space(l->s[i]) && !strchr("01NSEW", l->s[i]))
+		if (!is_space(l->s[i]) && !strchr("01NSEWM", l->s[i]))
 			return (false);
 		i++;
 	}

@@ -48,6 +48,38 @@ void	draw_tex_column(uint32_t *dst, const t_wall_span *s,
 	}
 }
 
+void	draw_sprite_column(uint32_t *dst, const t_wall_span *s,
+			const uint32_t *col, int tex_h)
+{
+	long	q;
+	long	r;
+	int		y;
+	int		end;
+
+	y = s->start_y;
+	if (y < 0)
+		y = 0;
+	end = s->start_y + s->height;
+	if (end > s->screen_h)
+		end = s->screen_h;
+	q = (long)(y - s->start_y) * tex_h / s->height;
+	r = (long)(y - s->start_y) * tex_h % s->height;
+	dst += (long)y * s->stride;
+	while (y++ < end)
+	{
+		if (!(col[q] & TEX_TRANSPARENT))
+			*dst = col[q];
+		dst += s->stride;
+		q += tex_h / s->height;
+		r += tex_h % s->height;
+		if (r >= s->height)
+		{
+			r -= s->height;
+			q++;
+		}
+	}
+}
+
 bool	texture_build_columns(t_texture *t)
 {
 	const uint32_t	*px;

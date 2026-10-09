@@ -147,9 +147,8 @@ int	run_loop(t_game *game, const t_options *opt)
 			break ;
 		frame_input(game, opt, &input);
 		dt = frame_dt(opt, &last, t[0]);
-		update_player(&game->player, dt);
-		weapon_update(&game->weapon, game->trigger,
-			player_move(&game->player), dt);
+		if (!game_update(game, dt))
+			break ;
 		t[1] = platform_ticks();
 		draw_loop(game);
 		t[2] = platform_ticks();

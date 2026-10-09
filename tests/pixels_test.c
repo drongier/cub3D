@@ -104,6 +104,18 @@ int	main(void)
 		&& texture_column(&t, 9) == texture_column(&t, 2), "x is clamped");
 	texture_free(&t);
 	blit_cases();
+	{
+		uint32_t	col[4] = {1, TEX_TRANSPARENT, 3, 4};
+		uint32_t	fb2[W * H];
+
+		for (int i = 0; i < W * H; i++)
+			fb2[i] = 9;
+		draw_sprite_column(fb2 + 1, &(t_wall_span){2, 8, H, W}, col, 4);
+		CHECK(fb2[2 * W + 1] == 1 && fb2[3 * W + 1] == 1 && fb2[4 * W + 1] == 9
+			&& fb2[5 * W + 1] == 9 && fb2[6 * W + 1] == 3
+			&& fb2[9 * W + 1] == 4 && fb2[10 * W + 1] == 9
+			&& fb2[1 * W + 1] == 9, "sprite column skips transparent texels");
+	}
 	if (g_fail)
 		printf("pixels_test: %d check(s) failed\n", g_fail);
 	else

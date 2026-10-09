@@ -20,6 +20,10 @@ bool	game_init(t_game *game, t_level_error *err)
 			return (snprintf(err->msg, sizeof(err->msg),
 					"cannot load texture '%s'", path), false);
 	}
+	if (!xpm_load(MUTANT_XPM, &game->mutant_tex)
+		|| !texture_build_columns(&game->mutant_tex))
+		return (snprintf(err->msg, sizeof(err->msg),
+				"cannot load texture '%s'", MUTANT_XPM), false);
 	return (true);
 }
 
@@ -87,7 +91,19 @@ bool	game_load_level(t_game *game, const char *path, t_level_error *err)
 		game_unload_level(game);
 		return (false);
 	}
+	if (!horde_init(&game->horde, &game->level))
+	{
+		err->line = 0;
+		snprintf(err->msg, sizeof(err->msg), "out of memory");
+		game_unload_level(game);
+		return (false);
+	}
 	init_player(&game->player, &game->level, game);
+	weapon_init(&game->weapon);
+	game->level_path = path;
+	game->hp = PLAYER_MAX_HP;
+	game->hurt_t = 0.0;
+	game->dead_t = 0.0;
 	return (true);
 }
 
@@ -99,6 +115,7 @@ void	game_unload_level(t_game *game)
 	while (i < 4)
 		texture_free(&game->textures[i++]);
 	grid_free(&game->grid);
+	horde_free(&game->horde);
 	level_free(&game->level);
 }
 
@@ -110,6 +127,7 @@ void	game_destroy(t_game *game)
 	i = 0;
 	while (i < WEAPON_FRAMES)
 		texture_free(&game->weapon_tex[i++]);
+	texture_free(&game->mutant_tex);
 	free(game->fb);
 	game->fb = NULL;
 	platform_destroy(game->platform);
