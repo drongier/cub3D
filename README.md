@@ -76,13 +76,15 @@ and the time spent rendering, refreshed twice a second.
 | `W` / `S` | walk forward / backward |
 | `A` / `D` | strafe left / right |
 | `Left` / `Right` | turn |
+| `Shift` (hold) | sprint, 1.75x the walking speed |
 | `Esc` | quit |
 | window close button | quit |
 
 Keys are read by physical position: on an AZERTY keyboard, walk with `Z` `Q` `S` `D`.
 
-Movement follows the clock, not the frame count: the player walks about 2.8 blocks and turns
-about 103 degrees per second at any frame rate, and walking diagonally is not faster. A frame that
+Movement follows the clock, not the frame count: the player walks about 2.8 blocks (4.9 when
+sprinting) and turns about 103 degrees per second at any frame rate, and walking diagonally is not
+faster. A frame that
 took longer than 50 ms counts as 50 ms, so a stall never makes the player jump.
 
 The player cannot walk through walls. Each axis is tested on its own before the move is applied, so
@@ -204,7 +206,7 @@ Both are compiled in by default and can be turned off with `BONUS 0` in `include
 
 ## Known limits
 
-- the field of view, the movement speed and the block size (64) are constants, and there is no mouse
-  look or sprint
+- the field of view, the movement and sprint speeds and the block size (64) are constants, and
+  there is no mouse look
 - floors and ceilings are solid colors, only the walls are textured
 - no sprites and no doors, so nothing moves in the scene but the player

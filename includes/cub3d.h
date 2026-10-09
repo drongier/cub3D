@@ -75,6 +75,7 @@ typedef struct s_player
 	bool			key_right;
 	bool			left_rotate;
 	bool			right_rotate;
+	bool			sprint;
 	struct s_game	*game;
 }					t_player;
 

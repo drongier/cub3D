@@ -10,26 +10,27 @@ double	motion_clamp_dt(double dt)
 	return (dt);
 }
 
-/*
- * forward : +1 avancer, -1 reculer ; strafe : +1 droite, -1 gauche.
- * La direction est normalisée : en diagonale on ne va pas plus vite.
- */
-t_vec2	motion_step(float angle, int forward, int strafe, double dt)
+/* La direction est normalisée : en diagonale on ne va pas plus vite */
+t_vec2	motion_step(float angle, t_move move, double dt)
 {
 	t_vec2	d;
 	float	len;
+	float	speed;
 	float	c;
 	float	s;
 
 	c = cosf(angle);
 	s = sinf(angle);
-	d.x = forward * c - strafe * s;
-	d.y = forward * s + strafe * c;
+	d.x = move.forward * c - move.strafe * s;
+	d.y = move.forward * s + move.strafe * c;
 	len = sqrtf(d.x * d.x + d.y * d.y);
 	if (len == 0.0f)
 		return ((t_vec2){0.0f, 0.0f});
-	d.x = d.x / len * MOVE_SPEED * (float)dt;
-	d.y = d.y / len * MOVE_SPEED * (float)dt;
+	speed = MOVE_SPEED;
+	if (move.sprint)
+		speed *= SPRINT_FACTOR;
+	d.x = d.x / len * speed * (float)dt;
+	d.y = d.y / len * speed * (float)dt;
 	return (d);
 }
 

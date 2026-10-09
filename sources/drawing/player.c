@@ -12,18 +12,24 @@
 
 #include "../../includes/cub3d.h"
 
-/* Teste la marge devant le joueur, axe par axe, pour glisser le long des murs */
+/*
+ * Teste un point devant le joueur, axe par axe, pour glisser le long des
+ * murs. Le point est à COLLISION_MARG, ou plus loin si le pas est plus long
+ * (sprint à bas fps), pour ne jamais finir dans un mur.
+ */
 static void	check_collision(t_player *player, t_vec2 step)
 {
 	float	len;
+	float	probe;
 	float	next_x;
 	float	next_y;
 
 	len = sqrtf(step.x * step.x + step.y * step.y);
 	if (len == 0.0f)
 		return ;
-	next_x = player->x + step.x / len * COLLISION_MARG;
-	next_y = player->y + step.y / len * COLLISION_MARG;
+	probe = fmaxf(COLLISION_MARG, len);
+	next_x = player->x + step.x / len * probe;
+	next_y = player->y + step.y / len * probe;
 	if (!touch(next_x, player->y, player->game))
 		player->x += step.x;
 	if (!touch(player->x, next_y, player->game))
@@ -40,5 +46,6 @@ void	update_player(t_player *player, double dt)
 	forward = player->key_up - player->key_down;
 	strafe = player->key_right - player->key_left;
 	player->angle = motion_turn(player->angle, turn, dt);
-	check_collision(player, motion_step(player->angle, forward, strafe, dt));
+	check_collision(player, motion_step(player->angle,
+			(t_move){forward, strafe, player->sprint}, dt));
 }

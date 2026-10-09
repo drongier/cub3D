@@ -61,6 +61,7 @@ static void	set_key(t_input *in, SDL_Scancode sc, bool down)
 		in->rot_left = down;
 	else if (sc == SDL_SCANCODE_RIGHT)
 		in->rot_right = down;
+
 	else if (sc == SDL_SCANCODE_ESCAPE && down)
 		in->quit = true;
 }
@@ -68,6 +69,7 @@ static void	set_key(t_input *in, SDL_Scancode sc, bool down)
 void	platform_poll(t_platform *p, t_input *in)
 {
 	SDL_Event	e;
+	const bool	*keys;
 
 	(void)p;
 	while (SDL_PollEvent(&e))
@@ -79,6 +81,8 @@ void	platform_poll(t_platform *p, t_input *in)
 			&& !e.key.repeat)
 			set_key(in, e.key.scancode, e.type == SDL_EVENT_KEY_DOWN);
 	}
+	keys = SDL_GetKeyboardState(NULL);
+	in->sprint = keys[SDL_SCANCODE_LSHIFT] || keys[SDL_SCANCODE_RSHIFT];
 }
 
 void	platform_present(t_platform *p, const uint32_t *fb)

@@ -16,6 +16,7 @@ static void	apply_input(t_player *player, const t_input *in)
 	player->key_right = in->right;
 	player->left_rotate = in->rot_left;
 	player->right_rotate = in->rot_right;
+	player->sprint = in->sprint;
 }
 
 /* Titre mis à jour toutes les 500 ms avec les moyennes de la fenêtre */

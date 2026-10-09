@@ -13,6 +13,7 @@ typedef struct s_input
 	bool	right;
 	bool	rot_left;
 	bool	rot_right;
+	bool	sprint;
 	bool	quit;
 }	t_input;
 
