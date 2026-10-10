@@ -55,11 +55,41 @@ static void	health(t_game *g)
 	text(g, (t_text){296, HEIGHT - 40, 3, 0xFFFFFF}, buf);
 }
 
+/* Vagues : numéro et vivants en haut, compte à rebours pendant la pause */
+static void	waves(t_game *g)
+{
+	char	buf[48];
+	double	left;
+
+	snprintf(buf, sizeof(buf), "VAGUE %d   MUTANTS %d", g->waves.index,
+		horde_alive(&g->horde));
+	text(g, (t_text){16, 16, 3, 0xFFFFFF}, buf);
+	left = waves_countdown(&g->waves);
+	if (g->waves.state != WAVE_PAUSE || g->hp <= 0)
+		return ;
+	if (g->waves.index > 1)
+	{
+		snprintf(buf, sizeof(buf), "VAGUE %d NETTOYEE  +%d VIE",
+			g->waves.index - 1, WAVE_HEAL);
+		text(g, (t_text){(WIDTH - font_width(buf, 3)) / 2, 150, 3,
+			0x80FF80}, buf);
+	}
+	snprintf(buf, sizeof(buf), "VAGUE %d", g->waves.index);
+	centered(g, 220, 8, buf);
+	snprintf(buf, sizeof(buf), "%d", (int)ceil(left));
+	centered(g, 300, 6, buf);
+}
+
 static void	counter(t_game *g)
 {
 	char	buf[32];
 	int		alive;
 
+	if (g->level.n_spawns > 0)
+	{
+		waves(g);
+		return ;
+	}
 	if (g->horde.n == 0)
 		return ;
 	alive = horde_alive(&g->horde);
@@ -67,6 +97,16 @@ static void	counter(t_game *g)
 	text(g, (t_text){16, 16, 3, 0xFFFFFF}, buf);
 	if (alive == 0)
 		text(g, (t_text){16, 46, 2, 0x80FF80}, "NIVEAU NETTOYE !");
+}
+
+/* Score de la partie en vagues : vagues tenues, mutants abattus */
+static void	score(t_game *g)
+{
+	char	buf[64];
+
+	snprintf(buf, sizeof(buf), "VAGUES TENUES %d   MUTANTS ABATTUS %d",
+		g->waves.index - 1, g->kills);
+	centered(g, 360, 3, buf);
 }
 
 void	draw_hud(t_game *g)
@@ -77,8 +117,10 @@ void	draw_hud(t_game *g)
 	{
 		tint(g, 0x800000, 60 + (int)(100 * fmin(g->dead_t, 1.0)));
 		centered(g, 260, 8, "VOUS ETES MORT");
+		if (g->level.n_spawns > 0)
+			score(g);
 		if (g->dead_t >= RESTART_DELAY)
-			centered(g, 360, 3, "ESPACE OU CLIC POUR RECOMMENCER");
+			centered(g, 420, 3, "ESPACE OU CLIC POUR RECOMMENCER");
 	}
 	health(g);
 	counter(g);

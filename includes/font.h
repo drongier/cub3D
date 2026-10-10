@@ -3,7 +3,7 @@
 
 # include <stdint.h>
 
-/* Police 5 x 7 : majuscules sans accents, chiffres, espace et  / : ! . - */
+/* Police 5 x 7 : majuscules sans accents, chiffres, espace et  / : ! . - + */
 # define FONT_W 5
 # define FONT_H 7
 # define FONT_ADVANCE 6

@@ -22,6 +22,9 @@ void	level_free(t_level *lv)
 	free(lv->enemies);
 	lv->enemies = NULL;
 	lv->n_enemies = 0;
+	free(lv->spawns);
+	lv->spawns = NULL;
+	lv->n_spawns = 0;
 }
 
 static const char	*missing_ids(unsigned seen)

@@ -35,6 +35,15 @@
 # define ENEMY_DAMAGE_RAND 11
 # define PISTOL_DAMAGE_MIN 20
 # define PISTOL_DAMAGE_RAND 16
+/*
+ * Vagues : places réservées en plus des 'M' quand la scène a des points
+ * d'apparition. Une fois pleines, les corps les plus anciens sont recyclés.
+ */
+# define HORDE_WAVE_SLOTS 96
+/* Un point d'apparition est choisi à au moins tant de cases de marche */
+# define SPAWN_MIN_STEPS 6
+/* Sinon, faute de mieux, même en vue, mais jamais plus près que ça */
+# define SPAWN_FALLBACK_STEPS 3
 
 enum e_enemy_state
 {
@@ -56,17 +65,21 @@ typedef struct s_enemy
 	double	cooldown;
 	bool	moving;
 	int		hp;
+	float	speed;
 }	t_enemy;
 
 /*
  * Tous les ennemis d'une scène. flow : distance en cases de chaque case
  * jusqu'au joueur (-1 : mur ou inaccessible), recalculée quand le joueur
- * change de case.
+ * change de case. v a cap places, dont n utilisées ; reuse : où reprendre la
+ * recherche d'un corps à recycler.
  */
 typedef struct s_horde
 {
 	t_enemy	*v;
 	int		n;
+	int		cap;
+	int		reuse;
 	int		*flow;
 	int		*queue;
 	int		flow_cell;
@@ -98,6 +111,23 @@ int		horde_shoot(t_horde *h, const t_grid *g, t_vec2 pos, float angle);
 /* Un ennemi vivant occupe-t-il le disque (p, radius) ? */
 bool	horde_blocks(const t_horde *h, t_vec2 p, float radius);
 int		horde_alive(const t_horde *h);
+
+/* Ce qui change d'une vague à l'autre pour un nouveau mutant */
+typedef struct s_breed
+{
+	int		hp;
+	float	speed;
+}	t_breed;
+
+/*
+ * Choisit un point d'apparition loin du joueur (en cases de marche), hors de
+ * sa vue et libre ; false si aucun ne convient pour l'instant. Le champ de
+ * distances doit être à jour (horde_update l'a calculé).
+ */
+bool	horde_pick_spawn(t_horde *h, const t_grid *g, const t_level *lv,
+			t_vec2 *out);
+/* Ajoute un mutant qui fonce sur le joueur ; false si la horde est pleine */
+bool	horde_spawn(t_horde *h, t_vec2 pos, t_breed breed);
 
 /* Distance de vue dégagée : aucun mur entre a et b */
 bool	clear_line(const t_grid *g, t_vec2 a, t_vec2 b);

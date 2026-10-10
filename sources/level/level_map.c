@@ -21,19 +21,34 @@ static bool	map_extent(const t_lines *lines, int first, int *last,
 	return (true);
 }
 
-static bool	add_enemy(t_level *lv, const t_line *l, int x, int y,
+/* Un 'M' ou un 'X' : la case devient du sol, la position est gardée */
+static bool	add_point(t_level *lv, const t_line *l, int x, int y,
 		t_level_error *err)
 {
-	if (lv->n_enemies == LEVEL_MAX_ENEMIES)
-		return (level_fail(err, l->num, "more than %d mutants",
-				LEVEL_MAX_ENEMIES));
-	if (!lv->enemies)
+	t_level_enemy	**v;
+	int				*n;
+	int				max;
+
+	v = &lv->enemies;
+	n = &lv->n_enemies;
+	max = LEVEL_MAX_ENEMIES;
+	if (l->s[x] == 'X')
 	{
-		lv->enemies = malloc(sizeof(t_level_enemy) * LEVEL_MAX_ENEMIES);
-		if (!lv->enemies)
+		v = &lv->spawns;
+		n = &lv->n_spawns;
+		max = LEVEL_MAX_SPAWNS;
+	}
+	if (*n == max && l->s[x] == 'X')
+		return (level_fail(err, l->num, "more than %d spawn points", max));
+	if (*n == max)
+		return (level_fail(err, l->num, "more than %d mutants", max));
+	if (!*v)
+	{
+		*v = malloc(sizeof(t_level_enemy) * max);
+		if (!*v)
 			return (level_fail(err, 0, "out of memory"));
 	}
-	lv->enemies[lv->n_enemies++] = (t_level_enemy){x, y, l->num};
+	(*v)[(*n)++] = (t_level_enemy){x, y, l->num};
 	lv->cells[y * lv->w + x] = '0';
 	return (true);
 }
@@ -46,8 +61,8 @@ static bool	put_cell(t_level *lv, const t_line *l, int x, int y,
 	c = l->s[x];
 	if (is_space(c))
 		return (true);
-	if (c == 'M')
-		return (add_enemy(lv, l, x, y, err));
+	if (c == 'M' || c == 'X')
+		return (add_point(lv, l, x, y, err));
 	if (c == '0' || c == '1')
 	{
 		lv->cells[y * lv->w + x] = c;
@@ -105,20 +120,22 @@ static bool	is_closed(const t_level *lv, int *stack, char *seen)
 	return (true);
 }
 
-/* Chaque mutant doit être dans la zone atteignable depuis le départ */
-static bool	check_enemies(const t_level *lv, const char *seen,
+/* Chaque mutant et chaque point d'apparition doit être atteignable */
+static bool	check_points(const t_level *lv, const char *seen,
 		t_level_error *err)
 {
 	int	i;
 
-	i = 0;
-	while (i < lv->n_enemies)
-	{
+	i = -1;
+	while (++i < lv->n_enemies)
 		if (!seen[lv->enemies[i].y * lv->w + lv->enemies[i].x])
 			return (level_fail(err, lv->enemies[i].line,
 					"mutant outside the area the player can reach"));
-		i++;
-	}
+	i = -1;
+	while (++i < lv->n_spawns)
+		if (!seen[lv->spawns[i].y * lv->w + lv->spawns[i].x])
+			return (level_fail(err, lv->spawns[i].line,
+					"spawn point outside the area the player can reach"));
 	return (true);
 }
 
@@ -142,7 +159,7 @@ static bool	check_closed(const t_level *lv, int spawn_line, t_level_error *err)
 		level_fail(err, spawn_line,
 			"the map is not closed: the player can walk off the edge");
 	else
-		ok = check_enemies(lv, seen, err);
+		ok = check_points(lv, seen, err);
 	free(seen);
 	return (ok);
 }

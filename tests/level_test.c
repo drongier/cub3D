@@ -73,6 +73,14 @@ static void	valid_cases(void)
 		"mutant cells are floor and their positions are kept");
 	level_free(&lv);
 	CHECK(lv.enemies == NULL && lv.n_enemies == 0, "level_free clears enemies");
+	CHECK(parse(HEAD "\n111111\n1X0N01\n10MX01\n111111\n", &lv, &err),
+		"spawn points: %s", err.msg);
+	CHECK(lv.n_spawns == 2 && lv.spawns[0].x == 1 && lv.spawns[0].y == 1
+		&& lv.spawns[1].x == 3 && lv.spawns[1].y == 2 && lv.n_enemies == 1
+		&& lv.cells[1 * lv.w + 1] == '0' && lv.cells[2 * lv.w + 3] == '0',
+		"spawn cells are floor and their positions are kept");
+	level_free(&lv);
+	CHECK(lv.spawns == NULL && lv.n_spawns == 0, "level_free clears spawns");
 }
 
 static void	big_map(int side, bool want_ok)
@@ -138,6 +146,8 @@ int	main(void)
 	expect_error(HEAD "\n1111\n1N21\n1111\n", 9, "unexpected character '2'");
 	expect_error(HEAD "\n11111111\n1N01M001\n11111111\n", 9,
 		"mutant outside the area");
+	expect_error(HEAD "\n11111111\n1N01X001\n11111111\n", 9,
+		"spawn point outside the area");
 	expect_error(HEAD "\n1111\n1NM\n1111\n", 9, "not closed");
 	expect_error(HEAD "\n1111\n1N01\n1101\n", 9, "not closed");
 	expect_error(HEAD "\n1111\nN001\n1111\n", 9, "not closed");

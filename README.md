@@ -123,7 +123,9 @@ commas. Spaces around the numbers are fine, `F 50 , 50 , 50` is accepted; `F 1,2
 
 The grid comes last. `1` is a wall, `0` is an empty cell, a whitespace character counts as empty,
 and one of `N`, `S`, `E`, `W` marks where the player starts and which way they look. Exactly one
-spawn point. Each `M` places a mutant on an empty cell (up to 256), facing south. Rows can be shorter than the longest one, the parser pads them. The grid is limited to
+spawn point. Each `M` places a mutant on an empty cell (up to 256), facing south. Each `X` is a
+spawn point for mutant waves (up to 64, see [Waves](#waves)). Rows can be shorter than the longest
+one, the parser pads them. The grid is limited to
 1000 x 1000 cells and the file to 16 MB. Windows line endings (`\r\n`) are accepted.
 
 ## What the parser refuses
@@ -143,9 +145,10 @@ line 5: color must be three numbers from 0 to 255, as R,G,B
 - a malformed color
 - a map that starts before all six elements are given, or anything but blank lines after it,
   including an empty line inside the grid
-- a map character outside `0`, `1`, whitespace and `NSEW`
+- a map character outside `0`, `1`, whitespace, `NSEW`, `M` and `X`
 - no spawn point, or more than one
 - a mutant the player cannot reach (more than 256 mutants is refused too)
+- a wave spawn point (`X`) the player cannot reach (more than 64 is refused too)
 - a grid that is not sealed: everything the player can reach from the spawn without crossing a
   wall, diagonals included, must stay inside the grid. The check walks the grid with an explicit
   stack, so a 1000 x 1000 map is checked in a few milliseconds without recursion.
@@ -157,7 +160,7 @@ textures included, prints `OK` and exits without opening a window.
 
 `make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill,
 ray casting, wall columns, scene parsing, weapon,
-enemies, font).
+enemies, font, waves).
 
 `test.sh` runs the binary over the whole `maps/bad/` folder and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -186,7 +189,8 @@ sources/raycast.c     camera, DDA ray casting, wall height
 sources/pixels.c      row fills, textured wall columns, column-major textures, sprite blit
 sources/weapon.c      pistol state: fire rate, animation frame, sway
 sources/enemy/        mutant AI: states, distance field, line of sight, shots, sprite frames
-sources/game_update.c one frame of play: player, weapon, mutants, health, death and restart
+sources/game_update.c one frame of play: player, weapon, mutants, waves, health, death and restart
+sources/waves.c       wave state: countdown, arrivals, difficulty of each wave
 sources/font.c        5x7 bitmap font for the HUD
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/level/        scene file parsing and validation (no exit, errors with line numbers)
@@ -266,6 +270,29 @@ plays the same way. Every setting is in `includes/enemy.h`.
 The mutant sheet is `textures/enemies/mutant_sheet.png` (ripped by 16-Bit Globe), turned into
 `mutant.xpm` with `tools/png_to_xpm.py`, its gray background made transparent. Like the other
 Wolfenstein 3D images, it is copyright id Software.
+
+## Waves
+
+A scene with at least one `X` in its grid is played in waves (`maps/good/waves.cub`). After a
+3 second countdown, wave 1 starts: its mutants arrive one by one, each at a spawn point, and run
+straight at you. When none is left alive, you get 25 health points back and the next wave starts
+after 6 seconds. There is no last wave: the death screen shows how many waves you held and how
+many mutants you killed.
+
+Each wave is bigger and harder than the one before (`wave_rule` in `sources/waves.c`): wave `n`
+sends `2 + 2n` mutants (40 at most), the delay between two arrivals drops from 1.3 s to 0.35 s,
+and each mutant gets 5 more health points (up to 100) and walks a bit faster (up to 2.8 cells
+per second).
+
+A mutant only appears at a spawn point that is free, at least 6 cells away from you by walking
+distance (read from the distance field the mutants already use) and out of your sight. If none
+fits, it takes any free one at least 3 cells away; if there is still none, it waits for the next
+frame. The horde keeps 96 slots for the waves; once they are full, the oldest bodies are recycled.
+Mutants placed with `M` stay in the scene too, and a wave only ends once they are dead as well.
+
+When several mutants want the same cell, the one closest to you (by walking distance, then the
+first one created) goes first and the others step aside or wait, so a crowd never locks itself
+in a doorway.
 
 ## Known limits
 

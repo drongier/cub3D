@@ -79,12 +79,31 @@ bool	horde_blocks(const t_horde *h, t_vec2 p, float radius)
 	return (false);
 }
 
-/* Avancer de p vers q ferait-il heurter un autre ennemi vivant ? */
-static bool	crowded(const t_horde *h, int i, t_vec2 p, t_vec2 q)
+/*
+ * j a-t-il la priorité sur i ? Celui qui ne poursuit pas reste sur place,
+ * sinon le plus avancé vers le joueur passe, puis le plus petit indice :
+ * deux ennemis qui veulent la même case ne s'attendent pas l'un l'autre.
+ */
+static bool	has_way(const t_horde *h, const t_grid *g, int i, int j)
+{
+	int	fi;
+	int	fj;
+
+	if (h->v[j].state != EN_CHASE)
+		return (true);
+	fi = h->flow[cell_of(g, h->v[i].pos)];
+	fj = h->flow[cell_of(g, h->v[j].pos)];
+	return (fj < fi || (fj == fi && j < i));
+}
+
+/* Avancer de p vers q ferait-il heurter un autre ennemi qui a la priorité ? */
+static bool	crowded(const t_horde *h, const t_grid *g, int i, t_vec2 q)
 {
 	const t_enemy	*o;
+	t_vec2			p;
 	int				j;
 
+	p = h->v[i].pos;
 	j = -1;
 	while (++j < h->n)
 	{
@@ -93,7 +112,7 @@ static bool	crowded(const t_horde *h, int i, t_vec2 p, t_vec2 q)
 			continue ;
 		if (hypotf(q.x - o->pos.x, q.y - o->pos.y) < 2 * ENEMY_RADIUS
 			&& hypotf(q.x - o->pos.x, q.y - o->pos.y)
-			< hypotf(p.x - o->pos.x, p.y - o->pos.y))
+			< hypotf(p.x - o->pos.x, p.y - o->pos.y) && has_way(h, g, i, j))
 			return (true);
 	}
 	return (false);
@@ -114,10 +133,10 @@ static bool	try_step(t_horde *h, int i, const t_grid *g, t_vec2 t,
 	len = hypotf(d.x, d.y);
 	if (len < 1e-4f)
 		return (false);
-	stepl = fminf(ENEMY_SPEED * (float)dt, len);
+	stepl = fminf(e->speed * (float)dt, len);
 	q = (t_vec2){e->pos.x + d.x / len * stepl, e->pos.y + d.y / len * stepl};
 	if (hypotf(player.x - q.x, player.y - q.y) < ENEMY_KEEP_AWAY
-		|| crowded(h, i, e->pos, q)
+		|| crowded(h, g, i, q)
 		|| grid_at(g, (int)floorf(q.x), (int)floorf(q.y)) == CELL_WALL)
 		return (false);
 	e->facing = atan2f(d.y, d.x);

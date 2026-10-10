@@ -104,6 +104,8 @@ bool	game_load_level(t_game *game, const char *path, t_level_error *err)
 	game->hp = PLAYER_MAX_HP;
 	game->hurt_t = 0.0;
 	game->dead_t = 0.0;
+	game->kills = 0;
+	waves_start(&game->waves);
 	return (true);
 }
 

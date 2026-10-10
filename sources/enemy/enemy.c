@@ -7,9 +7,13 @@ bool	horde_init(t_horde *h, const t_level *lv)
 	int	i;
 
 	h->n = lv->n_enemies;
+	h->cap = h->n;
+	if (lv->n_spawns > 0)
+		h->cap += HORDE_WAVE_SLOTS;
+	h->reuse = 0;
 	h->rng = 0x2545F491u;
 	h->flow_cell = -1;
-	h->v = calloc(h->n + 1, sizeof(t_enemy));
+	h->v = calloc(h->cap + 1, sizeof(t_enemy));
 	h->flow = malloc(sizeof(int) * ((size_t)lv->w * lv->h + 1));
 	h->queue = malloc(sizeof(int) * ((size_t)lv->w * lv->h + 1));
 	if (!h->v || !h->flow || !h->queue)
@@ -22,6 +26,7 @@ bool	horde_init(t_horde *h, const t_level *lv)
 		h->v[i].facing = PI_F / 2;
 		h->v[i].state = EN_IDLE;
 		h->v[i].hp = ENEMY_HP;
+		h->v[i].speed = ENEMY_SPEED;
 	}
 	return (true);
 }
@@ -35,6 +40,7 @@ void	horde_free(t_horde *h)
 	h->flow = NULL;
 	h->queue = NULL;
 	h->n = 0;
+	h->cap = 0;
 }
 
 /* xorshift32 : même graine, même partie */
@@ -169,9 +175,10 @@ int	horde_update(t_horde *h, const t_grid *g, t_target target, double dt)
 	int	dmg;
 	int	i;
 
-	if (h->n == 0)
+	if (h->cap == 0)
 		return (0);
 	flow_update(h, g, target.pos);
+	h->player = target.pos;
 	dmg = 0;
 	i = -1;
 	while (++i < h->n)

@@ -1,7 +1,7 @@
 #include "../includes/font.h"
 #include <string.h>
 
-static const char	*g_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 /:!.-";
+static const char	*g_chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 /:!.-+";
 
 /* Une ligne de 5 pixels par caractère du dessin, de haut en bas */
 static const char	*g_glyphs[][FONT_H] = {
@@ -47,6 +47,7 @@ static const char	*g_glyphs[][FONT_H] = {
 {"  #  ", "  #  ", "  #  ", "  #  ", "  #  ", "     ", "  #  "},
 {"     ", "     ", "     ", "     ", "     ", "     ", "  #  "},
 {"     ", "     ", "     ", "#####", "     ", "     ", "     "},
+{"     ", "  #  ", "  #  ", "#####", "  #  ", "  #  ", "     "},
 };
 
 int	font_width(const char *s, int scale)

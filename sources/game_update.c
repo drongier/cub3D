@@ -21,6 +21,38 @@ static bool	update_dead(t_game *game, bool pressed, double dt)
 	return (false);
 }
 
+/*
+ * Scène à points d'apparition : un mutant arrive quand la vague le demande
+ * et qu'un point convient ; sinon on réessaie à la frame suivante.
+ */
+static void	update_waves(t_game *game, double dt)
+{
+	t_vec2	pos;
+
+	if (game->level.n_spawns == 0)
+		return ;
+	if (waves_update(&game->waves, horde_alive(&game->horde), dt))
+	{
+		game->hp += WAVE_HEAL;
+		if (game->hp > PLAYER_MAX_HP)
+			game->hp = PLAYER_MAX_HP;
+	}
+	if (waves_due(&game->waves)
+		&& horde_pick_spawn(&game->horde, &game->grid, &game->level, &pos)
+		&& horde_spawn(&game->horde, pos, game->waves.rule.breed))
+		waves_spawned(&game->waves);
+}
+
+static void	shoot(t_game *game)
+{
+	int	hit;
+
+	hit = horde_shoot(&game->horde, &game->grid, player_cell_pos(game),
+			game->player.angle);
+	if (hit >= 0 && game->horde.v[hit].state == EN_DYING)
+		game->kills++;
+}
+
 bool	game_update(t_game *game, double dt)
 {
 	bool	pressed;
@@ -37,8 +69,7 @@ bool	game_update(t_game *game, double dt)
 	fired = weapon_update(&game->weapon, game->trigger,
 			player_move(&game->player), dt);
 	if (fired)
-		horde_shoot(&game->horde, &game->grid, player_cell_pos(game),
-			game->player.angle);
+		shoot(game);
 	dmg = horde_update(&game->horde, &game->grid, (t_target){
 			player_cell_pos(game), true, fired}, dt);
 	if (dmg > 0)
@@ -48,5 +79,7 @@ bool	game_update(t_game *game, double dt)
 		if (game->hp <= 0)
 			game->hp = 0;
 	}
+	if (game->hp > 0)
+		update_waves(game, dt);
 	return (true);
 }

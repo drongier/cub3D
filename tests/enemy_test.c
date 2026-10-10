@@ -213,6 +213,66 @@ static void	shoot_cases(void)
 	grid_free(&g);
 }
 
+/*
+ * Salle 11 x 5 et deux points : (1, 1), à 7 cases de marche du joueur et
+ * caché, et (9, 3), à 3 cases et en vue.
+ *   11111111111
+ *   1X000000001
+ *   10111111101
+ *   100000P00X1    P : le joueur en (6, 3)
+ *   11111111111
+ */
+static void	spawn_cases(void)
+{
+	const char		*room = "11111111111" "10000000001" "10111111101"
+		"10000000001" "11111111111";
+	t_grid			g;
+	t_horde			h;
+	t_level			lv;
+	t_level_enemy	pts[2] = {{1, 1, 1}, {9, 3, 1}};
+	t_vec2			p;
+	int				i;
+
+	memset(&lv, 0, sizeof(lv));
+	lv.w = 11;
+	lv.h = 5;
+	lv.spawns = pts;
+	lv.n_spawns = 2;
+	grid_init(&g, room, 11, 5);
+	horde_init(&h, &lv);
+	CHECK(h.n == 0 && h.cap == HORDE_WAVE_SLOTS, "room kept for the waves");
+	CHECK(!horde_pick_spawn(&h, &g, &lv, &p), "no flow yet: no pick");
+	horde_update(&h, &g, target(6.5f, 3.5f, false), 0.01);
+	CHECK(horde_pick_spawn(&h, &g, &lv, &p) && p.x == 1.5f && p.y == 1.5f,
+		"far and hidden wins over the visible one: %f %f", p.x, p.y);
+	CHECK(horde_spawn(&h, p, (t_breed){70, 2.0f}) && h.n == 1
+		&& h.v[0].state == EN_CHASE && h.v[0].hp == 70
+		&& h.v[0].speed == 2.0f, "spawns chasing, with the wave's breed");
+	CHECK(horde_pick_spawn(&h, &g, &lv, &p) && p.x == 9.5f,
+		"(1, 1) taken: falls back to the visible one");
+	h.v[0].pos = (t_vec2){9.5f, 3.5f};
+	CHECK(horde_pick_spawn(&h, &g, &lv, &p) && p.x == 1.5f, "and back");
+	horde_update(&h, &g, target(2.5f, 1.5f, false), 0.01);
+	h.v[0].pos = (t_vec2){9.5f, 3.5f};
+	CHECK(!horde_pick_spawn(&h, &g, &lv, &p), "too close or taken: wait");
+	horde_free(&h);
+	horde_init(&h, &lv);
+	horde_update(&h, &g, target(6.5f, 3.5f, false), 0.01);
+	i = -1;
+	while (++i < HORDE_WAVE_SLOTS)
+		horde_spawn(&h, (t_vec2){1.5f, 1.5f}, (t_breed){50, 1.6f});
+	CHECK(!horde_spawn(&h, p, (t_breed){50, 1.6f}), "full of living ones");
+	h.v[3].state = EN_DEAD;
+	h.v[5].state = EN_DEAD;
+	CHECK(horde_spawn(&h, (t_vec2){9.5f, 3.5f}, (t_breed){50, 1.6f})
+		&& h.v[3].state == EN_CHASE && h.v[3].pos.x == 9.5f
+		&& h.n == HORDE_WAVE_SLOTS, "recycles the first corpse");
+	CHECK(horde_spawn(&h, p, (t_breed){50, 1.6f}) && h.v[5].state == EN_CHASE,
+		"then the next one");
+	horde_free(&h);
+	grid_free(&g);
+}
+
 static void	cell_cases(void)
 {
 	t_enemy	e;
@@ -241,6 +301,7 @@ int	main(void)
 	detour_cases();
 	attack_cases();
 	shoot_cases();
+	spawn_cases();
 	cell_cases();
 	if (g_fail)
 		printf("enemy_test: %d check(s) failed\n", g_fail);

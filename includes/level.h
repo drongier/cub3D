@@ -8,6 +8,7 @@
 # define LEVEL_MAX_SIDE 1000
 # define LEVEL_MAX_FILE 16777216
 # define LEVEL_MAX_ENEMIES 256
+# define LEVEL_MAX_SPAWNS 64
 
 /* Même ordre que les faces du raycaster */
 enum e_level_tex
@@ -18,7 +19,10 @@ enum e_level_tex
 	TEX_EA
 };
 
-/* Case d'un ennemi ('M' dans la map) et sa ligne dans le fichier */
+/*
+ * Case d'un ennemi ('M' dans la map) ou d'un point d'apparition des vagues
+ * ('X'), et sa ligne dans le fichier
+ */
 typedef struct s_level_enemy
 {
 	int	x;
@@ -27,8 +31,9 @@ typedef struct s_level_enemy
 }	t_level_enemy;
 
 /*
- * Scène chargée. cells : w x h caractères, '1' mur, '0' sol (spawn et
- * ennemis compris), ' ' vide. spawn_dir : 'N', 'S', 'E' ou 'W'.
+ * Scène chargée. cells : w x h caractères, '1' mur, '0' sol (spawn,
+ * ennemis et points d'apparition compris), ' ' vide. spawn_dir : 'N', 'S',
+ * 'E' ou 'W'. Au moins un point d'apparition : la scène se joue en vagues.
  */
 typedef struct s_level
 {
@@ -43,6 +48,8 @@ typedef struct s_level
 	char		spawn_dir;
 	t_level_enemy	*enemies;
 	int			n_enemies;
+	t_level_enemy	*spawns;
+	int			n_spawns;
 }	t_level;
 
 /* line : ligne du fichier en cause (à partir de 1), 0 si aucune */

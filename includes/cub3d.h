@@ -65,6 +65,7 @@
 # include "level.h"
 # include "weapon.h"
 # include "enemy.h"
+# include "waves.h"
 # include "font.h"
 # include <stdint.h>
 # include <fcntl.h>
@@ -111,6 +112,8 @@ typedef struct s_game
 	int				hp;
 	double			hurt_t;
 	double			dead_t;
+	t_waves			waves;
+	int				kills;
 }					t_game;
 
 // GAME
