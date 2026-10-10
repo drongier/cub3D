@@ -1,4 +1,7 @@
 #include "../includes/cub3d.h"
+#ifdef __EMSCRIPTEN__
+# include <emscripten.h>
+#endif
 
 typedef struct s_fps_window
 {
@@ -7,6 +10,18 @@ typedef struct s_fps_window
 	double		frame_ms;
 	double		render_ms;
 }	t_fps_window;
+
+typedef struct s_loop
+{
+	t_game			*game;
+	const t_options	*opt;
+	t_input			input;
+	t_fps_window	win;
+	double			*render;
+	double			*frame;
+	uint64_t		last;
+	int				n;
+}	t_loop;
 
 static void	apply_input(t_player *player, const t_input *in)
 {
@@ -109,64 +124,105 @@ static void	cap_fps(const t_options *opt, uint64_t frame_start)
 		platform_sleep_ns((uint64_t)(left_ms * 1e6));
 }
 
+/* Une frame : entrées, mise à jour, dessin, affichage ; false pour arrêter */
+static bool	loop_frame(t_loop *l)
+{
+	uint64_t	t[4];
+	double		dt;
+
+	t[0] = platform_ticks();
+	platform_poll(l->game->platform, &l->input);
+	if (l->input.quit)
+		return (false);
+	frame_input(l->game, l->opt, &l->input);
+	dt = frame_dt(l->opt, &l->last, t[0]);
+	if (!game_update(l->game, dt))
+		return (false);
+	t[1] = platform_ticks();
+	draw_loop(l->game);
+	t[2] = platform_ticks();
+	platform_present(l->game->platform, l->game->fb);
+	t[3] = platform_ticks();
+	if (l->render)
+	{
+		l->render[l->n] = platform_ticks_to_ms(t[2] - t[1]);
+		l->frame[l->n] = platform_ticks_to_ms(t[3] - t[0]);
+	}
+	l->n++;
+	update_title(l->game->platform, &l->win, platform_ticks_to_ms(t[3] - t[0]),
+		platform_ticks_to_ms(t[2] - t[1]));
+	cap_fps(l->opt, t[0]);
+	return (l->opt->bench_frames == 0 || l->n < l->opt->bench_frames);
+}
+
+static int	loop_end(t_loop *l)
+{
+	if (l->render && l->n > 0)
+		print_report(l->opt, l->render, l->frame, l->n);
+	free(l->render);
+	free(l->frame);
+	return (0);
+}
+
+#ifdef __EMSCRIPTEN__
+
+/*
+ * Navigateur : pas de boucle bloquante, il appelle web_frame à chaque
+ * rafraîchissement de l'écran. Quand le jeu s'arrête, tout est libéré.
+ */
+static void	web_frame(void *arg)
+{
+	t_loop	*l;
+
+	l = arg;
+	if (loop_frame(l))
+		return ;
+	emscripten_cancel_main_loop();
+	loop_end(l);
+	game_destroy(l->game);
+}
+
+static int	loop_run(t_loop *l)
+{
+	static t_loop	kept;
+
+	kept = *l;
+	emscripten_set_main_loop_arg(web_frame, &kept, 0, false);
+	return (-1);
+}
+
+#else
+
+static int	loop_run(t_loop *l)
+{
+	while (loop_frame(l))
+		;
+	return (loop_end(l));
+}
+
+#endif
+
+/* Renvoie -1 quand la boucle continue sans nous (navigateur) */
 int	run_loop(t_game *game, const t_options *opt)
 {
-	t_input			input;
-	t_fps_window	win;
-	double			*render;
-	double			*frame;
-	uint64_t		t[4];
-	uint64_t		last;
-	double			dt;
-	int				n;
+	t_loop	l;
 
-	render = NULL;
-	frame = NULL;
+	ft_bzero(&l, sizeof(l));
+	l.game = game;
+	l.opt = opt;
 	if (opt->bench_frames > 0)
 	{
-		render = malloc(sizeof(double) * opt->bench_frames);
-		frame = malloc(sizeof(double) * opt->bench_frames);
-		if (!render || !frame)
+		l.render = malloc(sizeof(double) * opt->bench_frames);
+		l.frame = malloc(sizeof(double) * opt->bench_frames);
+		if (!l.render || !l.frame)
 		{
-			free(render);
-			free(frame);
+			free(l.render);
+			free(l.frame);
 			printf("Error: Allocation error!\n");
 			return (1);
 		}
 	}
-	ft_bzero(&input, sizeof(input));
-	ft_bzero(&win, sizeof(win));
-	win.start = platform_ticks();
-	last = win.start;
-	n = 0;
-	while (opt->bench_frames == 0 || n < opt->bench_frames)
-	{
-		t[0] = platform_ticks();
-		platform_poll(game->platform, &input);
-		if (input.quit)
-			break ;
-		frame_input(game, opt, &input);
-		dt = frame_dt(opt, &last, t[0]);
-		if (!game_update(game, dt))
-			break ;
-		t[1] = platform_ticks();
-		draw_loop(game);
-		t[2] = platform_ticks();
-		platform_present(game->platform, game->fb);
-		t[3] = platform_ticks();
-		if (render)
-		{
-			render[n] = platform_ticks_to_ms(t[2] - t[1]);
-			frame[n] = platform_ticks_to_ms(t[3] - t[0]);
-		}
-		n++;
-		update_title(game->platform, &win, platform_ticks_to_ms(t[3] - t[0]),
-			platform_ticks_to_ms(t[2] - t[1]));
-		cap_fps(opt, t[0]);
-	}
-	if (render && n > 0)
-		print_report(opt, render, frame, n);
-	free(render);
-	free(frame);
-	return (0);
+	l.win.start = platform_ticks();
+	l.last = l.win.start;
+	return (loop_run(&l));
 }

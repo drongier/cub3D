@@ -2,13 +2,29 @@ NAME		?= cub3D
 BUILD		?= build
 OPT			?= -O2
 
+ifeq ($(PLATFORM),web)
+# Navigateur (make web) : emcc, SDL3 fourni par Emscripten, libft compilée ici
+CC			:= emcc
+LIBFT		:=
+LIBFT_OBJ	:= $(patsubst %.c,$(BUILD)/%.o,$(wildcard libft/*.c))
+SDL_CFLAGS	:= --use-port=sdl3
+SDL_LIBS	:= --use-port=sdl3
+WEB_FLAGS	:= $(OPT) -sALLOW_MEMORY_GROWTH -sSTACK_SIZE=1MB -sINVOKE_RUN=0 \
+			   -sEXPORTED_RUNTIME_METHODS=callMain \
+			   --shell-file web/shell.html \
+			   --preload-file maps/good@/maps/good \
+			   --preload-file textures@/textures --exclude-file '*.png'
+else
 LIBFT		:= libft/libft.a
+LIBFT_OBJ	:=
 SDL_CFLAGS	:= $(shell pkg-config --cflags sdl3 2>/dev/null)
 SDL_LIBS	:= $(shell pkg-config --libs sdl3 2>/dev/null)
+WEB_FLAGS	:=
+endif
 
 CFLAGS		:= -Wall -Wextra -Werror -MMD -MP $(OPT) -g $(EXTRA_CFLAGS) $(SDL_CFLAGS)
-LDFLAGS		:= $(EXTRA_LDFLAGS)
-LDLIBS		:= $(LIBFT) $(SDL_LIBS) -lm
+LDFLAGS		:= $(EXTRA_LDFLAGS) $(WEB_FLAGS)
+LDLIBS		:= $(LIBFT) $(LIBFT_OBJ) $(SDL_LIBS) -lm
 
 ENEMY_SRC	:= sources/enemy/enemy.c sources/enemy/enemy_move.c \
 			   sources/enemy/enemy_view.c sources/enemy/enemy_spawn.c
@@ -39,7 +55,13 @@ TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 			   $(BUILD)/tests/font_test $(BUILD)/tests/waves_test \
 			   $(BUILD)/tests/items_test
 
-ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
+ifeq ($(PLATFORM),web)
+ifeq ($(shell command -v emcc 2>/dev/null),)
+$(error emcc introuvable : installer Emscripten (https://emscripten.org/docs/getting_started/downloads.html) puis source emsdk_env.sh)
+endif
+endif
+
+ifeq ($(filter clean fclean web,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
 $(error SDL3 introuvable via pkg-config. macOS : brew install sdl3 | Linux récent : paquet libsdl3-dev | sinon : compiler SDL3 depuis https://github.com/libsdl-org/SDL)
 endif
@@ -47,7 +69,8 @@ endif
 
 all: $(NAME)
 
-$(NAME): $(OBJ) $(LIBFT)
+$(NAME): $(OBJ) $(LIBFT) $(LIBFT_OBJ) $(if $(WEB_FLAGS),web/shell.html)
+	@mkdir -p $(dir $@)
 	$(CC) $(LDFLAGS) $(OBJ) $(LDLIBS) -o $@
 
 $(BUILD)/%.o: %.c
@@ -61,6 +84,11 @@ debug:
 	$(MAKE) NAME=cub3D_debug BUILD=build-debug OPT=-O0 \
 		EXTRA_CFLAGS="-fsanitize=address,undefined" \
 		EXTRA_LDFLAGS="-fsanitize=address,undefined"
+
+# Version navigateur dans build-web/ : index.html, .js, .wasm et .data
+web:
+	$(MAKE) PLATFORM=web NAME=build-web/index.html BUILD=build-web/obj \
+		OPT=-O2
 
 test: $(TEST_BINS)
 	@for t in $(TEST_BINS); do ./$$t || exit 1; done
@@ -121,7 +149,7 @@ $(BUILD)/tests/items_test: tests/items_test.c $(BUILD)/sources/items.o
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 
 clean:
-	rm -rf build build-debug
+	rm -rf build build-debug build-web
 	$(MAKE) -C libft clean
 
 fclean: clean
@@ -131,6 +159,6 @@ fclean: clean
 re: fclean
 	$(MAKE) all
 
-.PHONY: all debug test clean fclean re
+.PHONY: all debug web test clean fclean re
 
 -include $(OBJ:.o=.d) $(wildcard $(BUILD)/tests/*.d)

@@ -3,6 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* Dans un navigateur, Échap ne ferme rien : la page reste ouverte */
+#ifdef __EMSCRIPTEN__
+# define WEB_BUILD 1
+#else
+# define WEB_BUILD 0
+#endif
+
 struct s_platform
 {
 	SDL_Window		*window;
@@ -61,8 +68,7 @@ static void	set_key(t_input *in, SDL_Scancode sc, bool down)
 		in->rot_left = down;
 	else if (sc == SDL_SCANCODE_RIGHT)
 		in->rot_right = down;
-
-	else if (sc == SDL_SCANCODE_ESCAPE && down)
+	else if (sc == SDL_SCANCODE_ESCAPE && down && !WEB_BUILD)
 		in->quit = true;
 }
 

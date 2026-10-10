@@ -1,0 +1,40 @@
+# Compile la version navigateur (make web) et la publie sur GitHub Pages
+name: Web build
+
+on:
+  push:
+    branches: [cub3d_V2]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 6.0.12
+      - run: make web
+      - run: rm -rf build-web/obj
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: build-web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

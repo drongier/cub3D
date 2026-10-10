@@ -7,9 +7,10 @@ static int	fail(t_game *game, const char *msg)
 	return (1);
 }
 
+/* static : dans le navigateur, la partie continue après la fin de main */
 int	main(int argc, char **argv)
 {
-	t_game			game;
+	static t_game	game;
 	t_options		opt;
 	t_level_error	err;
 	int				status;
@@ -39,6 +40,8 @@ int	main(int argc, char **argv)
 	if (!game.platform)
 		return (fail(&game, "window initialisation failed"));
 	status = run_loop(&game, &opt);
+	if (status < 0)
+		return (0);
 	game_destroy(&game);
 	return (status);
 }

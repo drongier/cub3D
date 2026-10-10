@@ -51,7 +51,8 @@ sudo cmake --install SDL/build
 ```
 
 Targets: `make` builds an optimized `cub3D` (`-O2`, objects in `build/`), `make debug` builds
-`cub3D_debug` with AddressSanitizer and UBSan (objects in `build-debug/`), `make test` runs the
+`cub3D_debug` with AddressSanitizer and UBSan (objects in `build-debug/`), `make web` builds the
+browser version (see [Play in the browser](#play-in-the-browser)), `make test` runs the
 unit tests, `make clean`, `make fclean` and `make re` do the usual. `make OPT=-O0` builds without
 optimization.
 
@@ -90,6 +91,28 @@ took longer than 50 ms counts as 50 ms, so a stall never makes the player jump.
 
 The player cannot walk through walls. Each axis is tested on its own before the move is applied, so
 you slide along a wall instead of sticking to it.
+
+## Play in the browser
+
+`make web` compiles the same C code to WebAssembly with [Emscripten](https://emscripten.org) and
+writes a static site to `build-web/` (`index.html`, `.js`, `.wasm`, and `.data` holding the maps
+and textures, about 2 MB in all). SDL3 comes from Emscripten's own port, libft is compiled along.
+
+```sh
+git clone https://github.com/emscripten-core/emsdk.git ~/emsdk
+~/emsdk/emsdk install latest && ~/emsdk/emsdk activate latest
+source ~/emsdk/emsdk_env.sh          # in each new shell
+make web
+python3 -m http.server -d build-web 8000   # then open http://localhost:8000
+```
+
+The page (`web/shell.html`) shows a menu of maps; picking one starts the game, "Changer de map"
+reloads the page. A browser does not allow a blocking loop, so in the web build `run_loop` hands
+one frame at a time to the browser (`emscripten_set_main_loop_arg`), which calls it at the screen
+refresh rate; the native build keeps its own loop. `Esc` does nothing in the browser.
+
+Every push to `cub3d_V2` rebuilds the site and publishes it on GitHub Pages
+(`.github/workflows/pages.yml`).
 
 ## Scene file format
 
@@ -196,6 +219,7 @@ sources/waves.c       wave state: countdown, arrivals, difficulty of each wave
 sources/items.c       health kits: pickup and respawn
 sources/font.c        5x7 bitmap font for the HUD
 sources/platform/     SDL3 window, input and clock; XPM loader
+web/shell.html        web page around the browser build: map menu, controls
 sources/level/        scene file parsing and validation (no exit, errors with line numbers)
 sources/game.c        load and unload a scene: textures, grid, player
 sources/drawing/      frame drawing, player update, minimap, sprites (mutants, kits), HUD

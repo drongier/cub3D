@@ -4,6 +4,7 @@
 cub3D
 build/
 build-debug/
+build-web/
 cub3D_debug
 
 ### Editor and OS noise
