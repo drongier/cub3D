@@ -61,7 +61,7 @@ int	draw_loop(t_game *game)
 	i = 0;
 	while (i < WIDTH)
 		draw_column(game, &cam, i++);
-	draw_enemies(game, &cam);
+	draw_sprites(game, &cam);
 	if (game->hp > 0)
 		draw_weapon(game);
 	if (BONUS == 1)

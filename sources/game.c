@@ -24,6 +24,10 @@ bool	game_init(t_game *game, t_level_error *err)
 		|| !texture_build_columns(&game->mutant_tex))
 		return (snprintf(err->msg, sizeof(err->msg),
 				"cannot load texture '%s'", MUTANT_XPM), false);
+	if (!xpm_load(MEDKIT_XPM, &game->medkit_tex)
+		|| !texture_build_columns(&game->medkit_tex))
+		return (snprintf(err->msg, sizeof(err->msg),
+				"cannot load texture '%s'", MEDKIT_XPM), false);
 	return (true);
 }
 
@@ -91,7 +95,8 @@ bool	game_load_level(t_game *game, const char *path, t_level_error *err)
 		game_unload_level(game);
 		return (false);
 	}
-	if (!horde_init(&game->horde, &game->level))
+	if (!horde_init(&game->horde, &game->level)
+		|| !items_init(&game->items, &game->level))
 	{
 		err->line = 0;
 		snprintf(err->msg, sizeof(err->msg), "out of memory");
@@ -105,6 +110,7 @@ bool	game_load_level(t_game *game, const char *path, t_level_error *err)
 	game->hurt_t = 0.0;
 	game->dead_t = 0.0;
 	game->kills = 0;
+	game->heal_t = 0.0;
 	waves_start(&game->waves);
 	return (true);
 }
@@ -118,6 +124,7 @@ void	game_unload_level(t_game *game)
 		texture_free(&game->textures[i++]);
 	grid_free(&game->grid);
 	horde_free(&game->horde);
+	items_free(&game->items);
 	level_free(&game->level);
 }
 
@@ -130,6 +137,7 @@ void	game_destroy(t_game *game)
 	while (i < WEAPON_FRAMES)
 		texture_free(&game->weapon_tex[i++]);
 	texture_free(&game->mutant_tex);
+	texture_free(&game->medkit_tex);
 	free(game->fb);
 	game->fb = NULL;
 	platform_destroy(game->platform);

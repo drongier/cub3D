@@ -4,7 +4,11 @@
     tools/png_to_xpm.py textures/enemies/mutant_sheet.png \\
         textures/enemies/mutant.xpm 63747D 7D929E
 
-Les couleurs transparentes s'écrivent en hexadécimal RRGGBB. Il faut Pillow.
+    tools/png_to_xpm.py --crop 131,748,64,64 textures/items/objects_sheet.png \\
+        textures/items/medkit.xpm 980088
+
+Les couleurs transparentes s'écrivent en hexadécimal RRGGBB. --crop x,y,w,h
+ne garde que ce rectangle de l'image. Il faut Pillow.
 """
 import string
 import sys
@@ -15,9 +19,16 @@ CHARS = string.ascii_letters + string.digits + "#$%&*+-/:;<=>?@^_~|"
 
 
 def main():
+    crop = None
+    if len(sys.argv) > 2 and sys.argv[1] == "--crop":
+        x, y, cw, ch = (int(v) for v in sys.argv[2].split(","))
+        crop = (x, y, x + cw, y + ch)
+        del sys.argv[1:3]
     if len(sys.argv) < 3:
         sys.exit(__doc__)
     img = Image.open(sys.argv[1]).convert("RGB")
+    if crop:
+        img = img.crop(crop)
     clear = {tuple(int(h[i:i + 2], 16) for i in (0, 2, 4)) for h in sys.argv[3:]}
     w, h = img.size
     px = img.load()

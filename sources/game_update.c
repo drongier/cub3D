@@ -36,11 +36,27 @@ static void	update_waves(t_game *game, double dt)
 		game->hp += WAVE_HEAL;
 		if (game->hp > PLAYER_MAX_HP)
 			game->hp = PLAYER_MAX_HP;
+		items_restock(&game->items);
 	}
 	if (waves_due(&game->waves)
 		&& horde_pick_spawn(&game->horde, &game->grid, &game->level, &pos)
 		&& horde_spawn(&game->horde, pos, game->waves.rule.breed))
 		waves_spawned(&game->waves);
+}
+
+/* Trousses : retour après le délai, ramassage si le joueur est blessé */
+static void	update_items(t_game *game, double dt)
+{
+	int	heal;
+
+	items_update(&game->items, dt);
+	heal = items_pickup(&game->items, player_cell_pos(game), game->hp,
+			PLAYER_MAX_HP);
+	if (heal > 0)
+	{
+		game->hp += heal;
+		game->heal_t = HEAL_FLASH_TIME;
+	}
 }
 
 static void	shoot(t_game *game)
@@ -63,6 +79,8 @@ bool	game_update(t_game *game, double dt)
 	game->trigger_was_down = game->trigger;
 	if (game->hurt_t > 0.0)
 		game->hurt_t -= dt;
+	if (game->heal_t > 0.0)
+		game->heal_t -= dt;
 	if (game->hp <= 0)
 		return (update_dead(game, pressed, dt));
 	update_player(&game->player, dt);
@@ -80,6 +98,9 @@ bool	game_update(t_game *game, double dt)
 			game->hp = 0;
 	}
 	if (game->hp > 0)
+	{
+		update_items(game, dt);
 		update_waves(game, dt);
+	}
 	return (true);
 }

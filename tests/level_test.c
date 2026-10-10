@@ -81,6 +81,13 @@ static void	valid_cases(void)
 		"spawn cells are floor and their positions are kept");
 	level_free(&lv);
 	CHECK(lv.spawns == NULL && lv.n_spawns == 0, "level_free clears spawns");
+	CHECK(parse(HEAD "\n111111\n1H0N01\n10XH01\n111111\n", &lv, &err),
+		"health kits: %s", err.msg);
+	CHECK(lv.n_items == 2 && lv.items[1].x == 3 && lv.items[1].y == 2
+		&& lv.n_spawns == 1 && lv.cells[2 * lv.w + 3] == '0',
+		"kit cells are floor and their positions are kept");
+	level_free(&lv);
+	CHECK(lv.items == NULL && lv.n_items == 0, "level_free clears kits");
 }
 
 static void	big_map(int side, bool want_ok)
@@ -148,6 +155,8 @@ int	main(void)
 		"mutant outside the area");
 	expect_error(HEAD "\n11111111\n1N01X001\n11111111\n", 9,
 		"spawn point outside the area");
+	expect_error(HEAD "\n11111111\n1N01H001\n11111111\n", 9,
+		"health kit outside the area");
 	expect_error(HEAD "\n1111\n1NM\n1111\n", 9, "not closed");
 	expect_error(HEAD "\n1111\n1N01\n1101\n", 9, "not closed");
 	expect_error(HEAD "\n1111\nN001\n1111\n", 9, "not closed");

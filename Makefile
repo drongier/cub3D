@@ -20,7 +20,7 @@ SRC			:= sources/main.c sources/game.c sources/game_update.c \
 			   sources/loop.c sources/options.c sources/stats.c sources/motion.c \
 			   sources/raster.c sources/grid.c sources/raycast.c sources/pixels.c \
 			   sources/font.c \
-			   sources/weapon.c sources/waves.c \
+			   sources/weapon.c sources/waves.c sources/items.c \
 			   $(LEVEL_SRC) $(ENEMY_SRC) \
 			   sources/platform/platform_sdl.c \
 			   sources/platform/xpm_loader.c \
@@ -36,7 +36,8 @@ TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 			   $(BUILD)/tests/raster_test $(BUILD)/tests/raycast_test \
 			   $(BUILD)/tests/pixels_test $(BUILD)/tests/level_test \
 			   $(BUILD)/tests/weapon_test $(BUILD)/tests/enemy_test \
-			   $(BUILD)/tests/font_test $(BUILD)/tests/waves_test
+			   $(BUILD)/tests/font_test $(BUILD)/tests/waves_test \
+			   $(BUILD)/tests/items_test
 
 ifeq ($(filter clean fclean,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
@@ -112,6 +113,10 @@ $(BUILD)/tests/font_test: tests/font_test.c $(BUILD)/sources/font.o
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -o $@
 
 $(BUILD)/tests/waves_test: tests/waves_test.c $(BUILD)/sources/waves.o
+	@mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
+
+$(BUILD)/tests/items_test: tests/items_test.c $(BUILD)/sources/items.o
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(filter %.c %.o,$^) -lm -o $@
 

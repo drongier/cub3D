@@ -113,6 +113,8 @@ void	draw_hud(t_game *g)
 {
 	if (g->hurt_t > 0.0 && g->hp > 0)
 		tint(g, 0xC00000, (int)(110 * g->hurt_t / HURT_FLASH_TIME));
+	if (g->heal_t > 0.0 && g->hp > 0)
+		tint(g, 0x30E060, (int)(70 * g->heal_t / HEAL_FLASH_TIME));
 	if (g->hp <= 0)
 	{
 		tint(g, 0x800000, 60 + (int)(100 * fmin(g->dead_t, 1.0)));

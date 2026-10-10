@@ -21,34 +21,43 @@ static bool	map_extent(const t_lines *lines, int first, int *last,
 	return (true);
 }
 
-/* Un 'M' ou un 'X' : la case devient du sol, la position est gardée */
-static bool	add_point(t_level *lv, const t_line *l, int x, int y,
-		t_level_error *err)
+/* Liste de la scène qui reçoit un 'M', un 'X' ou un 'H' */
+typedef struct s_points
 {
 	t_level_enemy	**v;
 	int				*n;
 	int				max;
+	const char		*what;
+}	t_points;
 
-	v = &lv->enemies;
-	n = &lv->n_enemies;
-	max = LEVEL_MAX_ENEMIES;
-	if (l->s[x] == 'X')
+static t_points	points_of(t_level *lv, char c)
+{
+	if (c == 'X')
+		return ((t_points){&lv->spawns, &lv->n_spawns, LEVEL_MAX_SPAWNS,
+			"spawn points"});
+	if (c == 'H')
+		return ((t_points){&lv->items, &lv->n_items, LEVEL_MAX_ITEMS,
+			"health kits"});
+	return ((t_points){&lv->enemies, &lv->n_enemies, LEVEL_MAX_ENEMIES,
+		"mutants"});
+}
+
+/* Un 'M', un 'X' ou un 'H' : la case devient du sol, la position est gardée */
+static bool	add_point(t_level *lv, const t_line *l, int x, int y,
+		t_level_error *err)
+{
+	t_points	p;
+
+	p = points_of(lv, l->s[x]);
+	if (*p.n == p.max)
+		return (level_fail(err, l->num, "more than %d %s", p.max, p.what));
+	if (!*p.v)
 	{
-		v = &lv->spawns;
-		n = &lv->n_spawns;
-		max = LEVEL_MAX_SPAWNS;
-	}
-	if (*n == max && l->s[x] == 'X')
-		return (level_fail(err, l->num, "more than %d spawn points", max));
-	if (*n == max)
-		return (level_fail(err, l->num, "more than %d mutants", max));
-	if (!*v)
-	{
-		*v = malloc(sizeof(t_level_enemy) * max);
-		if (!*v)
+		*p.v = malloc(sizeof(t_level_enemy) * p.max);
+		if (!*p.v)
 			return (level_fail(err, 0, "out of memory"));
 	}
-	(*v)[(*n)++] = (t_level_enemy){x, y, l->num};
+	(*p.v)[(*p.n)++] = (t_level_enemy){x, y, l->num};
 	lv->cells[y * lv->w + x] = '0';
 	return (true);
 }
@@ -61,7 +70,7 @@ static bool	put_cell(t_level *lv, const t_line *l, int x, int y,
 	c = l->s[x];
 	if (is_space(c))
 		return (true);
-	if (c == 'M' || c == 'X')
+	if (c == 'M' || c == 'X' || c == 'H')
 		return (add_point(lv, l, x, y, err));
 	if (c == '0' || c == '1')
 	{
@@ -120,7 +129,7 @@ static bool	is_closed(const t_level *lv, int *stack, char *seen)
 	return (true);
 }
 
-/* Chaque mutant et chaque point d'apparition doit être atteignable */
+/* Mutants, points d'apparition et trousses : tous atteignables */
 static bool	check_points(const t_level *lv, const char *seen,
 		t_level_error *err)
 {
@@ -136,6 +145,11 @@ static bool	check_points(const t_level *lv, const char *seen,
 		if (!seen[lv->spawns[i].y * lv->w + lv->spawns[i].x])
 			return (level_fail(err, lv->spawns[i].line,
 					"spawn point outside the area the player can reach"));
+	i = -1;
+	while (++i < lv->n_items)
+		if (!seen[lv->items[i].y * lv->w + lv->items[i].x])
+			return (level_fail(err, lv->items[i].line,
+					"health kit outside the area the player can reach"));
 	return (true);
 }
 

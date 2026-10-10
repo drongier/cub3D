@@ -124,7 +124,8 @@ commas. Spaces around the numbers are fine, `F 50 , 50 , 50` is accepted; `F 1,2
 The grid comes last. `1` is a wall, `0` is an empty cell, a whitespace character counts as empty,
 and one of `N`, `S`, `E`, `W` marks where the player starts and which way they look. Exactly one
 spawn point. Each `M` places a mutant on an empty cell (up to 256), facing south. Each `X` is a
-spawn point for mutant waves (up to 64, see [Waves](#waves)). Rows can be shorter than the longest
+spawn point for mutant waves (up to 64, see [Waves](#waves)), each `H` a health kit (up to 32, see
+[Health kits](#health-kits)). Rows can be shorter than the longest
 one, the parser pads them. The grid is limited to
 1000 x 1000 cells and the file to 16 MB. Windows line endings (`\r\n`) are accepted.
 
@@ -145,10 +146,11 @@ line 5: color must be three numbers from 0 to 255, as R,G,B
 - a malformed color
 - a map that starts before all six elements are given, or anything but blank lines after it,
   including an empty line inside the grid
-- a map character outside `0`, `1`, whitespace, `NSEW`, `M` and `X`
+- a map character outside `0`, `1`, whitespace, `NSEW`, `M`, `X` and `H`
 - no spawn point, or more than one
 - a mutant the player cannot reach (more than 256 mutants is refused too)
 - a wave spawn point (`X`) the player cannot reach (more than 64 is refused too)
+- a health kit (`H`) the player cannot reach (more than 32 is refused too)
 - a grid that is not sealed: everything the player can reach from the spawn without crossing a
   wall, diagonals included, must stay inside the grid. The check walks the grid with an explicit
   stack, so a 1000 x 1000 map is checked in a few milliseconds without recursion.
@@ -160,7 +162,7 @@ textures included, prints `OK` and exits without opening a window.
 
 `make test` runs the unit tests (XPM loader, command line, statistics, movement, polygon fill,
 ray casting, wall columns, scene parsing, weapon,
-enemies, font, waves).
+enemies, font, waves, health kits).
 
 `test.sh` runs the binary over the whole `maps/bad/` folder and expects every scene to be refused:
 exit code 1 and an `Error` message, no crash, and the game must not still be running after 5
@@ -191,11 +193,12 @@ sources/weapon.c      pistol state: fire rate, animation frame, sway
 sources/enemy/        mutant AI: states, distance field, line of sight, shots, sprite frames
 sources/game_update.c one frame of play: player, weapon, mutants, waves, health, death and restart
 sources/waves.c       wave state: countdown, arrivals, difficulty of each wave
+sources/items.c       health kits: pickup and respawn
 sources/font.c        5x7 bitmap font for the HUD
 sources/platform/     SDL3 window, input and clock; XPM loader
 sources/level/        scene file parsing and validation (no exit, errors with line numbers)
 sources/game.c        load and unload a scene: textures, grid, player
-sources/drawing/      frame drawing, player update, minimap, enemy sprites, HUD
+sources/drawing/      frame drawing, player update, minimap, sprites (mutants, kits), HUD
 libft/                our own libft, including ft_printf and get_next_line
 tests/                unit tests
 maps/good/            valid scenes, from small test maps to full mazes
@@ -294,9 +297,24 @@ When several mutants want the same cell, the one closest to you (by walking dist
 first one created) goes first and the others step aside or wait, so a crowd never locks itself
 in a doorway.
 
+## Health kits
+
+Each `H` in the grid holds a first aid kit (three in `maps/good/mutants.cub`, one in each corner of
+`maps/good/waves.cub`). Walk over it to get 25 health points back, up to 100; at full health you
+leave it where it is. A kit you took comes back after 30 seconds, and in a wave scene every kit comes
+back as soon as a wave is cleared. Kits show as blue dots on the radar, and a green flash marks each
+pickup. The settings are in `includes/items.h`.
+
+Kits are drawn with the mutants in a single list sorted from far to near, so a mutant standing
+behind a kit is hidden by it and the other way round.
+
+The kit comes from `textures/items/objects_sheet.png` (Wolfenstein 3D objects, copyright id
+Software), cut with `tools/png_to_xpm.py --crop 131,748,64,64` and its purple background made
+transparent.
+
 ## Known limits
 
 - the field of view, the movement and sprint speeds and the block size (64) are constants, and
   there is no mouse look
 - floors and ceilings are solid colors, only the walls are textured
-- one kind of enemy, no doors, no items to pick up and no sound
+- one kind of enemy, one kind of item, no doors and no sound

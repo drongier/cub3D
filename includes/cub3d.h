@@ -31,6 +31,7 @@
 # define MM_CONE_A 90
 # define MM_PLAYER_RGB 0x40FF40
 # define MM_ENEMY_RGB 0xFF3030
+# define MM_ITEM_RGB 0x40C0FF
 # define MM_FRAME_RGB 0xFFFFFF
 # define MM_FRAME_A 160
 # define COLLISION_MARG 10
@@ -39,6 +40,8 @@
 # define PLAYER_RADIUS 0.25f
 /* Durée du flash rouge quand le joueur est touché */
 # define HURT_FLASH_TIME 0.35
+/* Durée du flash vert quand on ramasse une trousse */
+# define HEAL_FLASH_TIME 0.35
 /* Délai avant de pouvoir recommencer après la mort */
 # define RESTART_DELAY 1.0
 # define MUTANT_XPM "textures/enemies/mutant.xpm"
@@ -66,6 +69,7 @@
 # include "weapon.h"
 # include "enemy.h"
 # include "waves.h"
+# include "items.h"
 # include "font.h"
 # include <stdint.h>
 # include <fcntl.h>
@@ -114,7 +118,17 @@ typedef struct s_game
 	double			dead_t;
 	t_waves			waves;
 	int				kills;
+	t_items			items;
+	t_texture		medkit_tex;
+	double			heal_t;
 }					t_game;
+
+/* Un point du radar : position en cases et couleur */
+typedef struct s_dot
+{
+	t_vec2			pos;
+	uint32_t		color;
+}					t_dot;
 
 // GAME
 
@@ -140,7 +154,7 @@ int					run_loop(t_game *game, const t_options *opt);
 int					draw_loop(t_game *game);
 bool				touch(float px, float py, t_game *game);
 bool				player_blocked(t_game *game, float px, float py);
-void				draw_enemies(t_game *game, const t_camera *cam);
+void				draw_sprites(t_game *game, const t_camera *cam);
 void				draw_hud(t_game *game);
 
 // BONUS MINIMAP
