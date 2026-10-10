@@ -23,7 +23,7 @@
 # define ENEMY_ATTACK_RANGE 10.0f
 /* Délai avant la première attaque, puis entre deux attaques (+ hasard) */
 # define ENEMY_REACTION 0.5
-# define ENEMY_ATTACK_PAUSE 1.2
+# define ENEMY_ATTACK_PAUSE 1.5
 /* Attaque : 4 images, deux tirs */
 # define ENEMY_SHOT_1 0.25
 # define ENEMY_SHOT_2 0.60
