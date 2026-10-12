@@ -112,7 +112,7 @@ typedef struct s_game
 	float			zbuf[WIDTH];
 	t_horde			horde;
 	t_texture		mutant_tex;
-	const char		*level_path;
+	char			level_path[PATH_MAX];
 	int				hp;
 	double			hurt_t;
 	double			dead_t;

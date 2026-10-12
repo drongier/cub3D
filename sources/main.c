@@ -7,11 +7,14 @@ static int	fail(t_game *game, const char *msg)
 	return (1);
 }
 
-/* static : dans le navigateur, la partie continue après la fin de main */
+/*
+ * static : dans le navigateur, la partie continue après la fin de main, et
+ * la boucle garde des pointeurs vers game et opt
+ */
 int	main(int argc, char **argv)
 {
-	static t_game	game;
-	t_options		opt;
+	static t_game		game;
+	static t_options	opt;
 	t_level_error	err;
 	int				status;
 

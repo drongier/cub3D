@@ -73,12 +73,22 @@ static bool	load_textures(t_game *game, t_level_error *err)
 }
 
 /*
- * Charge une scène : fichier, textures, grille, joueur. En cas d'échec, err
+ * Charge une scène : fichier, textures, grille, joueur. Le chemin est copié :
+ * dans le navigateur, celui de argv disparaît une fois main terminé. En cas d'échec, err
  * est rempli et le jeu revient à l'état sans map ; la fenêtre n'est pas
  * touchée, on peut donc changer de map sans la fermer.
  */
 bool	game_load_level(t_game *game, const char *path, t_level_error *err)
 {
+	if (path != game->level_path && ft_strlcpy(game->level_path, path,
+			sizeof(game->level_path)) >= sizeof(game->level_path))
+	{
+		game->level_path[0] = '\0';
+		err->line = 0;
+		snprintf(err->msg, sizeof(err->msg), "scene path too long");
+		return (false);
+	}
+	path = game->level_path;
 	game_unload_level(game);
 	if (!level_load(path, &game->level, err))
 		return (false);
@@ -105,7 +115,6 @@ bool	game_load_level(t_game *game, const char *path, t_level_error *err)
 	}
 	init_player(&game->player, &game->level, game);
 	weapon_init(&game->weapon);
-	game->level_path = path;
 	game->hp = PLAYER_MAX_HP;
 	game->hurt_t = 0.0;
 	game->dead_t = 0.0;
