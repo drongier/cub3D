@@ -106,7 +106,7 @@ make web
 python3 -m http.server -d build-web 8000   # then open http://localhost:8000
 ```
 
-The page (`web/shell.html`) shows a menu of maps; picking one starts the game, "Changer de map"
+The page (`web/shell.html`) shows a menu of maps; picking one starts the game, "Change map"
 reloads the page. A browser does not allow a blocking loop, so in the web build `run_loop` hands
 one frame at a time to the browser (`emscripten_set_main_loop_arg`), which calls it at the screen
 refresh rate; the native build keeps its own loop. `Esc` does nothing in the browser.

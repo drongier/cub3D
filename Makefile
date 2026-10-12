@@ -57,13 +57,13 @@ TEST_BINS	:= $(BUILD)/tests/xpm_test $(BUILD)/tests/options_test \
 
 ifeq ($(PLATFORM),web)
 ifeq ($(shell command -v emcc 2>/dev/null),)
-$(error emcc introuvable : installer Emscripten (https://emscripten.org/docs/getting_started/downloads.html) puis source emsdk_env.sh)
+$(error emcc not found: install Emscripten (https://emscripten.org/docs/getting_started/downloads.html), then source emsdk_env.sh)
 endif
 endif
 
 ifeq ($(filter clean fclean web,$(MAKECMDGOALS)),)
 ifeq ($(SDL_LIBS),)
-$(error SDL3 introuvable via pkg-config. macOS : brew install sdl3 | Linux récent : paquet libsdl3-dev | sinon : compiler SDL3 depuis https://github.com/libsdl-org/SDL)
+$(error SDL3 not found through pkg-config. macOS: brew install sdl3 | recent Linux: libsdl3-dev package | otherwise build SDL3 from https://github.com/libsdl-org/SDL)
 endif
 endif
 

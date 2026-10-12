@@ -39,7 +39,7 @@ static void	health(t_game *g)
 	int			y;
 
 	c = (t_canvas){g->fb, WIDTH, 0, 0, WIDTH, HEIGHT};
-	text(g, (t_text){16, HEIGHT - 40, 3, 0xFFFFFF}, "VIE");
+	text(g, (t_text){16, HEIGHT - 40, 3, 0xFFFFFF}, "HP");
 	color = 0x30C040;
 	if (g->hp <= 60)
 		color = 0xE0C020;
@@ -61,7 +61,7 @@ static void	waves(t_game *g)
 	char	buf[48];
 	double	left;
 
-	snprintf(buf, sizeof(buf), "VAGUE %d   MUTANTS %d", g->waves.index,
+	snprintf(buf, sizeof(buf), "WAVE %d   MUTANTS %d", g->waves.index,
 		horde_alive(&g->horde));
 	text(g, (t_text){16, 16, 3, 0xFFFFFF}, buf);
 	left = waves_countdown(&g->waves);
@@ -69,12 +69,12 @@ static void	waves(t_game *g)
 		return ;
 	if (g->waves.index > 1)
 	{
-		snprintf(buf, sizeof(buf), "VAGUE %d NETTOYEE  +%d VIE",
+		snprintf(buf, sizeof(buf), "WAVE %d CLEARED  +%d HP",
 			g->waves.index - 1, WAVE_HEAL);
 		text(g, (t_text){(WIDTH - font_width(buf, 3)) / 2, 150, 3,
 			0x80FF80}, buf);
 	}
-	snprintf(buf, sizeof(buf), "VAGUE %d", g->waves.index);
+	snprintf(buf, sizeof(buf), "WAVE %d", g->waves.index);
 	centered(g, 220, 8, buf);
 	snprintf(buf, sizeof(buf), "%d", (int)ceil(left));
 	centered(g, 300, 6, buf);
@@ -96,7 +96,7 @@ static void	counter(t_game *g)
 	snprintf(buf, sizeof(buf), "MUTANTS %d/%d", alive, g->horde.n);
 	text(g, (t_text){16, 16, 3, 0xFFFFFF}, buf);
 	if (alive == 0)
-		text(g, (t_text){16, 46, 2, 0x80FF80}, "NIVEAU NETTOYE !");
+		text(g, (t_text){16, 46, 2, 0x80FF80}, "LEVEL CLEARED!");
 }
 
 /* Score de la partie en vagues : vagues tenues, mutants abattus */
@@ -104,7 +104,7 @@ static void	score(t_game *g)
 {
 	char	buf[64];
 
-	snprintf(buf, sizeof(buf), "VAGUES TENUES %d   MUTANTS ABATTUS %d",
+	snprintf(buf, sizeof(buf), "WAVES SURVIVED %d   KILLS %d",
 		g->waves.index - 1, g->kills);
 	centered(g, 360, 3, buf);
 }
@@ -118,11 +118,11 @@ void	draw_hud(t_game *g)
 	if (g->hp <= 0)
 	{
 		tint(g, 0x800000, 60 + (int)(100 * fmin(g->dead_t, 1.0)));
-		centered(g, 260, 8, "VOUS ETES MORT");
+		centered(g, 260, 8, "YOU ARE DEAD");
 		if (g->level.n_spawns > 0)
 			score(g);
 		if (g->dead_t >= RESTART_DELAY)
-			centered(g, 420, 3, "ESPACE OU CLIC POUR RECOMMENCER");
+			centered(g, 420, 3, "PRESS SPACE OR CLICK TO RESTART");
 	}
 	health(g);
 	counter(g);

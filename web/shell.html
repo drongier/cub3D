@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="fr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -39,27 +39,27 @@
 <body>
 <div id="stage">
   <canvas id="canvas" tabindex="-1" oncontextmenu="event.preventDefault()"></canvas>
-  <a id="back" href="">Changer de map</a>
+  <a id="back" href="">Change map</a>
   <div id="menu"><div class="box">
     <h1>cub3D</h1>
-    <p>Raycaster en C et SDL3, compilé en WebAssembly.</p>
+    <p>Raycaster written in C with SDL3, compiled to WebAssembly.</p>
     <div id="maps"></div>
     <div class="keys">
-      <b>W A S D</b> (Z Q S D en AZERTY) : se déplacer &nbsp;·&nbsp; <b>← →</b> : tourner<br>
-      <b>Maj</b> : sprint &nbsp;·&nbsp; <b>Espace</b> ou <b>clic</b> : tirer, recommencer après la mort
+      <b>W A S D</b> (Z Q S D on AZERTY): move &nbsp;·&nbsp; <b>← →</b>: turn<br>
+      <b>Shift</b>: sprint &nbsp;·&nbsp; <b>Space</b> or <b>click</b>: shoot, restart after dying
     </div>
-    <div id="status">Chargement…</div>
+    <div id="status">Loading…</div>
   </div></div>
 </div>
 <script>
   var MAPS = [
-    ["waves", "Vagues", "survivre aux vagues de mutants"],
-    ["mutants", "Mutants", "8 mutants, 3 trousses"],
-    ["map", "Map", "quelques mutants"],
-    ["dungeon", "Donjon", "exploration"],
-    ["library", "Bibliothèque", "exploration"],
+    ["waves", "Waves", "survive the mutant waves"],
+    ["mutants", "Mutants", "8 mutants, 3 health kits"],
+    ["map", "Map", "a few mutants"],
+    ["dungeon", "Dungeon", "exploration"],
+    ["library", "Library", "exploration"],
     ["creepy", "Creepy", "exploration"],
-    ["cheese_maze", "Labyrinthe", "exploration"],
+    ["cheese_maze", "Maze", "exploration"],
     ["matrix", "Matrix", "exploration"]
   ];
   var statusEl = document.getElementById("status");
@@ -98,7 +98,7 @@
     setStatus: function (t) { if (t) statusEl.textContent = t; },
     onRuntimeInitialized: function () {
       buttons.forEach(function (b) { b.disabled = false; });
-      statusEl.textContent = "Choisis une map.";
+      statusEl.textContent = "Pick a map.";
     }
   };
 </script>
